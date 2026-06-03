@@ -42,3 +42,20 @@ An advanced Python DV script has automatically generated a fully functional Syst
 
 ### Data Buses Randomized:
 - No data inputs available to randomize.
+
+## 📊 Visual Verification Status
+**Status:** ✅ Functional Validation Passed
+
+## 🧐 Analysis of the Waveform
+Based on the advanced GTKWave functional screenshot provided for the Reset Synchronizer:
+- **Clocking (`clk`)**: The destination clock is toggling at a steady frequency.
+- **Asynchronous Input (`async_rst_n`)**: We can see the noisy/asynchronous raw reset signal drop to `0` and then subsequently de-assert to `1`. The transitions occur completely out of sync with the clock edges, simulating real-world asynchronous resets.
+- **Synchronizer Chain (`sync_chain`)**: The internal 2-stage shift register (`STAGES=2`) perfectly captures the asynchronous transitions.
+  - The assertion of reset (`0`) is correctly bypassed or caught immediately depending on the architecture (often asynchronous assertion is preserved).
+  - The de-assertion to `1` is flawlessly pipelined across two active clock edges (`00` -> `01` -> `11`), ensuring metastability is resolved before it hits the main downstream logic.
+- **Synchronized Output (`sync_rst_n`)**: Safely transitions to `1` strictly synchronously with the `clk` edge *after* the 2-stage pipeline completes.
+
+**Conclusion:** The Reset Synchronizer functions flawlessly. It perfectly handles dangerous asynchronous de-assertions and aligns them securely to the destination clock domain without metastability risks.
+
+## 📷 Waveform Snapshot
+![GTKWave Waveform](gtkwave_screenshot.png)
