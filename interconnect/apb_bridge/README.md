@@ -52,6 +52,6 @@ graph TD
 ```
 
 ## ▶️ Simulation Instructions
-1. **Compile**: `iverilog -o sim.vvp apb_bridge.v tb_apb_bridge.v` (Include dependencies using `-I` if necessary)
+1. **Compile**: `iverilog -o sim.vvp apb_bridge.v tb_apb_bridge.v` (Include dependencies using ` -I ../../includes -I` if necessary)
 2. **Simulate**: `vvp sim.vvp`
 3. **View**: `gtkwave tb_apb_bridge.vcd`

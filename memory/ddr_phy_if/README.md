@@ -48,6 +48,6 @@ graph TD
 ```
 
 ## ▶️ Simulation Instructions
-1. **Compile**: `iverilog -o sim.vvp ddr_phy_if.v tb_ddr_phy_if.v` (Include dependencies using `-I` if necessary)
+1. **Compile**: `iverilog -o sim.vvp ddr_phy_if.v tb_ddr_phy_if.v` (Include dependencies using ` -I ../../includes -I` if necessary)
 2. **Simulate**: `vvp sim.vvp`
 3. **View**: `gtkwave tb_ddr_phy_if.vcd`

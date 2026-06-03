@@ -72,6 +72,6 @@ graph TD
 ```
 
 ## ▶️ Simulation Instructions
-1. **Compile**: `iverilog -o sim.vvp axi4_crossbar.v tb_axi4_crossbar.v` (Include dependencies using `-I` if necessary)
+1. **Compile**: `iverilog -o sim.vvp axi4_crossbar.v tb_axi4_crossbar.v` (Include dependencies using ` -I ../../includes -I` if necessary)
 2. **Simulate**: `vvp sim.vvp`
 3. **View**: `gtkwave tb_axi4_crossbar.vcd`

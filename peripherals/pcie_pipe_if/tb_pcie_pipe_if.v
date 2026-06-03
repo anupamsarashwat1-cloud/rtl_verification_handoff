@@ -12,7 +12,7 @@ module tb_pcie_pipe_if();
     wire rx_elecidle;
     wire rx_status;
     reg  tx_rate;
-    reg  power_down;
+    reg [1:0] power_down [0:3];
     reg  tx_elecidle;
     reg  tx_compliance;
     reg  rx_polarity;

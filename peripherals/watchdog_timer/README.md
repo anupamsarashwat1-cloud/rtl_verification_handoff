@@ -35,6 +35,6 @@ graph TD
 ```
 
 ## ▶️ Simulation Instructions
-1. **Compile**: `iverilog -o sim.vvp watchdog_timer.v tb_watchdog_timer.v` (Include dependencies using `-I` if necessary)
+1. **Compile**: `iverilog -o sim.vvp watchdog_timer.v tb_watchdog_timer.v` (Include dependencies using ` -I ../../includes -I` if necessary)
 2. **Simulate**: `vvp sim.vvp`
 3. **View**: `gtkwave tb_watchdog_timer.vcd`

@@ -51,6 +51,6 @@ graph TD
 ```
 
 ## ▶️ Simulation Instructions
-1. **Compile**: `iverilog -o sim.vvp pcie_pipe_if.v tb_pcie_pipe_if.v` (Include dependencies using `-I` if necessary)
+1. **Compile**: `iverilog -o sim.vvp pcie_pipe_if.v tb_pcie_pipe_if.v` (Include dependencies using ` -I ../../includes -I` if necessary)
 2. **Simulate**: `vvp sim.vvp`
 3. **View**: `gtkwave tb_pcie_pipe_if.vcd`

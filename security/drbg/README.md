@@ -38,6 +38,6 @@ graph TD
 ```
 
 ## ▶️ Simulation Instructions
-1. **Compile**: `iverilog -o sim.vvp drbg.v tb_drbg.v` (Include dependencies using `-I` if necessary)
+1. **Compile**: `iverilog -o sim.vvp drbg.v tb_drbg.v` (Include dependencies using ` -I ../../includes -I` if necessary)
 2. **Simulate**: `vvp sim.vvp`
 3. **View**: `gtkwave tb_drbg.vcd`

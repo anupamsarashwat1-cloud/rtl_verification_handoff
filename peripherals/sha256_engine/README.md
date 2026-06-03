@@ -34,6 +34,6 @@ graph TD
 ```
 
 ## ▶️ Simulation Instructions
-1. **Compile**: `iverilog -o sim.vvp sha256_engine.v tb_sha256_engine.v` (Include dependencies using `-I` if necessary)
+1. **Compile**: `iverilog -o sim.vvp sha256_engine.v tb_sha256_engine.v` (Include dependencies using ` -I ../../includes -I` if necessary)
 2. **Simulate**: `vvp sim.vvp`
 3. **View**: `gtkwave tb_sha256_engine.vcd`

@@ -32,6 +32,6 @@ graph TD
 ```
 
 ## ▶️ Simulation Instructions
-1. **Compile**: `iverilog -o sim.vvp l2_tag_array.v tb_l2_tag_array.v` (Include dependencies using `-I` if necessary)
+1. **Compile**: `iverilog -o sim.vvp l2_tag_array.v tb_l2_tag_array.v` (Include dependencies using ` -I ../../includes -I` if necessary)
 2. **Simulate**: `vvp sim.vvp`
 3. **View**: `gtkwave tb_l2_tag_array.vcd`

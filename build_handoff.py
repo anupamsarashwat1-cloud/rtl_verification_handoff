@@ -143,7 +143,7 @@ def generate_readme(module_name, ports, instances):
     readme += f"```\n\n"
     
     readme += f"## ▶️ Simulation Instructions\n"
-    readme += f"1. **Compile**: `iverilog -o sim.vvp {module_name}.v tb_{module_name}.v` (Include dependencies using `-I` if necessary)\n"
+    readme += f"1. **Compile**: `iverilog -o sim.vvp {module_name}.v tb_{module_name}.v` (Include dependencies using ` -I ../../includes -I` if necessary)\n"
     readme += f"2. **Simulate**: `vvp sim.vvp`\n"
     readme += f"3. **View**: `gtkwave tb_{module_name}.vcd`\n"
     
