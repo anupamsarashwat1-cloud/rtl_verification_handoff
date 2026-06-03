@@ -2,23 +2,23 @@
 
 module tb_gem_sgmii_pcs();
 
-    reg  reset_n;
-    reg  tx_clk;
-    reg  rx_clk;
-    reg  gmii_txd;
-    reg  gmii_tx_en;
-    reg  gmii_tx_er;
-    wire gmii_rxd;
-    wire gmii_rx_dv;
-    wire gmii_rx_er;
-    wire gmii_crs;
-    wire gmii_col;
-    wire tbi_tx_data;
-    reg  tbi_rx_data;
-    reg  signal_detect;
-    wire link_up;
-    wire speed;
-    wire duplex;
+    logic reset_n;
+    logic tx_clk;
+    logic rx_clk;
+    logic gmii_txd;
+    logic gmii_tx_en;
+    logic gmii_tx_er;
+    logic gmii_rxd;
+    logic gmii_rx_dv;
+    logic gmii_rx_er;
+    logic gmii_crs;
+    logic gmii_col;
+    logic tbi_tx_data;
+    logic tbi_rx_data;
+    logic signal_detect;
+    logic link_up;
+    logic speed;
+    logic duplex;
 
     // DUT Instantiation
     gem_sgmii_pcs uut (
@@ -41,27 +41,45 @@ module tb_gem_sgmii_pcs();
         .duplex(duplex)
     );
 
-    // Initial block for stimulus and VCD dumping
+    // Advanced Clock Generation (138.8 MHz -> ~7.2ns period)
+    initial begin
+        tx_clk = 0;
+        rx_clk = 0;
+    end
+
+    always #3.6 tx_clk = ~tx_clk;
+    always #3.6 rx_clk = ~rx_clk;
+
+    // Main Functional Stimulus Block
     initial begin
         $dumpfile("tb_gem_sgmii_pcs.vcd");
         $dumpvars(0, tb_gem_sgmii_pcs);
 
-        // Initialize inputs
-        reset_n = 0;
-        tx_clk = 0;
-        rx_clk = 0;
+        // 1. Initialize all data inputs
         gmii_txd = 0;
         gmii_tx_en = 0;
         gmii_tx_er = 0;
         tbi_rx_data = 0;
         signal_detect = 0;
 
-        // Reset sequence
+        // 2. Assert Resets
         #10;
-        reset_n = 1;
+        reset_n = 0; // Active low
         #100;
+        // 3. De-assert Resets
+        reset_n = 1;
+        #20;
 
-        // Add manual test stimulus here...
+        // 4. Constrained Random Stimulus Injection
+        // Generating aggressive random toggling to exercise internal logic
+        repeat(500) begin
+            #10;
+            gmii_txd = $random;
+            gmii_tx_en = $random;
+            gmii_tx_er = $random;
+            tbi_rx_data = $random;
+            signal_detect = $random;
+        end
 
         #1000;
         $finish;

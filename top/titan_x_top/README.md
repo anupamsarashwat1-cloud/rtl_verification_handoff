@@ -81,3 +81,25 @@ graph TD
 1. **Compile**: `iverilog -o sim.vvp titan_x_top.v tb_titan_x_top.v` (Include dependencies using ` -I ../../includes -I` if necessary)
 2. **Simulate**: `vvp sim.vvp`
 3. **View**: `gtkwave tb_titan_x_top.vcd`
+
+## 💉 Injected Stimulus Profile
+An advanced Python DV script has automatically generated a fully functional SystemVerilog testbench for this module. The following aggressive stimulus is applied during simulation:
+
+### Clocks Auto-Toggled:
+- `clk` toggling every 3.6ns (138.8 MHz)
+- `pipe_clk` toggling every 3.6ns (138.8 MHz)
+- `eth_tx_clk` toggling every 3.6ns (138.8 MHz)
+- `eth_rx_clk` toggling every 3.6ns (138.8 MHz)
+- `ulpi_clk` toggling every 3.6ns (138.8 MHz)
+- `mipi_rxbyteclkhs` toggling every 3.6ns (138.8 MHz)
+- `hdmi_clk_pixel` toggling every 3.6ns (138.8 MHz)
+- `hdmi_clk_tmds` toggling every 3.6ns (138.8 MHz)
+- `rtc_clk` toggling every 3.6ns (138.8 MHz)
+
+### Reset Sequence:
+- `rst_n` driven to 0 then 1 over 100ns.
+
+### Data Buses Randomized:
+Over 500 consecutive cycles, the following inputs receive constrained `$random` logic values to aggressively exercise datapaths and control flow:
+- `uart_rx`
+- `can_rx`

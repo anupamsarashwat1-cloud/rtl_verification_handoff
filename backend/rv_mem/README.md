@@ -63,3 +63,32 @@ graph TD
 1. **Compile**: `iverilog -o sim.vvp rv_mem.v tb_rv_mem.v` (Include dependencies using ` -I ../../includes -I` if necessary)
 2. **Simulate**: `vvp sim.vvp`
 3. **View**: `gtkwave tb_rv_mem.vcd`
+
+## 💉 Injected Stimulus Profile
+An advanced Python DV script has automatically generated a fully functional SystemVerilog testbench for this module. The following aggressive stimulus is applied during simulation:
+
+### Clocks Auto-Toggled:
+- `clk` toggling every 3.6ns (138.8 MHz)
+
+### Reset Sequence:
+- `rst_n` driven to 0 then 1 over 100ns.
+
+### Data Buses Randomized:
+Over 500 consecutive cycles, the following inputs receive constrained `$random` logic values to aggressively exercise datapaths and control flow:
+- `flush`
+- `alu_result`
+- `rs2_data`
+- `rd_in`
+- `funct3`
+- `opcode`
+- `mem_read`
+- `mem_write`
+- `reg_write`
+- `valid_in`
+- `dmem_awready`
+- `dmem_wready`
+- `dmem_bvalid`
+- `dmem_arready`
+- `dmem_rvalid`
+- `dmem_rdata`
+- `dmem_rresp`

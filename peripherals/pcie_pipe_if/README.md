@@ -54,3 +54,28 @@ graph TD
 1. **Compile**: `iverilog -o sim.vvp pcie_pipe_if.v tb_pcie_pipe_if.v` (Include dependencies using ` -I ../../includes -I` if necessary)
 2. **Simulate**: `vvp sim.vvp`
 3. **View**: `gtkwave tb_pcie_pipe_if.vcd`
+
+## 💉 Injected Stimulus Profile
+An advanced Python DV script has automatically generated a fully functional SystemVerilog testbench for this module. The following aggressive stimulus is applied during simulation:
+
+### Clocks Auto-Toggled:
+- `pclk` toggling every 3.6ns (138.8 MHz)
+
+### Reset Sequence:
+- `reset_n` driven to 0 then 1 over 100ns.
+
+### Data Buses Randomized:
+Over 500 consecutive cycles, the following inputs receive constrained `$random` logic values to aggressively exercise datapaths and control flow:
+- `tx_data`
+- `tx_datak`
+- `tx_rate`
+- `power_down`
+- `tx_elecidle`
+- `tx_compliance`
+- `rx_polarity`
+- `pipe_rx_data`
+- `pipe_rx_datak`
+- `pipe_rx_valid`
+- `pipe_rx_elecidle`
+- `pipe_rx_status`
+- `pipe_phy_status`

@@ -2,50 +2,50 @@
 
 module tb_vdma();
 
-    reg  clk;
-    reg  rst_n;
-    reg  s_axis_s2mm_tdata;
-    reg  s_axis_s2mm_tvalid;
-    wire s_axis_s2mm_tready;
-    reg  s_axis_s2mm_tuser;
-    reg  s_axis_s2mm_tlast;
-    wire m_axis_mm2s_tdata;
-    wire m_axis_mm2s_tvalid;
-    reg  m_axis_mm2s_tready;
-    wire m_axis_mm2s_tuser;
-    wire m_axis_mm2s_tlast;
-    wire m_axi_awvalid;
-    reg  m_axi_awready;
-    wire m_axi_awaddr;
-    wire m_axi_awlen;
-    wire m_axi_awsize;
-    wire m_axi_wvalid;
-    reg  m_axi_wready;
-    wire m_axi_wdata;
-    wire m_axi_wstrb;
-    wire m_axi_wlast;
-    reg  m_axi_bvalid;
-    wire m_axi_bready;
-    reg  m_axi_bresp;
-    wire m_axi_arvalid;
-    reg  m_axi_arready;
-    wire m_axi_araddr;
-    wire m_axi_arlen;
-    wire m_axi_arsize;
-    reg  m_axi_rvalid;
-    wire m_axi_rready;
-    reg  m_axi_rdata;
-    reg  m_axi_rresp;
-    reg  m_axi_rlast;
-    reg  paddr;
-    reg  psel;
-    reg  penable;
-    reg  pwrite;
-    reg  pwdata;
-    wire prdata;
-    wire pready;
-    wire pslverr;
-    wire vdma_irq;
+    logic clk;
+    logic rst_n;
+    logic s_axis_s2mm_tdata;
+    logic s_axis_s2mm_tvalid;
+    logic s_axis_s2mm_tready;
+    logic s_axis_s2mm_tuser;
+    logic s_axis_s2mm_tlast;
+    logic m_axis_mm2s_tdata;
+    logic m_axis_mm2s_tvalid;
+    logic m_axis_mm2s_tready;
+    logic m_axis_mm2s_tuser;
+    logic m_axis_mm2s_tlast;
+    logic m_axi_awvalid;
+    logic m_axi_awready;
+    logic m_axi_awaddr;
+    logic m_axi_awlen;
+    logic m_axi_awsize;
+    logic m_axi_wvalid;
+    logic m_axi_wready;
+    logic m_axi_wdata;
+    logic m_axi_wstrb;
+    logic m_axi_wlast;
+    logic m_axi_bvalid;
+    logic m_axi_bready;
+    logic m_axi_bresp;
+    logic m_axi_arvalid;
+    logic m_axi_arready;
+    logic m_axi_araddr;
+    logic m_axi_arlen;
+    logic m_axi_arsize;
+    logic m_axi_rvalid;
+    logic m_axi_rready;
+    logic m_axi_rdata;
+    logic m_axi_rresp;
+    logic m_axi_rlast;
+    logic paddr;
+    logic psel;
+    logic penable;
+    logic pwrite;
+    logic pwdata;
+    logic prdata;
+    logic pready;
+    logic pslverr;
+    logic vdma_irq;
 
     // DUT Instantiation
     vdma uut (
@@ -95,19 +95,19 @@ module tb_vdma();
         .vdma_irq(vdma_irq)
     );
 
-    // Clock Generation (138.8 MHz -> ~7.2ns period)
+    // Advanced Clock Generation (138.8 MHz -> ~7.2ns period)
     initial begin
         clk = 0;
-        forever #3.6 clk = ~clk;
     end
 
-    // Initial block for stimulus and VCD dumping
+    always #3.6 clk = ~clk;
+
+    // Main Functional Stimulus Block
     initial begin
         $dumpfile("tb_vdma.vcd");
         $dumpvars(0, tb_vdma);
 
-        // Initialize inputs
-        rst_n = 0;
+        // 1. Initialize all data inputs
         s_axis_s2mm_tdata = 0;
         s_axis_s2mm_tvalid = 0;
         s_axis_s2mm_tuser = 0;
@@ -128,12 +128,38 @@ module tb_vdma();
         pwrite = 0;
         pwdata = 0;
 
-        // Reset sequence
+        // 2. Assert Resets
         #10;
-        rst_n = 1;
+        rst_n = 0; // Active low
         #100;
+        // 3. De-assert Resets
+        rst_n = 1;
+        #20;
 
-        // Add manual test stimulus here...
+        // 4. Constrained Random Stimulus Injection
+        // Generating aggressive random toggling to exercise internal logic
+        repeat(500) begin
+            #10;
+            s_axis_s2mm_tdata = $random;
+            s_axis_s2mm_tvalid = $random;
+            s_axis_s2mm_tuser = $random;
+            s_axis_s2mm_tlast = $random;
+            m_axis_mm2s_tready = $random;
+            m_axi_awready = $random;
+            m_axi_wready = $random;
+            m_axi_bvalid = $random;
+            m_axi_bresp = $random;
+            m_axi_arready = $random;
+            m_axi_rvalid = $random;
+            m_axi_rdata = $random;
+            m_axi_rresp = $random;
+            m_axi_rlast = $random;
+            paddr = $random;
+            psel = $random;
+            penable = $random;
+            pwrite = $random;
+            pwdata = $random;
+        end
 
         #1000;
         $finish;

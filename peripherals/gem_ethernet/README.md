@@ -75,3 +75,38 @@ graph TD
 1. **Compile**: `iverilog -o sim.vvp gem_ethernet.v tb_gem_ethernet.v` (Include dependencies using ` -I ../../includes -I` if necessary)
 2. **Simulate**: `vvp sim.vvp`
 3. **View**: `gtkwave tb_gem_ethernet.vcd`
+
+## 💉 Injected Stimulus Profile
+An advanced Python DV script has automatically generated a fully functional SystemVerilog testbench for this module. The following aggressive stimulus is applied during simulation:
+
+### Clocks Auto-Toggled:
+- `clk` toggling every 3.6ns (138.8 MHz)
+- `tx_clk` toggling every 3.6ns (138.8 MHz)
+- `rx_clk` toggling every 3.6ns (138.8 MHz)
+
+### Reset Sequence:
+- `rst_n` driven to 0 then 1 over 100ns.
+
+### Data Buses Randomized:
+Over 500 consecutive cycles, the following inputs receive constrained `$random` logic values to aggressively exercise datapaths and control flow:
+- `m_awready`
+- `m_wready`
+- `m_bvalid`
+- `m_bresp`
+- `m_bid`
+- `m_arready`
+- `m_rvalid`
+- `m_rdata`
+- `m_rresp`
+- `m_rlast`
+- `m_rid`
+- `paddr`
+- `psel`
+- `penable`
+- `pwrite`
+- `pwdata`
+- `gmii_rxd`
+- `gmii_rx_dv`
+- `gmii_rx_er`
+- `gmii_crs`
+- `gmii_col`

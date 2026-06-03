@@ -2,58 +2,58 @@
 
 module tb_rv_core_top();
 
-    reg  clk;
-    reg  rst_n;
-    reg  irq_m_ext;
-    reg  irq_m_timer;
-    reg  irq_m_soft;
-    wire imem_arvalid;
-    reg  imem_arready;
-    wire imem_araddr;
-    wire imem_arlen;
-    wire imem_arsize;
-    wire imem_arburst;
-    reg  imem_rvalid;
-    wire imem_rready;
-    reg  imem_rdata;
-    reg  imem_rlast;
-    reg  imem_rresp;
-    wire dmem_awvalid;
-    reg  dmem_awready;
-    wire dmem_awaddr;
-    wire dmem_awlen;
-    wire dmem_awsize;
-    wire dmem_awburst;
-    wire dmem_wvalid;
-    reg  dmem_wready;
-    wire dmem_wdata;
-    wire dmem_wstrb;
-    wire dmem_wlast;
-    reg  dmem_bvalid;
-    wire dmem_bready;
-    reg  dmem_bresp;
-    wire dmem_arvalid;
-    reg  dmem_arready;
-    wire dmem_araddr;
-    wire dmem_arlen;
-    wire dmem_arsize;
-    wire dmem_arburst;
-    wire dmem_arlock;
-    reg  dmem_rvalid;
-    wire dmem_rready;
-    reg  dmem_rdata;
-    reg  dmem_rlast;
-    reg  dmem_rresp;
-    reg  snoop_valid;
-    reg  snoop_addr;
-    reg  snoop_type;
-    wire snoop_ack;
-    wire snoop_data_valid;
-    wire snoop_data;
-    reg  halt_req;
-    reg  resume_req;
-    wire hart_halted;
-    wire hart_running;
+    logic clk;
+    logic rst_n;
+    logic irq_m_ext;
+    logic irq_m_timer;
+    logic irq_m_soft;
+    logic imem_arvalid;
+    logic imem_arready;
+    logic imem_araddr;
+    logic imem_arlen;
+    logic imem_arsize;
+    logic imem_arburst;
+    logic imem_rvalid;
+    logic imem_rready;
+    logic imem_rdata;
+    logic imem_rlast;
+    logic imem_rresp;
+    logic dmem_awvalid;
+    logic dmem_awready;
+    logic dmem_awaddr;
+    logic dmem_awlen;
+    logic dmem_awsize;
+    logic dmem_awburst;
+    logic dmem_wvalid;
+    logic dmem_wready;
+    logic dmem_wdata;
+    logic dmem_wstrb;
+    logic dmem_wlast;
+    logic dmem_bvalid;
+    logic dmem_bready;
+    logic dmem_bresp;
+    logic dmem_arvalid;
+    logic dmem_arready;
+    logic dmem_araddr;
+    logic dmem_arlen;
+    logic dmem_arsize;
+    logic dmem_arburst;
+    logic dmem_arlock;
+    logic dmem_rvalid;
+    logic dmem_rready;
+    logic dmem_rdata;
+    logic dmem_rlast;
+    logic dmem_rresp;
+    logic snoop_valid;
+    logic snoop_addr;
+    logic snoop_type;
+    logic snoop_ack;
+    logic snoop_data_valid;
+    logic snoop_data;
+    logic halt_req;
+    logic resume_req;
+    logic hart_halted;
+    logic hart_running;
 
     // DUT Instantiation
     rv_core_top uut (
@@ -111,19 +111,19 @@ module tb_rv_core_top();
         .hart_running(hart_running)
     );
 
-    // Clock Generation (138.8 MHz -> ~7.2ns period)
+    // Advanced Clock Generation (138.8 MHz -> ~7.2ns period)
     initial begin
         clk = 0;
-        forever #3.6 clk = ~clk;
     end
 
-    // Initial block for stimulus and VCD dumping
+    always #3.6 clk = ~clk;
+
+    // Main Functional Stimulus Block
     initial begin
         $dumpfile("tb_rv_core_top.vcd");
         $dumpvars(0, tb_rv_core_top);
 
-        // Initialize inputs
-        rst_n = 0;
+        // 1. Initialize all data inputs
         irq_m_ext = 0;
         irq_m_timer = 0;
         irq_m_soft = 0;
@@ -147,12 +147,41 @@ module tb_rv_core_top();
         halt_req = 0;
         resume_req = 0;
 
-        // Reset sequence
+        // 2. Assert Resets
         #10;
-        rst_n = 1;
+        rst_n = 0; // Active low
         #100;
+        // 3. De-assert Resets
+        rst_n = 1;
+        #20;
 
-        // Add manual test stimulus here...
+        // 4. Constrained Random Stimulus Injection
+        // Generating aggressive random toggling to exercise internal logic
+        repeat(500) begin
+            #10;
+            irq_m_ext = $random;
+            irq_m_timer = $random;
+            irq_m_soft = $random;
+            imem_arready = $random;
+            imem_rvalid = $random;
+            imem_rdata = $random;
+            imem_rlast = $random;
+            imem_rresp = $random;
+            dmem_awready = $random;
+            dmem_wready = $random;
+            dmem_bvalid = $random;
+            dmem_bresp = $random;
+            dmem_arready = $random;
+            dmem_rvalid = $random;
+            dmem_rdata = $random;
+            dmem_rlast = $random;
+            dmem_rresp = $random;
+            snoop_valid = $random;
+            snoop_addr = $random;
+            snoop_type = $random;
+            halt_req = $random;
+            resume_req = $random;
+        end
 
         #1000;
         $finish;

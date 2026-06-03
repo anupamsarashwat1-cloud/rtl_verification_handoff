@@ -2,59 +2,59 @@
 
 module tb_rv_dcache();
 
-    reg  clk;
-    reg  rst_n;
-    reg  cpu_addr;
-    reg  cpu_wdata;
-    reg  cpu_wstrb;
-    reg  cpu_req;
-    reg  cpu_wr;
-    reg  cpu_size;
-    wire cpu_rdata;
-    wire cpu_valid;
-    wire cpu_stall;
-    reg  is_lr;
-    reg  is_sc;
-    reg  lr_addr_in;
-    reg  lr_valid_in;
-    wire sc_success;
-    reg  flush_all;
-    reg  flush_addr_en;
-    reg  flush_addr;
-    wire m_arvalid;
-    reg  m_arready;
-    wire m_araddr;
-    wire m_arlen;
-    wire m_arsize;
-    wire m_arburst;
-    wire m_arlock;
-    reg  m_rvalid;
-    wire m_rready;
-    reg  m_rdata;
-    reg  m_rlast;
-    reg  m_rresp;
-    wire m_awvalid;
-    reg  m_awready;
-    wire m_awaddr;
-    wire m_awlen;
-    wire m_awsize;
-    wire m_awburst;
-    wire m_wvalid;
-    reg  m_wready;
-    wire m_wdata;
-    wire m_wstrb;
-    wire m_wlast;
-    reg  m_bvalid;
-    wire m_bready;
-    reg  m_bresp;
-    reg  snoop_valid;
-    reg  snoop_addr;
-    reg  snoop_type;
-    wire snoop_ack;
-    wire snoop_data_valid;
-    wire snoop_data;
-    wire ecc_1bit;
-    wire ecc_2bit;
+    logic clk;
+    logic rst_n;
+    logic cpu_addr;
+    logic cpu_wdata;
+    logic cpu_wstrb;
+    logic cpu_req;
+    logic cpu_wr;
+    logic cpu_size;
+    logic cpu_rdata;
+    logic cpu_valid;
+    logic cpu_stall;
+    logic is_lr;
+    logic is_sc;
+    logic lr_addr_in;
+    logic lr_valid_in;
+    logic sc_success;
+    logic flush_all;
+    logic flush_addr_en;
+    logic flush_addr;
+    logic m_arvalid;
+    logic m_arready;
+    logic m_araddr;
+    logic m_arlen;
+    logic m_arsize;
+    logic m_arburst;
+    logic m_arlock;
+    logic m_rvalid;
+    logic m_rready;
+    logic m_rdata;
+    logic m_rlast;
+    logic m_rresp;
+    logic m_awvalid;
+    logic m_awready;
+    logic m_awaddr;
+    logic m_awlen;
+    logic m_awsize;
+    logic m_awburst;
+    logic m_wvalid;
+    logic m_wready;
+    logic m_wdata;
+    logic m_wstrb;
+    logic m_wlast;
+    logic m_bvalid;
+    logic m_bready;
+    logic m_bresp;
+    logic snoop_valid;
+    logic snoop_addr;
+    logic snoop_type;
+    logic snoop_ack;
+    logic snoop_data_valid;
+    logic snoop_data;
+    logic ecc_1bit;
+    logic ecc_2bit;
 
     // DUT Instantiation
     rv_dcache uut (
@@ -113,19 +113,19 @@ module tb_rv_dcache();
         .ecc_2bit(ecc_2bit)
     );
 
-    // Clock Generation (138.8 MHz -> ~7.2ns period)
+    // Advanced Clock Generation (138.8 MHz -> ~7.2ns period)
     initial begin
         clk = 0;
-        forever #3.6 clk = ~clk;
     end
 
-    // Initial block for stimulus and VCD dumping
+    always #3.6 clk = ~clk;
+
+    // Main Functional Stimulus Block
     initial begin
         $dumpfile("tb_rv_dcache.vcd");
         $dumpvars(0, tb_rv_dcache);
 
-        // Initialize inputs
-        rst_n = 0;
+        // 1. Initialize all data inputs
         cpu_addr = 0;
         cpu_wdata = 0;
         cpu_wstrb = 0;
@@ -152,12 +152,44 @@ module tb_rv_dcache();
         snoop_addr = 0;
         snoop_type = 0;
 
-        // Reset sequence
+        // 2. Assert Resets
         #10;
-        rst_n = 1;
+        rst_n = 0; // Active low
         #100;
+        // 3. De-assert Resets
+        rst_n = 1;
+        #20;
 
-        // Add manual test stimulus here...
+        // 4. Constrained Random Stimulus Injection
+        // Generating aggressive random toggling to exercise internal logic
+        repeat(500) begin
+            #10;
+            cpu_addr = $random;
+            cpu_wdata = $random;
+            cpu_wstrb = $random;
+            cpu_req = $random;
+            cpu_wr = $random;
+            cpu_size = $random;
+            is_lr = $random;
+            is_sc = $random;
+            lr_addr_in = $random;
+            lr_valid_in = $random;
+            flush_all = $random;
+            flush_addr_en = $random;
+            flush_addr = $random;
+            m_arready = $random;
+            m_rvalid = $random;
+            m_rdata = $random;
+            m_rlast = $random;
+            m_rresp = $random;
+            m_awready = $random;
+            m_wready = $random;
+            m_bvalid = $random;
+            m_bresp = $random;
+            snoop_valid = $random;
+            snoop_addr = $random;
+            snoop_type = $random;
+        end
 
         #1000;
         $finish;

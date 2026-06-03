@@ -2,54 +2,54 @@
 
 module tb_axi4_crossbar();
 
-    reg  clk;
-    reg  rst_n;
-    reg  m_awvalid;
-    wire m_awready;
-    reg  m_awaddr;
-    reg  m_awid;
-    reg  m_wvalid;
-    wire m_wready;
-    reg  m_wdata;
-    reg  m_wstrb;
-    reg  m_wlast;
-    wire m_bvalid;
-    reg  m_bready;
-    wire m_bresp;
-    wire m_bid;
-    reg  m_arvalid;
-    wire m_arready;
-    reg  m_araddr;
-    reg  m_arid;
-    wire m_rvalid;
-    reg  m_rready;
-    wire m_rdata;
-    wire m_rresp;
-    wire m_rlast;
-    wire m_rid;
-    wire s_awvalid;
-    reg  s_awready;
-    wire s_awaddr;
-    wire s_awid;
-    wire s_wvalid;
-    reg  s_wready;
-    wire s_wdata;
-    wire s_wstrb;
-    wire s_wlast;
-    reg  s_bvalid;
-    wire s_bready;
-    reg  s_bresp;
-    reg  s_bid;
-    wire s_arvalid;
-    reg  s_arready;
-    wire s_araddr;
-    wire s_arid;
-    reg  s_rvalid;
-    wire s_rready;
-    reg  s_rdata;
-    reg  s_rresp;
-    reg  s_rlast;
-    reg  s_rid;
+    logic clk;
+    logic rst_n;
+    logic m_awvalid;
+    logic m_awready;
+    logic m_awaddr;
+    logic m_awid;
+    logic m_wvalid;
+    logic m_wready;
+    logic m_wdata;
+    logic m_wstrb;
+    logic m_wlast;
+    logic m_bvalid;
+    logic m_bready;
+    logic m_bresp;
+    logic m_bid;
+    logic m_arvalid;
+    logic m_arready;
+    logic m_araddr;
+    logic m_arid;
+    logic m_rvalid;
+    logic m_rready;
+    logic m_rdata;
+    logic m_rresp;
+    logic m_rlast;
+    logic m_rid;
+    logic s_awvalid;
+    logic s_awready;
+    logic s_awaddr;
+    logic s_awid;
+    logic s_wvalid;
+    logic s_wready;
+    logic s_wdata;
+    logic s_wstrb;
+    logic s_wlast;
+    logic s_bvalid;
+    logic s_bready;
+    logic s_bresp;
+    logic s_bid;
+    logic s_arvalid;
+    logic s_arready;
+    logic s_araddr;
+    logic s_arid;
+    logic s_rvalid;
+    logic s_rready;
+    logic s_rdata;
+    logic s_rresp;
+    logic s_rlast;
+    logic s_rid;
 
     // DUT Instantiation
     axi4_crossbar uut (
@@ -103,19 +103,19 @@ module tb_axi4_crossbar();
         .s_rid(s_rid)
     );
 
-    // Clock Generation (138.8 MHz -> ~7.2ns period)
+    // Advanced Clock Generation (138.8 MHz -> ~7.2ns period)
     initial begin
         clk = 0;
-        forever #3.6 clk = ~clk;
     end
 
-    // Initial block for stimulus and VCD dumping
+    always #3.6 clk = ~clk;
+
+    // Main Functional Stimulus Block
     initial begin
         $dumpfile("tb_axi4_crossbar.vcd");
         $dumpvars(0, tb_axi4_crossbar);
 
-        // Initialize inputs
-        rst_n = 0;
+        // 1. Initialize all data inputs
         m_awvalid = 0;
         m_awaddr = 0;
         m_awid = 0;
@@ -140,12 +140,42 @@ module tb_axi4_crossbar();
         s_rlast = 0;
         s_rid = 0;
 
-        // Reset sequence
+        // 2. Assert Resets
         #10;
-        rst_n = 1;
+        rst_n = 0; // Active low
         #100;
+        // 3. De-assert Resets
+        rst_n = 1;
+        #20;
 
-        // Add manual test stimulus here...
+        // 4. Constrained Random Stimulus Injection
+        // Generating aggressive random toggling to exercise internal logic
+        repeat(500) begin
+            #10;
+            m_awvalid = $random;
+            m_awaddr = $random;
+            m_awid = $random;
+            m_wvalid = $random;
+            m_wdata = $random;
+            m_wstrb = $random;
+            m_wlast = $random;
+            m_bready = $random;
+            m_arvalid = $random;
+            m_araddr = $random;
+            m_arid = $random;
+            m_rready = $random;
+            s_awready = $random;
+            s_wready = $random;
+            s_bvalid = $random;
+            s_bresp = $random;
+            s_bid = $random;
+            s_arready = $random;
+            s_rvalid = $random;
+            s_rdata = $random;
+            s_rresp = $random;
+            s_rlast = $random;
+            s_rid = $random;
+        end
 
         #1000;
         $finish;

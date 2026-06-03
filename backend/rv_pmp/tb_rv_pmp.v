@@ -2,18 +2,18 @@
 
 module tb_rv_pmp();
 
-    reg  clk;
-    reg  rst_n;
-    reg  paddr;
-    reg  check_r;
-    reg  check_w;
-    reg  check_x;
-    reg  priv_mode;
-    reg  check_en;
-    reg  pmpcfg0;
-    reg  pmpcfg2;
-    reg  pmpaddr_packed;
-    wire pmp_fault;
+    logic clk;
+    logic rst_n;
+    logic paddr;
+    logic check_r;
+    logic check_w;
+    logic check_x;
+    logic priv_mode;
+    logic check_en;
+    logic pmpcfg0;
+    logic pmpcfg2;
+    logic pmpaddr_packed;
+    logic pmp_fault;
 
     // DUT Instantiation
     rv_pmp uut (
@@ -31,19 +31,19 @@ module tb_rv_pmp();
         .pmp_fault(pmp_fault)
     );
 
-    // Clock Generation (138.8 MHz -> ~7.2ns period)
+    // Advanced Clock Generation (138.8 MHz -> ~7.2ns period)
     initial begin
         clk = 0;
-        forever #3.6 clk = ~clk;
     end
 
-    // Initial block for stimulus and VCD dumping
+    always #3.6 clk = ~clk;
+
+    // Main Functional Stimulus Block
     initial begin
         $dumpfile("tb_rv_pmp.vcd");
         $dumpvars(0, tb_rv_pmp);
 
-        // Initialize inputs
-        rst_n = 0;
+        // 1. Initialize all data inputs
         paddr = 0;
         check_r = 0;
         check_w = 0;
@@ -54,12 +54,28 @@ module tb_rv_pmp();
         pmpcfg2 = 0;
         pmpaddr_packed = 0;
 
-        // Reset sequence
+        // 2. Assert Resets
         #10;
-        rst_n = 1;
+        rst_n = 0; // Active low
         #100;
+        // 3. De-assert Resets
+        rst_n = 1;
+        #20;
 
-        // Add manual test stimulus here...
+        // 4. Constrained Random Stimulus Injection
+        // Generating aggressive random toggling to exercise internal logic
+        repeat(500) begin
+            #10;
+            paddr = $random;
+            check_r = $random;
+            check_w = $random;
+            check_x = $random;
+            priv_mode = $random;
+            check_en = $random;
+            pmpcfg0 = $random;
+            pmpcfg2 = $random;
+            pmpaddr_packed = $random;
+        end
 
         #1000;
         $finish;

@@ -2,23 +2,23 @@
 
 module tb_uart_16550();
 
-    reg  clk;
-    reg  rst_n;
-    reg  paddr;
-    reg  psel;
-    reg  penable;
-    reg  pwrite;
-    reg  pwdata;
-    wire prdata;
-    wire pready;
-    wire pslverr;
-    wire uart_irq;
-    reg  rxd;
-    wire txd;
-    wire irda_tx;
-    reg  irda_rx;
-    wire lin_tx;
-    reg  lin_rx;
+    logic clk;
+    logic rst_n;
+    logic paddr;
+    logic psel;
+    logic penable;
+    logic pwrite;
+    logic pwdata;
+    logic prdata;
+    logic pready;
+    logic pslverr;
+    logic uart_irq;
+    logic rxd;
+    logic txd;
+    logic irda_tx;
+    logic irda_rx;
+    logic lin_tx;
+    logic lin_rx;
 
     // DUT Instantiation
     uart_16550 uut (
@@ -41,19 +41,19 @@ module tb_uart_16550();
         .lin_rx(lin_rx)
     );
 
-    // Clock Generation (138.8 MHz -> ~7.2ns period)
+    // Advanced Clock Generation (138.8 MHz -> ~7.2ns period)
     initial begin
         clk = 0;
-        forever #3.6 clk = ~clk;
     end
 
-    // Initial block for stimulus and VCD dumping
+    always #3.6 clk = ~clk;
+
+    // Main Functional Stimulus Block
     initial begin
         $dumpfile("tb_uart_16550.vcd");
         $dumpvars(0, tb_uart_16550);
 
-        // Initialize inputs
-        rst_n = 0;
+        // 1. Initialize all data inputs
         paddr = 0;
         psel = 0;
         penable = 0;
@@ -63,12 +63,27 @@ module tb_uart_16550();
         irda_rx = 0;
         lin_rx = 0;
 
-        // Reset sequence
+        // 2. Assert Resets
         #10;
-        rst_n = 1;
+        rst_n = 0; // Active low
         #100;
+        // 3. De-assert Resets
+        rst_n = 1;
+        #20;
 
-        // Add manual test stimulus here...
+        // 4. Constrained Random Stimulus Injection
+        // Generating aggressive random toggling to exercise internal logic
+        repeat(500) begin
+            #10;
+            paddr = $random;
+            psel = $random;
+            penable = $random;
+            pwrite = $random;
+            pwdata = $random;
+            rxd = $random;
+            irda_rx = $random;
+            lin_rx = $random;
+        end
 
         #1000;
         $finish;

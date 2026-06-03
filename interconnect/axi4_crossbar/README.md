@@ -75,3 +75,38 @@ graph TD
 1. **Compile**: `iverilog -o sim.vvp axi4_crossbar.v tb_axi4_crossbar.v` (Include dependencies using ` -I ../../includes -I` if necessary)
 2. **Simulate**: `vvp sim.vvp`
 3. **View**: `gtkwave tb_axi4_crossbar.vcd`
+
+## 💉 Injected Stimulus Profile
+An advanced Python DV script has automatically generated a fully functional SystemVerilog testbench for this module. The following aggressive stimulus is applied during simulation:
+
+### Clocks Auto-Toggled:
+- `clk` toggling every 3.6ns (138.8 MHz)
+
+### Reset Sequence:
+- `rst_n` driven to 0 then 1 over 100ns.
+
+### Data Buses Randomized:
+Over 500 consecutive cycles, the following inputs receive constrained `$random` logic values to aggressively exercise datapaths and control flow:
+- `m_awvalid`
+- `m_awaddr`
+- `m_awid`
+- `m_wvalid`
+- `m_wdata`
+- `m_wstrb`
+- `m_wlast`
+- `m_bready`
+- `m_arvalid`
+- `m_araddr`
+- `m_arid`
+- `m_rready`
+- `s_awready`
+- `s_wready`
+- `s_bvalid`
+- `s_bresp`
+- `s_bid`
+- `s_arready`
+- `s_rvalid`
+- `s_rdata`
+- `s_rresp`
+- `s_rlast`
+- `s_rid`

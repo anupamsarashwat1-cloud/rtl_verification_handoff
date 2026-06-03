@@ -2,34 +2,34 @@
 
 module tb_apb_bridge();
 
-    reg  clk;
-    reg  rst_n;
-    reg  s_awvalid;
-    wire s_awready;
-    reg  s_awaddr;
-    reg  s_wvalid;
-    wire s_wready;
-    reg  s_wdata;
-    reg  s_wstrb;
-    wire s_bvalid;
-    reg  s_bready;
-    wire s_bresp;
-    reg  s_arvalid;
-    wire s_arready;
-    reg  s_araddr;
-    wire s_rvalid;
-    reg  s_rready;
-    wire s_rdata;
-    wire s_rresp;
-    wire paddr;
-    wire psel;
-    wire penable;
-    wire pwrite;
-    wire pwdata;
-    wire pstrb;
-    reg  prdata;
-    reg  pready;
-    reg  pslverr;
+    logic clk;
+    logic rst_n;
+    logic s_awvalid;
+    logic s_awready;
+    logic s_awaddr;
+    logic s_wvalid;
+    logic s_wready;
+    logic s_wdata;
+    logic s_wstrb;
+    logic s_bvalid;
+    logic s_bready;
+    logic s_bresp;
+    logic s_arvalid;
+    logic s_arready;
+    logic s_araddr;
+    logic s_rvalid;
+    logic s_rready;
+    logic s_rdata;
+    logic s_rresp;
+    logic paddr;
+    logic psel;
+    logic penable;
+    logic pwrite;
+    logic pwdata;
+    logic pstrb;
+    logic prdata;
+    logic pready;
+    logic pslverr;
 
     // DUT Instantiation
     apb_bridge uut (
@@ -63,19 +63,19 @@ module tb_apb_bridge();
         .pslverr(pslverr)
     );
 
-    // Clock Generation (138.8 MHz -> ~7.2ns period)
+    // Advanced Clock Generation (138.8 MHz -> ~7.2ns period)
     initial begin
         clk = 0;
-        forever #3.6 clk = ~clk;
     end
 
-    // Initial block for stimulus and VCD dumping
+    always #3.6 clk = ~clk;
+
+    // Main Functional Stimulus Block
     initial begin
         $dumpfile("tb_apb_bridge.vcd");
         $dumpvars(0, tb_apb_bridge);
 
-        // Initialize inputs
-        rst_n = 0;
+        // 1. Initialize all data inputs
         s_awvalid = 0;
         s_awaddr = 0;
         s_wvalid = 0;
@@ -89,12 +89,31 @@ module tb_apb_bridge();
         pready = 0;
         pslverr = 0;
 
-        // Reset sequence
+        // 2. Assert Resets
         #10;
-        rst_n = 1;
+        rst_n = 0; // Active low
         #100;
+        // 3. De-assert Resets
+        rst_n = 1;
+        #20;
 
-        // Add manual test stimulus here...
+        // 4. Constrained Random Stimulus Injection
+        // Generating aggressive random toggling to exercise internal logic
+        repeat(500) begin
+            #10;
+            s_awvalid = $random;
+            s_awaddr = $random;
+            s_wvalid = $random;
+            s_wdata = $random;
+            s_wstrb = $random;
+            s_bready = $random;
+            s_arvalid = $random;
+            s_araddr = $random;
+            s_rready = $random;
+            prdata = $random;
+            pready = $random;
+            pslverr = $random;
+        end
 
         #1000;
         $finish;

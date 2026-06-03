@@ -30,3 +30,15 @@ graph TD
 1. **Compile**: `iverilog -o sim.vvp reset_sync.v tb_reset_sync.v` (Include dependencies using ` -I ../../includes -I` if necessary)
 2. **Simulate**: `vvp sim.vvp`
 3. **View**: `gtkwave tb_reset_sync.vcd`
+
+## 💉 Injected Stimulus Profile
+An advanced Python DV script has automatically generated a fully functional SystemVerilog testbench for this module. The following aggressive stimulus is applied during simulation:
+
+### Clocks Auto-Toggled:
+- `clk` toggling every 3.6ns (138.8 MHz)
+
+### Reset Sequence:
+- `async_rst_n` driven to 0 then 1 over 100ns.
+
+### Data Buses Randomized:
+- No data inputs available to randomize.

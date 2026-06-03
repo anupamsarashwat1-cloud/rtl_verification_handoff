@@ -2,41 +2,41 @@
 
 module tb_rv_debug();
 
-    reg  clk;
-    reg  rst_n;
-    reg  tck;
-    reg  tms;
-    reg  tdi;
-    wire tdo;
-    wire halt_req;
-    wire resume_req;
-    reg  hart_halted;
-    reg  hart_running;
-    reg  hart_unavail;
-    wire reg_sel;
-    wire reg_wr;
-    wire reg_wdata;
-    reg  reg_rdata;
-    wire cmd_exec;
-    reg  cmd_done;
-    reg  cmd_err;
-    wire sb_arvalid;
-    reg  sb_arready;
-    wire sb_araddr;
-    reg  sb_rvalid;
-    wire sb_rready;
-    reg  sb_rdata;
-    reg  sb_rresp;
-    wire sb_awvalid;
-    reg  sb_awready;
-    wire sb_awaddr;
-    wire sb_wvalid;
-    reg  sb_wready;
-    wire sb_wdata;
-    wire sb_wstrb;
-    wire sb_wlast;
-    reg  sb_bvalid;
-    wire sb_bready;
+    logic clk;
+    logic rst_n;
+    logic tck;
+    logic tms;
+    logic tdi;
+    logic tdo;
+    logic halt_req;
+    logic resume_req;
+    logic hart_halted;
+    logic hart_running;
+    logic hart_unavail;
+    logic reg_sel;
+    logic reg_wr;
+    logic reg_wdata;
+    logic reg_rdata;
+    logic cmd_exec;
+    logic cmd_done;
+    logic cmd_err;
+    logic sb_arvalid;
+    logic sb_arready;
+    logic sb_araddr;
+    logic sb_rvalid;
+    logic sb_rready;
+    logic sb_rdata;
+    logic sb_rresp;
+    logic sb_awvalid;
+    logic sb_awready;
+    logic sb_awaddr;
+    logic sb_wvalid;
+    logic sb_wready;
+    logic sb_wdata;
+    logic sb_wstrb;
+    logic sb_wlast;
+    logic sb_bvalid;
+    logic sb_bready;
 
     // DUT Instantiation
     rv_debug uut (
@@ -77,19 +77,19 @@ module tb_rv_debug();
         .sb_bready(sb_bready)
     );
 
-    // Clock Generation (138.8 MHz -> ~7.2ns period)
+    // Advanced Clock Generation (138.8 MHz -> ~7.2ns period)
     initial begin
         clk = 0;
-        forever #3.6 clk = ~clk;
     end
 
-    // Initial block for stimulus and VCD dumping
+    always #3.6 clk = ~clk;
+
+    // Main Functional Stimulus Block
     initial begin
         $dumpfile("tb_rv_debug.vcd");
         $dumpvars(0, tb_rv_debug);
 
-        // Initialize inputs
-        rst_n = 0;
+        // 1. Initialize all data inputs
         tck = 0;
         tms = 0;
         tdi = 0;
@@ -107,12 +107,35 @@ module tb_rv_debug();
         sb_wready = 0;
         sb_bvalid = 0;
 
-        // Reset sequence
+        // 2. Assert Resets
         #10;
-        rst_n = 1;
+        rst_n = 0; // Active low
         #100;
+        // 3. De-assert Resets
+        rst_n = 1;
+        #20;
 
-        // Add manual test stimulus here...
+        // 4. Constrained Random Stimulus Injection
+        // Generating aggressive random toggling to exercise internal logic
+        repeat(500) begin
+            #10;
+            tck = $random;
+            tms = $random;
+            tdi = $random;
+            hart_halted = $random;
+            hart_running = $random;
+            hart_unavail = $random;
+            reg_rdata = $random;
+            cmd_done = $random;
+            cmd_err = $random;
+            sb_arready = $random;
+            sb_rvalid = $random;
+            sb_rdata = $random;
+            sb_rresp = $random;
+            sb_awready = $random;
+            sb_wready = $random;
+            sb_bvalid = $random;
+        end
 
         #1000;
         $finish;

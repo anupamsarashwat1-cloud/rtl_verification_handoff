@@ -2,23 +2,23 @@
 
 module tb_rv_fpu();
 
-    reg  clk;
-    reg  rst_n;
-    reg  fop;
-    reg  fmt;
-    reg  rm;
-    reg  valid_in;
-    reg  fp_src1;
-    reg  fp_src2;
-    reg  fp_src3;
-    reg  int_src;
-    reg  frm_csr;
-    wire fp_result;
-    wire result_valid;
-    wire fflags;
-    wire fpu_done;
-    wire int_result;
-    wire int_result_valid;
+    logic clk;
+    logic rst_n;
+    logic fop;
+    logic fmt;
+    logic rm;
+    logic valid_in;
+    logic fp_src1;
+    logic fp_src2;
+    logic fp_src3;
+    logic int_src;
+    logic frm_csr;
+    logic fp_result;
+    logic result_valid;
+    logic fflags;
+    logic fpu_done;
+    logic int_result;
+    logic int_result_valid;
 
     // DUT Instantiation
     rv_fpu uut (
@@ -41,19 +41,19 @@ module tb_rv_fpu();
         .int_result_valid(int_result_valid)
     );
 
-    // Clock Generation (138.8 MHz -> ~7.2ns period)
+    // Advanced Clock Generation (138.8 MHz -> ~7.2ns period)
     initial begin
         clk = 0;
-        forever #3.6 clk = ~clk;
     end
 
-    // Initial block for stimulus and VCD dumping
+    always #3.6 clk = ~clk;
+
+    // Main Functional Stimulus Block
     initial begin
         $dumpfile("tb_rv_fpu.vcd");
         $dumpvars(0, tb_rv_fpu);
 
-        // Initialize inputs
-        rst_n = 0;
+        // 1. Initialize all data inputs
         fop = 0;
         fmt = 0;
         rm = 0;
@@ -64,12 +64,28 @@ module tb_rv_fpu();
         int_src = 0;
         frm_csr = 0;
 
-        // Reset sequence
+        // 2. Assert Resets
         #10;
-        rst_n = 1;
+        rst_n = 0; // Active low
         #100;
+        // 3. De-assert Resets
+        rst_n = 1;
+        #20;
 
-        // Add manual test stimulus here...
+        // 4. Constrained Random Stimulus Injection
+        // Generating aggressive random toggling to exercise internal logic
+        repeat(500) begin
+            #10;
+            fop = $random;
+            fmt = $random;
+            rm = $random;
+            valid_in = $random;
+            fp_src1 = $random;
+            fp_src2 = $random;
+            fp_src3 = $random;
+            int_src = $random;
+            frm_csr = $random;
+        end
 
         #1000;
         $finish;

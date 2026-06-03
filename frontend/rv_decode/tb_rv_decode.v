@@ -2,34 +2,34 @@
 
 module tb_rv_decode();
 
-    reg  clk;
-    reg  rst_n;
-    reg  stall;
-    reg  flush;
-    reg  pc_in;
-    reg  instr_in;
-    reg  valid_in;
-    reg  wb_rd;
-    reg  wb_data;
-    reg  wb_we;
-    wire pc_out;
-    wire rs1_data;
-    wire rs2_data;
-    wire imm;
-    wire rd;
-    wire rs1_addr;
-    wire rs2_addr;
-    wire funct3;
-    wire funct7;
-    wire opcode;
-    wire alu_op;
-    wire mem_read;
-    wire mem_write;
-    wire reg_write;
-    wire branch;
-    wire jal;
-    wire jalr;
-    wire valid_out;
+    logic clk;
+    logic rst_n;
+    logic stall;
+    logic flush;
+    logic pc_in;
+    logic instr_in;
+    logic valid_in;
+    logic wb_rd;
+    logic wb_data;
+    logic wb_we;
+    logic pc_out;
+    logic rs1_data;
+    logic rs2_data;
+    logic imm;
+    logic rd;
+    logic rs1_addr;
+    logic rs2_addr;
+    logic funct3;
+    logic funct7;
+    logic opcode;
+    logic alu_op;
+    logic mem_read;
+    logic mem_write;
+    logic reg_write;
+    logic branch;
+    logic jal;
+    logic jalr;
+    logic valid_out;
 
     // DUT Instantiation
     rv_decode uut (
@@ -63,19 +63,19 @@ module tb_rv_decode();
         .valid_out(valid_out)
     );
 
-    // Clock Generation (138.8 MHz -> ~7.2ns period)
+    // Advanced Clock Generation (138.8 MHz -> ~7.2ns period)
     initial begin
         clk = 0;
-        forever #3.6 clk = ~clk;
     end
 
-    // Initial block for stimulus and VCD dumping
+    always #3.6 clk = ~clk;
+
+    // Main Functional Stimulus Block
     initial begin
         $dumpfile("tb_rv_decode.vcd");
         $dumpvars(0, tb_rv_decode);
 
-        // Initialize inputs
-        rst_n = 0;
+        // 1. Initialize all data inputs
         stall = 0;
         flush = 0;
         pc_in = 0;
@@ -85,12 +85,27 @@ module tb_rv_decode();
         wb_data = 0;
         wb_we = 0;
 
-        // Reset sequence
+        // 2. Assert Resets
         #10;
-        rst_n = 1;
+        rst_n = 0; // Active low
         #100;
+        // 3. De-assert Resets
+        rst_n = 1;
+        #20;
 
-        // Add manual test stimulus here...
+        // 4. Constrained Random Stimulus Injection
+        // Generating aggressive random toggling to exercise internal logic
+        repeat(500) begin
+            #10;
+            stall = $random;
+            flush = $random;
+            pc_in = $random;
+            instr_in = $random;
+            valid_in = $random;
+            wb_rd = $random;
+            wb_data = $random;
+            wb_we = $random;
+        end
 
         #1000;
         $finish;

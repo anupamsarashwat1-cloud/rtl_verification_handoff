@@ -2,33 +2,33 @@
 
 module tb_ddr_phy_if();
 
-    reg  clk;
-    reg  rst_n;
-    reg  dfi_ck_en;
-    reg  dfi_cs_n;
-    reg  dfi_ras_n;
-    reg  dfi_cas_n;
-    reg  dfi_we_n;
-    reg  dfi_bank;
-    reg  dfi_addr;
-    reg  dfi_wrdata_valid;
-    reg  dfi_wrdata;
-    reg  dfi_wrdata_mask;
-    wire dfi_rddata;
-    wire dfi_rddata_valid;
-    wire ddr_ck_p;
-    wire ddr_ck_n;
-    wire ddr_cke;
-    wire ddr_cs_n;
-    wire ddr_ras_n;
-    wire ddr_cas_n;
-    wire ddr_we_n;
-    wire ddr_ba;
-    wire ddr_addr;
-    wire ddr_dm;
-    wire ddr_dq;
-    wire ddr_dqs_p;
-    wire ddr_dqs_n;
+    logic clk;
+    logic rst_n;
+    logic dfi_ck_en;
+    logic dfi_cs_n;
+    logic dfi_ras_n;
+    logic dfi_cas_n;
+    logic dfi_we_n;
+    logic dfi_bank;
+    logic dfi_addr;
+    logic dfi_wrdata_valid;
+    logic dfi_wrdata;
+    logic dfi_wrdata_mask;
+    logic dfi_rddata;
+    logic dfi_rddata_valid;
+    logic ddr_ck_p;
+    logic ddr_ck_n;
+    logic ddr_cke;
+    logic ddr_cs_n;
+    logic ddr_ras_n;
+    logic ddr_cas_n;
+    logic ddr_we_n;
+    logic ddr_ba;
+    logic ddr_addr;
+    logic ddr_dm;
+    logic ddr_dq;
+    logic ddr_dqs_p;
+    logic ddr_dqs_n;
 
     // DUT Instantiation
     ddr_phy_if uut (
@@ -61,19 +61,19 @@ module tb_ddr_phy_if();
         .ddr_dqs_n(ddr_dqs_n)
     );
 
-    // Clock Generation (138.8 MHz -> ~7.2ns period)
+    // Advanced Clock Generation (138.8 MHz -> ~7.2ns period)
     initial begin
         clk = 0;
-        forever #3.6 clk = ~clk;
     end
 
-    // Initial block for stimulus and VCD dumping
+    always #3.6 clk = ~clk;
+
+    // Main Functional Stimulus Block
     initial begin
         $dumpfile("tb_ddr_phy_if.vcd");
         $dumpvars(0, tb_ddr_phy_if);
 
-        // Initialize inputs
-        rst_n = 0;
+        // 1. Initialize all data inputs
         dfi_ck_en = 0;
         dfi_cs_n = 0;
         dfi_ras_n = 0;
@@ -85,12 +85,29 @@ module tb_ddr_phy_if();
         dfi_wrdata = 0;
         dfi_wrdata_mask = 0;
 
-        // Reset sequence
+        // 2. Assert Resets
         #10;
-        rst_n = 1;
+        rst_n = 0; // Active low
         #100;
+        // 3. De-assert Resets
+        rst_n = 1;
+        #20;
 
-        // Add manual test stimulus here...
+        // 4. Constrained Random Stimulus Injection
+        // Generating aggressive random toggling to exercise internal logic
+        repeat(500) begin
+            #10;
+            dfi_ck_en = $random;
+            dfi_cs_n = $random;
+            dfi_ras_n = $random;
+            dfi_cas_n = $random;
+            dfi_we_n = $random;
+            dfi_bank = $random;
+            dfi_addr = $random;
+            dfi_wrdata_valid = $random;
+            dfi_wrdata = $random;
+            dfi_wrdata_mask = $random;
+        end
 
         #1000;
         $finish;

@@ -2,28 +2,28 @@
 
 module tb_ddr_scheduler();
 
-    reg  clk;
-    reg  rst_n;
-    reg  cmd_valid;
-    reg  cmd_type;
-    reg  cmd_bank;
-    reg  cmd_row;
-    reg  cmd_col;
-    wire cmd_ready;
-    wire rd_data;
-    wire rd_valid;
-    reg  wr_data;
-    wire dfi_cs_n;
-    wire dfi_ras_n;
-    wire dfi_cas_n;
-    wire dfi_we_n;
-    wire dfi_act_n;
-    wire dfi_bank;
-    wire dfi_addr;
-    wire dfi_wrdata_valid;
-    wire dfi_wrdata;
-    reg  dfi_rddata;
-    reg  dfi_rddata_valid;
+    logic clk;
+    logic rst_n;
+    logic cmd_valid;
+    logic cmd_type;
+    logic cmd_bank;
+    logic cmd_row;
+    logic cmd_col;
+    logic cmd_ready;
+    logic rd_data;
+    logic rd_valid;
+    logic wr_data;
+    logic dfi_cs_n;
+    logic dfi_ras_n;
+    logic dfi_cas_n;
+    logic dfi_we_n;
+    logic dfi_act_n;
+    logic dfi_bank;
+    logic dfi_addr;
+    logic dfi_wrdata_valid;
+    logic dfi_wrdata;
+    logic dfi_rddata;
+    logic dfi_rddata_valid;
 
     // DUT Instantiation
     ddr_scheduler uut (
@@ -51,19 +51,19 @@ module tb_ddr_scheduler();
         .dfi_rddata_valid(dfi_rddata_valid)
     );
 
-    // Clock Generation (138.8 MHz -> ~7.2ns period)
+    // Advanced Clock Generation (138.8 MHz -> ~7.2ns period)
     initial begin
         clk = 0;
-        forever #3.6 clk = ~clk;
     end
 
-    // Initial block for stimulus and VCD dumping
+    always #3.6 clk = ~clk;
+
+    // Main Functional Stimulus Block
     initial begin
         $dumpfile("tb_ddr_scheduler.vcd");
         $dumpvars(0, tb_ddr_scheduler);
 
-        // Initialize inputs
-        rst_n = 0;
+        // 1. Initialize all data inputs
         cmd_valid = 0;
         cmd_type = 0;
         cmd_bank = 0;
@@ -73,12 +73,27 @@ module tb_ddr_scheduler();
         dfi_rddata = 0;
         dfi_rddata_valid = 0;
 
-        // Reset sequence
+        // 2. Assert Resets
         #10;
-        rst_n = 1;
+        rst_n = 0; // Active low
         #100;
+        // 3. De-assert Resets
+        rst_n = 1;
+        #20;
 
-        // Add manual test stimulus here...
+        // 4. Constrained Random Stimulus Injection
+        // Generating aggressive random toggling to exercise internal logic
+        repeat(500) begin
+            #10;
+            cmd_valid = $random;
+            cmd_type = $random;
+            cmd_bank = $random;
+            cmd_row = $random;
+            cmd_col = $random;
+            wr_data = $random;
+            dfi_rddata = $random;
+            dfi_rddata_valid = $random;
+        end
 
         #1000;
         $finish;

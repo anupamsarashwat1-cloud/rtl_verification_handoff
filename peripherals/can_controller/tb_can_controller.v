@@ -2,19 +2,19 @@
 
 module tb_can_controller();
 
-    reg  clk;
-    reg  rst_n;
-    reg  paddr;
-    reg  psel;
-    reg  penable;
-    reg  pwrite;
-    reg  pwdata;
-    wire prdata;
-    wire pready;
-    wire pslverr;
-    wire can_irq;
-    wire can_tx;
-    reg  can_rx;
+    logic clk;
+    logic rst_n;
+    logic paddr;
+    logic psel;
+    logic penable;
+    logic pwrite;
+    logic pwdata;
+    logic prdata;
+    logic pready;
+    logic pslverr;
+    logic can_irq;
+    logic can_tx;
+    logic can_rx;
 
     // DUT Instantiation
     can_controller uut (
@@ -33,19 +33,19 @@ module tb_can_controller();
         .can_rx(can_rx)
     );
 
-    // Clock Generation (138.8 MHz -> ~7.2ns period)
+    // Advanced Clock Generation (138.8 MHz -> ~7.2ns period)
     initial begin
         clk = 0;
-        forever #3.6 clk = ~clk;
     end
 
-    // Initial block for stimulus and VCD dumping
+    always #3.6 clk = ~clk;
+
+    // Main Functional Stimulus Block
     initial begin
         $dumpfile("tb_can_controller.vcd");
         $dumpvars(0, tb_can_controller);
 
-        // Initialize inputs
-        rst_n = 0;
+        // 1. Initialize all data inputs
         paddr = 0;
         psel = 0;
         penable = 0;
@@ -53,12 +53,25 @@ module tb_can_controller();
         pwdata = 0;
         can_rx = 0;
 
-        // Reset sequence
+        // 2. Assert Resets
         #10;
-        rst_n = 1;
+        rst_n = 0; // Active low
         #100;
+        // 3. De-assert Resets
+        rst_n = 1;
+        #20;
 
-        // Add manual test stimulus here...
+        // 4. Constrained Random Stimulus Injection
+        // Generating aggressive random toggling to exercise internal logic
+        repeat(500) begin
+            #10;
+            paddr = $random;
+            psel = $random;
+            penable = $random;
+            pwrite = $random;
+            pwdata = $random;
+            can_rx = $random;
+        end
 
         #1000;
         $finish;

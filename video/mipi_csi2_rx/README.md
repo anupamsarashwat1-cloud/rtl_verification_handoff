@@ -49,3 +49,28 @@ graph TD
 1. **Compile**: `iverilog -o sim.vvp mipi_csi2_rx.v tb_mipi_csi2_rx.v` (Include dependencies using ` -I ../../includes -I` if necessary)
 2. **Simulate**: `vvp sim.vvp`
 3. **View**: `gtkwave tb_mipi_csi2_rx.vcd`
+
+## 💉 Injected Stimulus Profile
+An advanced Python DV script has automatically generated a fully functional SystemVerilog testbench for this module. The following aggressive stimulus is applied during simulation:
+
+### Clocks Auto-Toggled:
+- `rxbyteclkhs` toggling every 3.6ns (138.8 MHz)
+- `pclk` toggling every 3.6ns (138.8 MHz)
+
+### Reset Sequence:
+- `rst_n` driven to 0 then 1 over 100ns.
+- `prst_n` driven to 0 then 1 over 100ns.
+
+### Data Buses Randomized:
+Over 500 consecutive cycles, the following inputs receive constrained `$random` logic values to aggressively exercise datapaths and control flow:
+- `rxdatahs`
+- `rxvalidhs`
+- `rxactivehs`
+- `rxsyncbhs`
+- `rxdata_lp`
+- `m_axis_tready`
+- `paddr`
+- `psel`
+- `penable`
+- `pwrite`
+- `pwdata`

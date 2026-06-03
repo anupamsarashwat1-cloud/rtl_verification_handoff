@@ -2,16 +2,16 @@
 
 module tb_l2_data_array();
 
-    reg  clk;
-    reg  rst_n;
-    reg  bank_sel;
-    reg  cs;
-    reg  we;
-    reg  wmask;
-    reg  addr;
-    reg  din;
-    wire dout;
-    wire dout_valid;
+    logic clk;
+    logic rst_n;
+    logic bank_sel;
+    logic cs;
+    logic we;
+    logic wmask;
+    logic addr;
+    logic din;
+    logic dout;
+    logic dout_valid;
 
     // DUT Instantiation
     l2_data_array uut (
@@ -27,19 +27,19 @@ module tb_l2_data_array();
         .dout_valid(dout_valid)
     );
 
-    // Clock Generation (138.8 MHz -> ~7.2ns period)
+    // Advanced Clock Generation (138.8 MHz -> ~7.2ns period)
     initial begin
         clk = 0;
-        forever #3.6 clk = ~clk;
     end
 
-    // Initial block for stimulus and VCD dumping
+    always #3.6 clk = ~clk;
+
+    // Main Functional Stimulus Block
     initial begin
         $dumpfile("tb_l2_data_array.vcd");
         $dumpvars(0, tb_l2_data_array);
 
-        // Initialize inputs
-        rst_n = 0;
+        // 1. Initialize all data inputs
         bank_sel = 0;
         cs = 0;
         we = 0;
@@ -47,12 +47,25 @@ module tb_l2_data_array();
         addr = 0;
         din = 0;
 
-        // Reset sequence
+        // 2. Assert Resets
         #10;
-        rst_n = 1;
+        rst_n = 0; // Active low
         #100;
+        // 3. De-assert Resets
+        rst_n = 1;
+        #20;
 
-        // Add manual test stimulus here...
+        // 4. Constrained Random Stimulus Injection
+        // Generating aggressive random toggling to exercise internal logic
+        repeat(500) begin
+            #10;
+            bank_sel = $random;
+            cs = $random;
+            we = $random;
+            wmask = $random;
+            addr = $random;
+            din = $random;
+        end
 
         #1000;
         $finish;

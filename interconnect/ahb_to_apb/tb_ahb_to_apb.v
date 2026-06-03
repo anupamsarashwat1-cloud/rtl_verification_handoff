@@ -2,23 +2,23 @@
 
 module tb_ahb_to_apb();
 
-    reg  clk;
-    reg  rst_n;
-    reg  haddr;
-    reg  hwrite;
-    reg  htrans;
-    reg  hwdata;
-    wire hrdata;
-    wire hready_out;
-    wire hresp;
-    wire paddr;
-    wire psel;
-    wire penable;
-    wire pwrite;
-    wire pwdata;
-    reg  prdata;
-    reg  pready;
-    reg  pslverr;
+    logic clk;
+    logic rst_n;
+    logic haddr;
+    logic hwrite;
+    logic htrans;
+    logic hwdata;
+    logic hrdata;
+    logic hready_out;
+    logic hresp;
+    logic paddr;
+    logic psel;
+    logic penable;
+    logic pwrite;
+    logic pwdata;
+    logic prdata;
+    logic pready;
+    logic pslverr;
 
     // DUT Instantiation
     ahb_to_apb uut (
@@ -41,19 +41,19 @@ module tb_ahb_to_apb();
         .pslverr(pslverr)
     );
 
-    // Clock Generation (138.8 MHz -> ~7.2ns period)
+    // Advanced Clock Generation (138.8 MHz -> ~7.2ns period)
     initial begin
         clk = 0;
-        forever #3.6 clk = ~clk;
     end
 
-    // Initial block for stimulus and VCD dumping
+    always #3.6 clk = ~clk;
+
+    // Main Functional Stimulus Block
     initial begin
         $dumpfile("tb_ahb_to_apb.vcd");
         $dumpvars(0, tb_ahb_to_apb);
 
-        // Initialize inputs
-        rst_n = 0;
+        // 1. Initialize all data inputs
         haddr = 0;
         hwrite = 0;
         htrans = 0;
@@ -62,12 +62,26 @@ module tb_ahb_to_apb();
         pready = 0;
         pslverr = 0;
 
-        // Reset sequence
+        // 2. Assert Resets
         #10;
-        rst_n = 1;
+        rst_n = 0; // Active low
         #100;
+        // 3. De-assert Resets
+        rst_n = 1;
+        #20;
 
-        // Add manual test stimulus here...
+        // 4. Constrained Random Stimulus Injection
+        // Generating aggressive random toggling to exercise internal logic
+        repeat(500) begin
+            #10;
+            haddr = $random;
+            hwrite = $random;
+            htrans = $random;
+            hwdata = $random;
+            prdata = $random;
+            pready = $random;
+            pslverr = $random;
+        end
 
         #1000;
         $finish;

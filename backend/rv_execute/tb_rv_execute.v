@@ -2,55 +2,55 @@
 
 module tb_rv_execute();
 
-    reg  clk;
-    reg  rst_n;
-    reg  stall;
-    reg  flush;
-    reg  pc_in;
-    reg  rs1_data;
-    reg  rs2_data;
-    reg  imm;
-    reg  rd_in;
-    reg  rs1_addr;
-    reg  rs2_addr;
-    reg  funct3;
-    reg  funct7;
-    reg  opcode;
-    reg  alu_op;
-    reg  mem_read;
-    reg  mem_write;
-    reg  reg_write;
-    reg  branch;
-    reg  jal;
-    reg  jalr;
-    reg  is_amo;
-    reg  amo_funct5;
-    reg  valid_in;
-    reg  fwd_mem_data;
-    reg  fwd_mem_valid;
-    reg  fwd_mem_rd;
-    reg  fwd_wb_data;
-    reg  fwd_wb_valid;
-    reg  fwd_wb_rd;
-    reg  fpu_result;
-    reg  fpu_valid;
-    reg  fpu_done;
-    wire alu_result;
-    wire rs2_out;
-    wire rd_out;
-    wire funct3_out;
-    wire opcode_out;
-    wire mem_read_out;
-    wire mem_write_out;
-    wire reg_write_out;
-    wire is_amo_out;
-    wire amo_funct5_out;
-    wire valid_out;
-    wire mul_div_stall;
-    wire branch_taken;
-    wire branch_target;
-    wire lr_addr;
-    wire lr_valid;
+    logic clk;
+    logic rst_n;
+    logic stall;
+    logic flush;
+    logic pc_in;
+    logic rs1_data;
+    logic rs2_data;
+    logic imm;
+    logic rd_in;
+    logic rs1_addr;
+    logic rs2_addr;
+    logic funct3;
+    logic funct7;
+    logic opcode;
+    logic alu_op;
+    logic mem_read;
+    logic mem_write;
+    logic reg_write;
+    logic branch;
+    logic jal;
+    logic jalr;
+    logic is_amo;
+    logic amo_funct5;
+    logic valid_in;
+    logic fwd_mem_data;
+    logic fwd_mem_valid;
+    logic fwd_mem_rd;
+    logic fwd_wb_data;
+    logic fwd_wb_valid;
+    logic fwd_wb_rd;
+    logic fpu_result;
+    logic fpu_valid;
+    logic fpu_done;
+    logic alu_result;
+    logic rs2_out;
+    logic rd_out;
+    logic funct3_out;
+    logic opcode_out;
+    logic mem_read_out;
+    logic mem_write_out;
+    logic reg_write_out;
+    logic is_amo_out;
+    logic amo_funct5_out;
+    logic valid_out;
+    logic mul_div_stall;
+    logic branch_taken;
+    logic branch_target;
+    logic lr_addr;
+    logic lr_valid;
 
     // DUT Instantiation
     rv_execute uut (
@@ -105,19 +105,19 @@ module tb_rv_execute();
         .lr_valid(lr_valid)
     );
 
-    // Clock Generation (138.8 MHz -> ~7.2ns period)
+    // Advanced Clock Generation (138.8 MHz -> ~7.2ns period)
     initial begin
         clk = 0;
-        forever #3.6 clk = ~clk;
     end
 
-    // Initial block for stimulus and VCD dumping
+    always #3.6 clk = ~clk;
+
+    // Main Functional Stimulus Block
     initial begin
         $dumpfile("tb_rv_execute.vcd");
         $dumpvars(0, tb_rv_execute);
 
-        // Initialize inputs
-        rst_n = 0;
+        // 1. Initialize all data inputs
         stall = 0;
         flush = 0;
         pc_in = 0;
@@ -150,12 +150,50 @@ module tb_rv_execute();
         fpu_valid = 0;
         fpu_done = 0;
 
-        // Reset sequence
+        // 2. Assert Resets
         #10;
-        rst_n = 1;
+        rst_n = 0; // Active low
         #100;
+        // 3. De-assert Resets
+        rst_n = 1;
+        #20;
 
-        // Add manual test stimulus here...
+        // 4. Constrained Random Stimulus Injection
+        // Generating aggressive random toggling to exercise internal logic
+        repeat(500) begin
+            #10;
+            stall = $random;
+            flush = $random;
+            pc_in = $random;
+            rs1_data = $random;
+            rs2_data = $random;
+            imm = $random;
+            rd_in = $random;
+            rs1_addr = $random;
+            rs2_addr = $random;
+            funct3 = $random;
+            funct7 = $random;
+            opcode = $random;
+            alu_op = $random;
+            mem_read = $random;
+            mem_write = $random;
+            reg_write = $random;
+            branch = $random;
+            jal = $random;
+            jalr = $random;
+            is_amo = $random;
+            amo_funct5 = $random;
+            valid_in = $random;
+            fwd_mem_data = $random;
+            fwd_mem_valid = $random;
+            fwd_mem_rd = $random;
+            fwd_wb_data = $random;
+            fwd_wb_valid = $random;
+            fwd_wb_rd = $random;
+            fpu_result = $random;
+            fpu_valid = $random;
+            fpu_done = $random;
+        end
 
         #1000;
         $finish;

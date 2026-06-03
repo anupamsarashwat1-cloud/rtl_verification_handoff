@@ -2,33 +2,33 @@
 
 module tb_pcie_pipe_if();
 
-    reg  pclk;
-    reg  reset_n;
-    reg  tx_data;
-    reg  tx_datak;
-    wire rx_data;
-    wire rx_datak;
-    wire rx_valid;
-    wire rx_elecidle;
-    wire rx_status;
-    reg  tx_rate;
-    reg [1:0] power_down [0:3];
-    reg  tx_elecidle;
-    reg  tx_compliance;
-    reg  rx_polarity;
-    wire pipe_tx_data;
-    wire pipe_tx_datak;
-    reg  pipe_rx_data;
-    reg  pipe_rx_datak;
-    wire pipe_tx_rate;
-    wire pipe_tx_elecidle;
-    wire pipe_tx_compliance;
-    wire pipe_rx_polarity;
-    wire pipe_power_down;
-    reg  pipe_rx_valid;
-    reg  pipe_rx_elecidle;
-    reg  pipe_rx_status;
-    reg  pipe_phy_status;
+    logic pclk;
+    logic reset_n;
+    logic tx_data;
+    logic tx_datak;
+    logic rx_data;
+    logic rx_datak;
+    logic rx_valid;
+    logic rx_elecidle;
+    logic rx_status;
+    logic tx_rate;
+    logic [1:0] power_down [3:0];
+    logic tx_elecidle;
+    logic tx_compliance;
+    logic rx_polarity;
+    logic [63:0] pipe_tx_data;
+    logic [7:0] pipe_tx_datak;
+    logic [63:0] pipe_rx_data;
+    logic [7:0] pipe_rx_datak;
+    logic [1:0] pipe_tx_rate;
+    logic [3:0] pipe_tx_elecidle;
+    logic [3:0] pipe_tx_compliance;
+    logic [3:0] pipe_rx_polarity;
+    logic [7:0] pipe_power_down;
+    logic [3:0] pipe_rx_valid;
+    logic [3:0] pipe_rx_elecidle;
+    logic [11:0] pipe_rx_status;
+    logic [3:0] pipe_phy_status;
 
     // DUT Instantiation
     pcie_pipe_if uut (
@@ -61,19 +61,25 @@ module tb_pcie_pipe_if();
         .pipe_phy_status(pipe_phy_status)
     );
 
-    // Initial block for stimulus and VCD dumping
+    // Advanced Clock Generation (138.8 MHz -> ~7.2ns period)
+    initial begin
+        pclk = 0;
+    end
+
+    always #3.6 pclk = ~pclk;
+
+    // Main Functional Stimulus Block
     initial begin
         $dumpfile("tb_pcie_pipe_if.vcd");
         $dumpvars(0, tb_pcie_pipe_if);
 
-        // Initialize inputs
-        pclk = 0;
-        reset_n = 0;
+        // 1. Initialize all data inputs
         tx_data = 0;
         tx_datak = 0;
         tx_rate = 0;
-        power_down = 0;
         tx_elecidle = 0;
+        // Unpacked arrays cannot be assigned 0 directly without a loop
+        // power_down = 0;
         tx_compliance = 0;
         rx_polarity = 0;
         pipe_rx_data = 0;
@@ -83,12 +89,33 @@ module tb_pcie_pipe_if();
         pipe_rx_status = 0;
         pipe_phy_status = 0;
 
-        // Reset sequence
+        // 2. Assert Resets
         #10;
-        reset_n = 1;
+        reset_n = 0; // Active low
         #100;
+        // 3. De-assert Resets
+        reset_n = 1;
+        #20;
 
-        // Add manual test stimulus here...
+        // 4. Constrained Random Stimulus Injection
+        // Generating aggressive random toggling to exercise internal logic
+        repeat(500) begin
+            #10;
+            tx_data = $random;
+            tx_datak = $random;
+            tx_rate = $random;
+            tx_elecidle = $random;
+            // Unpacked arrays cannot be assigned 0 directly without a loop
+            // power_down = $random;
+            tx_compliance = $random;
+            rx_polarity = $random;
+            pipe_rx_data = $random;
+            pipe_rx_datak = $random;
+            pipe_rx_valid = $random;
+            pipe_rx_elecidle = $random;
+            pipe_rx_status = $random;
+            pipe_phy_status = $random;
+        end
 
         #1000;
         $finish;

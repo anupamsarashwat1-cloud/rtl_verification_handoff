@@ -97,3 +97,49 @@ graph TD
 1. **Compile**: `iverilog -o sim.vvp pcie_top.v tb_pcie_top.v` (Include dependencies using ` -I ../../includes -I` if necessary)
 2. **Simulate**: `vvp sim.vvp`
 3. **View**: `gtkwave tb_pcie_top.vcd`
+
+## 💉 Injected Stimulus Profile
+An advanced Python DV script has automatically generated a fully functional SystemVerilog testbench for this module. The following aggressive stimulus is applied during simulation:
+
+### Clocks Auto-Toggled:
+- `pcie_clk` toggling every 3.6ns (138.8 MHz)
+- `pipe_clk` toggling every 3.6ns (138.8 MHz)
+
+### Reset Sequence:
+- `pcie_rst_n` driven to 0 then 1 over 100ns.
+
+### Data Buses Randomized:
+Over 500 consecutive cycles, the following inputs receive constrained `$random` logic values to aggressively exercise datapaths and control flow:
+- `m_awready`
+- `m_wready`
+- `m_bvalid`
+- `m_bresp`
+- `m_bid`
+- `m_arready`
+- `m_rvalid`
+- `m_rdata`
+- `m_rresp`
+- `m_rlast`
+- `m_rid`
+- `s_awvalid`
+- `s_awaddr`
+- `s_awid`
+- `s_awlen`
+- `s_awsize`
+- `s_wvalid`
+- `s_wdata`
+- `s_wstrb`
+- `s_wlast`
+- `s_bready`
+- `s_arvalid`
+- `s_araddr`
+- `s_arid`
+- `s_arlen`
+- `s_arsize`
+- `s_rready`
+- `pipe_rx_data`
+- `pipe_rx_datak`
+- `pipe_rx_valid`
+- `pipe_rx_elecidle`
+- `pipe_rx_status`
+- `pipe_phy_status`

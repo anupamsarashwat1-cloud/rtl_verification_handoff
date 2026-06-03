@@ -2,48 +2,48 @@
 
 module tb_ddr_ctrl_top();
 
-    reg  clk;
-    reg  rst_n;
-    reg  s_awvalid;
-    wire s_awready;
-    reg  s_awaddr;
-    reg  s_awid;
-    reg  s_awlen;
-    reg  s_awsize;
-    reg  s_wvalid;
-    wire s_wready;
-    reg  s_wdata;
-    reg  s_wstrb;
-    reg  s_wlast;
-    wire s_bvalid;
-    reg  s_bready;
-    wire s_bresp;
-    wire s_bid;
-    reg  s_arvalid;
-    wire s_arready;
-    reg  s_araddr;
-    reg  s_arid;
-    reg  s_arlen;
-    wire s_rvalid;
-    reg  s_rready;
-    wire s_rdata;
-    wire s_rresp;
-    wire s_rlast;
-    wire s_rid;
-    wire ddr_ck_p;
-    wire ddr_ck_n;
-    wire ddr_cke;
-    wire ddr_cs_n;
-    wire ddr_ras_n;
-    wire ddr_cas_n;
-    wire ddr_we_n;
-    wire ddr_ba;
-    wire ddr_bg;
-    wire ddr_addr;
-    wire ddr_dm;
-    wire ddr_dq;
-    wire ddr_dqs_p;
-    wire ddr_dqs_n;
+    logic clk;
+    logic rst_n;
+    logic s_awvalid;
+    logic s_awready;
+    logic s_awaddr;
+    logic s_awid;
+    logic s_awlen;
+    logic s_awsize;
+    logic s_wvalid;
+    logic s_wready;
+    logic s_wdata;
+    logic s_wstrb;
+    logic s_wlast;
+    logic s_bvalid;
+    logic s_bready;
+    logic s_bresp;
+    logic s_bid;
+    logic s_arvalid;
+    logic s_arready;
+    logic s_araddr;
+    logic s_arid;
+    logic s_arlen;
+    logic s_rvalid;
+    logic s_rready;
+    logic s_rdata;
+    logic s_rresp;
+    logic s_rlast;
+    logic s_rid;
+    logic ddr_ck_p;
+    logic ddr_ck_n;
+    logic ddr_cke;
+    logic ddr_cs_n;
+    logic ddr_ras_n;
+    logic ddr_cas_n;
+    logic ddr_we_n;
+    logic ddr_ba;
+    logic ddr_bg;
+    logic ddr_addr;
+    logic ddr_dm;
+    logic ddr_dq;
+    logic ddr_dqs_p;
+    logic ddr_dqs_n;
 
     // DUT Instantiation
     ddr_ctrl_top uut (
@@ -91,19 +91,19 @@ module tb_ddr_ctrl_top();
         .ddr_dqs_n(ddr_dqs_n)
     );
 
-    // Clock Generation (138.8 MHz -> ~7.2ns period)
+    // Advanced Clock Generation (138.8 MHz -> ~7.2ns period)
     initial begin
         clk = 0;
-        forever #3.6 clk = ~clk;
     end
 
-    // Initial block for stimulus and VCD dumping
+    always #3.6 clk = ~clk;
+
+    // Main Functional Stimulus Block
     initial begin
         $dumpfile("tb_ddr_ctrl_top.vcd");
         $dumpvars(0, tb_ddr_ctrl_top);
 
-        // Initialize inputs
-        rst_n = 0;
+        // 1. Initialize all data inputs
         s_awvalid = 0;
         s_awaddr = 0;
         s_awid = 0;
@@ -120,12 +120,34 @@ module tb_ddr_ctrl_top();
         s_arlen = 0;
         s_rready = 0;
 
-        // Reset sequence
+        // 2. Assert Resets
         #10;
-        rst_n = 1;
+        rst_n = 0; // Active low
         #100;
+        // 3. De-assert Resets
+        rst_n = 1;
+        #20;
 
-        // Add manual test stimulus here...
+        // 4. Constrained Random Stimulus Injection
+        // Generating aggressive random toggling to exercise internal logic
+        repeat(500) begin
+            #10;
+            s_awvalid = $random;
+            s_awaddr = $random;
+            s_awid = $random;
+            s_awlen = $random;
+            s_awsize = $random;
+            s_wvalid = $random;
+            s_wdata = $random;
+            s_wstrb = $random;
+            s_wlast = $random;
+            s_bready = $random;
+            s_arvalid = $random;
+            s_araddr = $random;
+            s_arid = $random;
+            s_arlen = $random;
+            s_rready = $random;
+        end
 
         #1000;
         $finish;

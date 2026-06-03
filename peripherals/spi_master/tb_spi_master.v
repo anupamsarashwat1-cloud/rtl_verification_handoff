@@ -2,20 +2,20 @@
 
 module tb_spi_master();
 
-    reg  clk;
-    reg  rst_n;
-    reg  psel;
-    reg  penable;
-    reg  pwrite;
-    reg  paddr;
-    reg  pwdata;
-    wire prdata;
-    wire pready;
-    wire spi_clk;
-    wire spi_mosi;
-    reg  spi_miso;
-    wire spi_csn;
-    wire irq;
+    logic clk;
+    logic rst_n;
+    logic psel;
+    logic penable;
+    logic pwrite;
+    logic paddr;
+    logic pwdata;
+    logic prdata;
+    logic pready;
+    logic spi_clk;
+    logic spi_mosi;
+    logic spi_miso;
+    logic spi_csn;
+    logic irq;
 
     // DUT Instantiation
     spi_master uut (
@@ -35,19 +35,19 @@ module tb_spi_master();
         .irq(irq)
     );
 
-    // Clock Generation (138.8 MHz -> ~7.2ns period)
+    // Advanced Clock Generation (138.8 MHz -> ~7.2ns period)
     initial begin
         clk = 0;
-        forever #3.6 clk = ~clk;
     end
 
-    // Initial block for stimulus and VCD dumping
+    always #3.6 clk = ~clk;
+
+    // Main Functional Stimulus Block
     initial begin
         $dumpfile("tb_spi_master.vcd");
         $dumpvars(0, tb_spi_master);
 
-        // Initialize inputs
-        rst_n = 0;
+        // 1. Initialize all data inputs
         psel = 0;
         penable = 0;
         pwrite = 0;
@@ -55,12 +55,25 @@ module tb_spi_master();
         pwdata = 0;
         spi_miso = 0;
 
-        // Reset sequence
+        // 2. Assert Resets
         #10;
-        rst_n = 1;
+        rst_n = 0; // Active low
         #100;
+        // 3. De-assert Resets
+        rst_n = 1;
+        #20;
 
-        // Add manual test stimulus here...
+        // 4. Constrained Random Stimulus Injection
+        // Generating aggressive random toggling to exercise internal logic
+        repeat(500) begin
+            #10;
+            psel = $random;
+            penable = $random;
+            pwrite = $random;
+            paddr = $random;
+            pwdata = $random;
+            spi_miso = $random;
+        end
 
         #1000;
         $finish;

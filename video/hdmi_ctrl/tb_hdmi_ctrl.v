@@ -2,28 +2,28 @@
 
 module tb_hdmi_ctrl();
 
-    reg  clk_pixel;
-    reg  clk_tmds;
-    reg  rst_n;
-    reg  s_axis_tdata;
-    reg  s_axis_tvalid;
-    wire s_axis_tready;
-    reg  s_axis_tuser;
-    reg  s_axis_tlast;
-    wire tmds_clk_p;
-    wire tmds_clk_n;
-    wire tmds_data_p;
-    wire tmds_data_n;
-    reg  pclk;
-    reg  prst_n;
-    reg  paddr;
-    reg  psel;
-    reg  penable;
-    reg  pwrite;
-    reg  pwdata;
-    wire prdata;
-    wire pready;
-    wire pslverr;
+    logic clk_pixel;
+    logic clk_tmds;
+    logic rst_n;
+    logic s_axis_tdata;
+    logic s_axis_tvalid;
+    logic s_axis_tready;
+    logic s_axis_tuser;
+    logic s_axis_tlast;
+    logic tmds_clk_p;
+    logic tmds_clk_n;
+    logic tmds_data_p;
+    logic tmds_data_n;
+    logic pclk;
+    logic prst_n;
+    logic paddr;
+    logic psel;
+    logic penable;
+    logic pwrite;
+    logic pwdata;
+    logic prdata;
+    logic pready;
+    logic pslverr;
 
     // DUT Instantiation
     hdmi_ctrl uut (
@@ -51,33 +51,57 @@ module tb_hdmi_ctrl();
         .pslverr(pslverr)
     );
 
-    // Initial block for stimulus and VCD dumping
+    // Advanced Clock Generation (138.8 MHz -> ~7.2ns period)
+    initial begin
+        clk_pixel = 0;
+        clk_tmds = 0;
+        pclk = 0;
+    end
+
+    always #3.6 clk_pixel = ~clk_pixel;
+    always #3.6 clk_tmds = ~clk_tmds;
+    always #3.6 pclk = ~pclk;
+
+    // Main Functional Stimulus Block
     initial begin
         $dumpfile("tb_hdmi_ctrl.vcd");
         $dumpvars(0, tb_hdmi_ctrl);
 
-        // Initialize inputs
-        clk_pixel = 0;
-        clk_tmds = 0;
-        rst_n = 0;
+        // 1. Initialize all data inputs
         s_axis_tdata = 0;
         s_axis_tvalid = 0;
         s_axis_tuser = 0;
         s_axis_tlast = 0;
-        pclk = 0;
-        prst_n = 0;
         paddr = 0;
         psel = 0;
         penable = 0;
         pwrite = 0;
         pwdata = 0;
 
-        // Reset sequence
+        // 2. Assert Resets
         #10;
-        rst_n = 1;
+        rst_n = 0; // Active low
+        prst_n = 0; // Active low
         #100;
+        // 3. De-assert Resets
+        rst_n = 1;
+        prst_n = 1;
+        #20;
 
-        // Add manual test stimulus here...
+        // 4. Constrained Random Stimulus Injection
+        // Generating aggressive random toggling to exercise internal logic
+        repeat(500) begin
+            #10;
+            s_axis_tdata = $random;
+            s_axis_tvalid = $random;
+            s_axis_tuser = $random;
+            s_axis_tlast = $random;
+            paddr = $random;
+            psel = $random;
+            penable = $random;
+            pwrite = $random;
+            pwdata = $random;
+        end
 
         #1000;
         $finish;

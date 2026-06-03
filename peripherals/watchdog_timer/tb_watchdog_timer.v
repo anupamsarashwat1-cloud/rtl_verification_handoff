@@ -2,17 +2,17 @@
 
 module tb_watchdog_timer();
 
-    reg  clk;
-    reg  rst_n;
-    reg  psel;
-    reg  penable;
-    reg  pwrite;
-    reg  paddr;
-    reg  pwdata;
-    wire prdata;
-    wire pready;
-    wire wdt_reset_n;
-    wire irq;
+    logic clk;
+    logic rst_n;
+    logic psel;
+    logic penable;
+    logic pwrite;
+    logic paddr;
+    logic pwdata;
+    logic prdata;
+    logic pready;
+    logic wdt_reset_n;
+    logic irq;
 
     // DUT Instantiation
     watchdog_timer uut (
@@ -29,31 +29,43 @@ module tb_watchdog_timer();
         .irq(irq)
     );
 
-    // Clock Generation (138.8 MHz -> ~7.2ns period)
+    // Advanced Clock Generation (138.8 MHz -> ~7.2ns period)
     initial begin
         clk = 0;
-        forever #3.6 clk = ~clk;
     end
 
-    // Initial block for stimulus and VCD dumping
+    always #3.6 clk = ~clk;
+
+    // Main Functional Stimulus Block
     initial begin
         $dumpfile("tb_watchdog_timer.vcd");
         $dumpvars(0, tb_watchdog_timer);
 
-        // Initialize inputs
-        rst_n = 0;
+        // 1. Initialize all data inputs
         psel = 0;
         penable = 0;
         pwrite = 0;
         paddr = 0;
         pwdata = 0;
 
-        // Reset sequence
+        // 2. Assert Resets
         #10;
-        rst_n = 1;
+        rst_n = 0; // Active low
         #100;
+        // 3. De-assert Resets
+        rst_n = 1;
+        #20;
 
-        // Add manual test stimulus here...
+        // 4. Constrained Random Stimulus Injection
+        // Generating aggressive random toggling to exercise internal logic
+        repeat(500) begin
+            #10;
+            psel = $random;
+            penable = $random;
+            pwrite = $random;
+            paddr = $random;
+            pwdata = $random;
+        end
 
         #1000;
         $finish;

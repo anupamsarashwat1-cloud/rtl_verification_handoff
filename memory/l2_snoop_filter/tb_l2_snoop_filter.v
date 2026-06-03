@@ -2,21 +2,21 @@
 
 module tb_l2_snoop_filter();
 
-    reg  clk;
-    reg  rst_n;
-    reg  req_valid;
-    reg  req_addr;
-    reg  req_type;
-    reg  req_core;
-    wire snoop_valid;
-    wire snoop_addr;
-    wire snoop_type;
-    reg  snoop_ack;
-    reg  snoop_data_valid;
-    wire resp_valid;
-    wire resp_hit;
-    wire resp_dirty;
-    wire resp_owner;
+    logic clk;
+    logic rst_n;
+    logic req_valid;
+    logic req_addr;
+    logic req_type;
+    logic req_core;
+    logic snoop_valid;
+    logic snoop_addr;
+    logic snoop_type;
+    logic snoop_ack;
+    logic snoop_data_valid;
+    logic resp_valid;
+    logic resp_hit;
+    logic resp_dirty;
+    logic resp_owner;
 
     // DUT Instantiation
     l2_snoop_filter uut (
@@ -37,19 +37,19 @@ module tb_l2_snoop_filter();
         .resp_owner(resp_owner)
     );
 
-    // Clock Generation (138.8 MHz -> ~7.2ns period)
+    // Advanced Clock Generation (138.8 MHz -> ~7.2ns period)
     initial begin
         clk = 0;
-        forever #3.6 clk = ~clk;
     end
 
-    // Initial block for stimulus and VCD dumping
+    always #3.6 clk = ~clk;
+
+    // Main Functional Stimulus Block
     initial begin
         $dumpfile("tb_l2_snoop_filter.vcd");
         $dumpvars(0, tb_l2_snoop_filter);
 
-        // Initialize inputs
-        rst_n = 0;
+        // 1. Initialize all data inputs
         req_valid = 0;
         req_addr = 0;
         req_type = 0;
@@ -57,12 +57,25 @@ module tb_l2_snoop_filter();
         snoop_ack = 0;
         snoop_data_valid = 0;
 
-        // Reset sequence
+        // 2. Assert Resets
         #10;
-        rst_n = 1;
+        rst_n = 0; // Active low
         #100;
+        // 3. De-assert Resets
+        rst_n = 1;
+        #20;
 
-        // Add manual test stimulus here...
+        // 4. Constrained Random Stimulus Injection
+        // Generating aggressive random toggling to exercise internal logic
+        repeat(500) begin
+            #10;
+            req_valid = $random;
+            req_addr = $random;
+            req_type = $random;
+            req_core = $random;
+            snoop_ack = $random;
+            snoop_data_valid = $random;
+        end
 
         #1000;
         $finish;

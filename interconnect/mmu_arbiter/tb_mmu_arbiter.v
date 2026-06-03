@@ -2,22 +2,22 @@
 
 module tb_mmu_arbiter();
 
-    reg  clk;
-    reg  rst_n;
-    reg  s_arvalid;
-    wire s_arready;
-    reg  s_araddr;
-    wire s_rvalid;
-    reg  s_rready;
-    wire s_rdata;
-    wire s_rresp;
-    wire m_arvalid;
-    reg  m_arready;
-    wire m_araddr;
-    reg  m_rvalid;
-    wire m_rready;
-    reg  m_rdata;
-    reg  m_rresp;
+    logic clk;
+    logic rst_n;
+    logic s_arvalid;
+    logic s_arready;
+    logic s_araddr;
+    logic s_rvalid;
+    logic s_rready;
+    logic s_rdata;
+    logic s_rresp;
+    logic m_arvalid;
+    logic m_arready;
+    logic m_araddr;
+    logic m_rvalid;
+    logic m_rready;
+    logic m_rdata;
+    logic m_rresp;
 
     // DUT Instantiation
     mmu_arbiter uut (
@@ -39,19 +39,19 @@ module tb_mmu_arbiter();
         .m_rresp(m_rresp)
     );
 
-    // Clock Generation (138.8 MHz -> ~7.2ns period)
+    // Advanced Clock Generation (138.8 MHz -> ~7.2ns period)
     initial begin
         clk = 0;
-        forever #3.6 clk = ~clk;
     end
 
-    // Initial block for stimulus and VCD dumping
+    always #3.6 clk = ~clk;
+
+    // Main Functional Stimulus Block
     initial begin
         $dumpfile("tb_mmu_arbiter.vcd");
         $dumpvars(0, tb_mmu_arbiter);
 
-        // Initialize inputs
-        rst_n = 0;
+        // 1. Initialize all data inputs
         s_arvalid = 0;
         s_araddr = 0;
         s_rready = 0;
@@ -60,12 +60,26 @@ module tb_mmu_arbiter();
         m_rdata = 0;
         m_rresp = 0;
 
-        // Reset sequence
+        // 2. Assert Resets
         #10;
-        rst_n = 1;
+        rst_n = 0; // Active low
         #100;
+        // 3. De-assert Resets
+        rst_n = 1;
+        #20;
 
-        // Add manual test stimulus here...
+        // 4. Constrained Random Stimulus Injection
+        // Generating aggressive random toggling to exercise internal logic
+        repeat(500) begin
+            #10;
+            s_arvalid = $random;
+            s_araddr = $random;
+            s_rready = $random;
+            m_arready = $random;
+            m_rvalid = $random;
+            m_rdata = $random;
+            m_rresp = $random;
+        end
 
         #1000;
         $finish;

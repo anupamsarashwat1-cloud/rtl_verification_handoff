@@ -2,38 +2,38 @@
 
 module tb_axi4_to_ahb();
 
-    reg  clk;
-    reg  rst_n;
-    reg  s_awvalid;
-    wire s_awready;
-    reg  s_awaddr;
-    reg  s_awid;
-    reg  s_wvalid;
-    wire s_wready;
-    reg  s_wdata;
-    reg  s_wstrb;
-    wire s_bvalid;
-    reg  s_bready;
-    wire s_bresp;
-    wire s_bid;
-    reg  s_arvalid;
-    wire s_arready;
-    reg  s_araddr;
-    reg  s_arid;
-    wire s_rvalid;
-    reg  s_rready;
-    wire s_rdata;
-    wire s_rresp;
-    wire s_rlast;
-    wire haddr;
-    wire hwrite;
-    wire htrans;
-    wire hsize;
-    wire hburst;
-    wire hwdata;
-    reg  hrdata;
-    reg  hready;
-    reg  hresp;
+    logic clk;
+    logic rst_n;
+    logic s_awvalid;
+    logic s_awready;
+    logic s_awaddr;
+    logic s_awid;
+    logic s_wvalid;
+    logic s_wready;
+    logic s_wdata;
+    logic s_wstrb;
+    logic s_bvalid;
+    logic s_bready;
+    logic s_bresp;
+    logic s_bid;
+    logic s_arvalid;
+    logic s_arready;
+    logic s_araddr;
+    logic s_arid;
+    logic s_rvalid;
+    logic s_rready;
+    logic s_rdata;
+    logic s_rresp;
+    logic s_rlast;
+    logic haddr;
+    logic hwrite;
+    logic htrans;
+    logic hsize;
+    logic hburst;
+    logic hwdata;
+    logic hrdata;
+    logic hready;
+    logic hresp;
 
     // DUT Instantiation
     axi4_to_ahb uut (
@@ -71,19 +71,19 @@ module tb_axi4_to_ahb();
         .hresp(hresp)
     );
 
-    // Clock Generation (138.8 MHz -> ~7.2ns period)
+    // Advanced Clock Generation (138.8 MHz -> ~7.2ns period)
     initial begin
         clk = 0;
-        forever #3.6 clk = ~clk;
     end
 
-    // Initial block for stimulus and VCD dumping
+    always #3.6 clk = ~clk;
+
+    // Main Functional Stimulus Block
     initial begin
         $dumpfile("tb_axi4_to_ahb.vcd");
         $dumpvars(0, tb_axi4_to_ahb);
 
-        // Initialize inputs
-        rst_n = 0;
+        // 1. Initialize all data inputs
         s_awvalid = 0;
         s_awaddr = 0;
         s_awid = 0;
@@ -99,12 +99,33 @@ module tb_axi4_to_ahb();
         hready = 0;
         hresp = 0;
 
-        // Reset sequence
+        // 2. Assert Resets
         #10;
-        rst_n = 1;
+        rst_n = 0; // Active low
         #100;
+        // 3. De-assert Resets
+        rst_n = 1;
+        #20;
 
-        // Add manual test stimulus here...
+        // 4. Constrained Random Stimulus Injection
+        // Generating aggressive random toggling to exercise internal logic
+        repeat(500) begin
+            #10;
+            s_awvalid = $random;
+            s_awaddr = $random;
+            s_awid = $random;
+            s_wvalid = $random;
+            s_wdata = $random;
+            s_wstrb = $random;
+            s_bready = $random;
+            s_arvalid = $random;
+            s_araddr = $random;
+            s_arid = $random;
+            s_rready = $random;
+            hrdata = $random;
+            hready = $random;
+            hresp = $random;
+        end
 
         #1000;
         $finish;

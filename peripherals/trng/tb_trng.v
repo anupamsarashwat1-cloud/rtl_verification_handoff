@@ -2,20 +2,20 @@
 
 module tb_trng();
 
-    reg  clk;
-    reg  rst_n;
-    reg  paddr;
-    reg  psel;
-    reg  penable;
-    reg  pwrite;
-    reg  pwdata;
-    wire prdata;
-    wire pready;
-    wire pslverr;
-    wire trng_entropy;
-    wire trng_valid;
-    reg  trng_ready;
-    wire trng_irq;
+    logic clk;
+    logic rst_n;
+    logic paddr;
+    logic psel;
+    logic penable;
+    logic pwrite;
+    logic pwdata;
+    logic prdata;
+    logic pready;
+    logic pslverr;
+    logic trng_entropy;
+    logic trng_valid;
+    logic trng_ready;
+    logic trng_irq;
 
     // DUT Instantiation
     trng uut (
@@ -35,19 +35,19 @@ module tb_trng();
         .trng_irq(trng_irq)
     );
 
-    // Clock Generation (138.8 MHz -> ~7.2ns period)
+    // Advanced Clock Generation (138.8 MHz -> ~7.2ns period)
     initial begin
         clk = 0;
-        forever #3.6 clk = ~clk;
     end
 
-    // Initial block for stimulus and VCD dumping
+    always #3.6 clk = ~clk;
+
+    // Main Functional Stimulus Block
     initial begin
         $dumpfile("tb_trng.vcd");
         $dumpvars(0, tb_trng);
 
-        // Initialize inputs
-        rst_n = 0;
+        // 1. Initialize all data inputs
         paddr = 0;
         psel = 0;
         penable = 0;
@@ -55,12 +55,25 @@ module tb_trng();
         pwdata = 0;
         trng_ready = 0;
 
-        // Reset sequence
+        // 2. Assert Resets
         #10;
-        rst_n = 1;
+        rst_n = 0; // Active low
         #100;
+        // 3. De-assert Resets
+        rst_n = 1;
+        #20;
 
-        // Add manual test stimulus here...
+        // 4. Constrained Random Stimulus Injection
+        // Generating aggressive random toggling to exercise internal logic
+        repeat(500) begin
+            #10;
+            paddr = $random;
+            psel = $random;
+            penable = $random;
+            pwrite = $random;
+            pwdata = $random;
+            trng_ready = $random;
+        end
 
         #1000;
         $finish;

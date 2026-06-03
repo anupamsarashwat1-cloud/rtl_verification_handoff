@@ -2,12 +2,12 @@
 
 module tb_sram_512kx8_180nm();
 
-    reg  CLK;
-    reg  CEN;
-    reg  WEN;
-    reg  A;
-    reg  D;
-    wire Q;
+    logic CLK;
+    logic CEN;
+    logic WEN;
+    logic A;
+    logic D;
+    logic Q;
 
     // DUT Instantiation
     sram_512kx8_180nm uut (
@@ -19,19 +19,33 @@ module tb_sram_512kx8_180nm();
         .Q(Q)
     );
 
-    // Initial block for stimulus and VCD dumping
+    // Advanced Clock Generation (138.8 MHz -> ~7.2ns period)
+    initial begin
+        CLK = 0;
+    end
+
+    always #3.6 CLK = ~CLK;
+
+    // Main Functional Stimulus Block
     initial begin
         $dumpfile("tb_sram_512kx8_180nm.vcd");
         $dumpvars(0, tb_sram_512kx8_180nm);
 
-        // Initialize inputs
-        CLK = 0;
+        // 1. Initialize all data inputs
         CEN = 0;
         WEN = 0;
         A = 0;
         D = 0;
 
-        // Add manual test stimulus here...
+        // 4. Constrained Random Stimulus Injection
+        // Generating aggressive random toggling to exercise internal logic
+        repeat(500) begin
+            #10;
+            CEN = $random;
+            WEN = $random;
+            A = $random;
+            D = $random;
+        end
 
         #1000;
         $finish;

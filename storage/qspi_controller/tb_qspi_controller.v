@@ -2,26 +2,26 @@
 
 module tb_qspi_controller();
 
-    reg  clk;
-    reg  rst_n;
-    reg  s_arvalid;
-    wire s_arready;
-    reg  s_araddr;
-    wire s_rvalid;
-    reg  s_rready;
-    wire s_rdata;
-    wire s_rresp;
-    reg  paddr;
-    reg  psel;
-    reg  penable;
-    reg  pwrite;
-    reg  pwdata;
-    wire prdata;
-    wire pready;
-    wire pslverr;
-    wire qspi_sclk;
-    wire qspi_cs_n;
-    wire qspi_io;
+    logic clk;
+    logic rst_n;
+    logic s_arvalid;
+    logic s_arready;
+    logic s_araddr;
+    logic s_rvalid;
+    logic s_rready;
+    logic s_rdata;
+    logic s_rresp;
+    logic paddr;
+    logic psel;
+    logic penable;
+    logic pwrite;
+    logic pwdata;
+    logic prdata;
+    logic pready;
+    logic pslverr;
+    logic qspi_sclk;
+    logic qspi_cs_n;
+    logic qspi_io;
 
     // DUT Instantiation
     qspi_controller uut (
@@ -47,19 +47,19 @@ module tb_qspi_controller();
         .qspi_io(qspi_io)
     );
 
-    // Clock Generation (138.8 MHz -> ~7.2ns period)
+    // Advanced Clock Generation (138.8 MHz -> ~7.2ns period)
     initial begin
         clk = 0;
-        forever #3.6 clk = ~clk;
     end
 
-    // Initial block for stimulus and VCD dumping
+    always #3.6 clk = ~clk;
+
+    // Main Functional Stimulus Block
     initial begin
         $dumpfile("tb_qspi_controller.vcd");
         $dumpvars(0, tb_qspi_controller);
 
-        // Initialize inputs
-        rst_n = 0;
+        // 1. Initialize all data inputs
         s_arvalid = 0;
         s_araddr = 0;
         s_rready = 0;
@@ -69,12 +69,27 @@ module tb_qspi_controller();
         pwrite = 0;
         pwdata = 0;
 
-        // Reset sequence
+        // 2. Assert Resets
         #10;
-        rst_n = 1;
+        rst_n = 0; // Active low
         #100;
+        // 3. De-assert Resets
+        rst_n = 1;
+        #20;
 
-        // Add manual test stimulus here...
+        // 4. Constrained Random Stimulus Injection
+        // Generating aggressive random toggling to exercise internal logic
+        repeat(500) begin
+            #10;
+            s_arvalid = $random;
+            s_araddr = $random;
+            s_rready = $random;
+            paddr = $random;
+            psel = $random;
+            penable = $random;
+            pwrite = $random;
+            pwdata = $random;
+        end
 
         #1000;
         $finish;

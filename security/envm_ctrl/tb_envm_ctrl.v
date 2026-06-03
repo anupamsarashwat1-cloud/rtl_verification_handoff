@@ -2,30 +2,30 @@
 
 module tb_envm_ctrl();
 
-    reg  clk;
-    reg  rst_n;
-    reg  s_arvalid;
-    wire s_arready;
-    reg  s_araddr;
-    wire s_rvalid;
-    reg  s_rready;
-    wire s_rdata;
-    wire s_rresp;
-    reg  paddr;
-    reg  psel;
-    reg  penable;
-    reg  pwrite;
-    reg  pwdata;
-    wire prdata;
-    wire pready;
-    wire pslverr;
-    wire envm_clk;
-    wire envm_ce_n;
-    wire envm_we_n;
-    wire envm_addr;
-    wire envm_wdata;
-    reg  envm_rdata;
-    reg  envm_ready;
+    logic clk;
+    logic rst_n;
+    logic s_arvalid;
+    logic s_arready;
+    logic s_araddr;
+    logic s_rvalid;
+    logic s_rready;
+    logic s_rdata;
+    logic s_rresp;
+    logic paddr;
+    logic psel;
+    logic penable;
+    logic pwrite;
+    logic pwdata;
+    logic prdata;
+    logic pready;
+    logic pslverr;
+    logic envm_clk;
+    logic envm_ce_n;
+    logic envm_we_n;
+    logic envm_addr;
+    logic envm_wdata;
+    logic envm_rdata;
+    logic envm_ready;
 
     // DUT Instantiation
     envm_ctrl uut (
@@ -55,19 +55,19 @@ module tb_envm_ctrl();
         .envm_ready(envm_ready)
     );
 
-    // Clock Generation (138.8 MHz -> ~7.2ns period)
+    // Advanced Clock Generation (138.8 MHz -> ~7.2ns period)
     initial begin
         clk = 0;
-        forever #3.6 clk = ~clk;
     end
 
-    // Initial block for stimulus and VCD dumping
+    always #3.6 clk = ~clk;
+
+    // Main Functional Stimulus Block
     initial begin
         $dumpfile("tb_envm_ctrl.vcd");
         $dumpvars(0, tb_envm_ctrl);
 
-        // Initialize inputs
-        rst_n = 0;
+        // 1. Initialize all data inputs
         s_arvalid = 0;
         s_araddr = 0;
         s_rready = 0;
@@ -79,12 +79,29 @@ module tb_envm_ctrl();
         envm_rdata = 0;
         envm_ready = 0;
 
-        // Reset sequence
+        // 2. Assert Resets
         #10;
-        rst_n = 1;
+        rst_n = 0; // Active low
         #100;
+        // 3. De-assert Resets
+        rst_n = 1;
+        #20;
 
-        // Add manual test stimulus here...
+        // 4. Constrained Random Stimulus Injection
+        // Generating aggressive random toggling to exercise internal logic
+        repeat(500) begin
+            #10;
+            s_arvalid = $random;
+            s_araddr = $random;
+            s_rready = $random;
+            paddr = $random;
+            psel = $random;
+            penable = $random;
+            pwrite = $random;
+            pwdata = $random;
+            envm_rdata = $random;
+            envm_ready = $random;
+        end
 
         #1000;
         $finish;

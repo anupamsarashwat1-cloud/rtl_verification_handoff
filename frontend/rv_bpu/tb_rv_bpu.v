@@ -2,19 +2,19 @@
 
 module tb_rv_bpu();
 
-    reg  clk;
-    reg  rst_n;
-    reg  fetch_pc;
-    reg  fetch_valid;
-    wire pred_taken;
-    wire pred_target;
-    wire pred_valid;
-    reg  ex_pc;
-    reg  ex_is_branch;
-    reg  ex_is_jal;
-    reg  ex_taken;
-    reg  ex_target;
-    reg  ex_valid;
+    logic clk;
+    logic rst_n;
+    logic fetch_pc;
+    logic fetch_valid;
+    logic pred_taken;
+    logic pred_target;
+    logic pred_valid;
+    logic ex_pc;
+    logic ex_is_branch;
+    logic ex_is_jal;
+    logic ex_taken;
+    logic ex_target;
+    logic ex_valid;
 
     // DUT Instantiation
     rv_bpu uut (
@@ -33,19 +33,19 @@ module tb_rv_bpu();
         .ex_valid(ex_valid)
     );
 
-    // Clock Generation (138.8 MHz -> ~7.2ns period)
+    // Advanced Clock Generation (138.8 MHz -> ~7.2ns period)
     initial begin
         clk = 0;
-        forever #3.6 clk = ~clk;
     end
 
-    // Initial block for stimulus and VCD dumping
+    always #3.6 clk = ~clk;
+
+    // Main Functional Stimulus Block
     initial begin
         $dumpfile("tb_rv_bpu.vcd");
         $dumpvars(0, tb_rv_bpu);
 
-        // Initialize inputs
-        rst_n = 0;
+        // 1. Initialize all data inputs
         fetch_pc = 0;
         fetch_valid = 0;
         ex_pc = 0;
@@ -55,12 +55,27 @@ module tb_rv_bpu();
         ex_target = 0;
         ex_valid = 0;
 
-        // Reset sequence
+        // 2. Assert Resets
         #10;
-        rst_n = 1;
+        rst_n = 0; // Active low
         #100;
+        // 3. De-assert Resets
+        rst_n = 1;
+        #20;
 
-        // Add manual test stimulus here...
+        // 4. Constrained Random Stimulus Injection
+        // Generating aggressive random toggling to exercise internal logic
+        repeat(500) begin
+            #10;
+            fetch_pc = $random;
+            fetch_valid = $random;
+            ex_pc = $random;
+            ex_is_branch = $random;
+            ex_is_jal = $random;
+            ex_taken = $random;
+            ex_target = $random;
+            ex_valid = $random;
+        end
 
         #1000;
         $finish;

@@ -2,50 +2,50 @@
 
 module tb_usb_otg();
 
-    reg  clk;
-    reg  rst_n;
-    reg  ulpi_clk;
-    wire ulpi_data;
-    reg  ulpi_dir;
-    reg  ulpi_nxt;
-    wire ulpi_stp;
-    wire ulpi_reset;
-    wire m_awvalid;
-    reg  m_awready;
-    wire m_awaddr;
-    wire m_awid;
-    wire m_awlen;
-    wire m_awsize;
-    wire m_wvalid;
-    reg  m_wready;
-    wire m_wdata;
-    wire m_wstrb;
-    wire m_wlast;
-    reg  m_bvalid;
-    wire m_bready;
-    reg  m_bresp;
-    reg  m_bid;
-    wire m_arvalid;
-    reg  m_arready;
-    wire m_araddr;
-    wire m_arid;
-    wire m_arlen;
-    wire m_arsize;
-    reg  m_rvalid;
-    wire m_rready;
-    reg  m_rdata;
-    reg  m_rresp;
-    reg  m_rlast;
-    reg  m_rid;
-    reg  paddr;
-    reg  psel;
-    reg  penable;
-    reg  pwrite;
-    reg  pwdata;
-    wire prdata;
-    wire pready;
-    wire pslverr;
-    wire usb_irq;
+    logic clk;
+    logic rst_n;
+    logic ulpi_clk;
+    logic ulpi_data;
+    logic ulpi_dir;
+    logic ulpi_nxt;
+    logic ulpi_stp;
+    logic ulpi_reset;
+    logic m_awvalid;
+    logic m_awready;
+    logic m_awaddr;
+    logic m_awid;
+    logic m_awlen;
+    logic m_awsize;
+    logic m_wvalid;
+    logic m_wready;
+    logic m_wdata;
+    logic m_wstrb;
+    logic m_wlast;
+    logic m_bvalid;
+    logic m_bready;
+    logic m_bresp;
+    logic m_bid;
+    logic m_arvalid;
+    logic m_arready;
+    logic m_araddr;
+    logic m_arid;
+    logic m_arlen;
+    logic m_arsize;
+    logic m_rvalid;
+    logic m_rready;
+    logic m_rdata;
+    logic m_rresp;
+    logic m_rlast;
+    logic m_rid;
+    logic paddr;
+    logic psel;
+    logic penable;
+    logic pwrite;
+    logic pwdata;
+    logic prdata;
+    logic pready;
+    logic pslverr;
+    logic usb_irq;
 
     // DUT Instantiation
     usb_otg uut (
@@ -95,20 +95,21 @@ module tb_usb_otg();
         .usb_irq(usb_irq)
     );
 
-    // Clock Generation (138.8 MHz -> ~7.2ns period)
+    // Advanced Clock Generation (138.8 MHz -> ~7.2ns period)
     initial begin
         clk = 0;
-        forever #3.6 clk = ~clk;
+        ulpi_clk = 0;
     end
 
-    // Initial block for stimulus and VCD dumping
+    always #3.6 clk = ~clk;
+    always #3.6 ulpi_clk = ~ulpi_clk;
+
+    // Main Functional Stimulus Block
     initial begin
         $dumpfile("tb_usb_otg.vcd");
         $dumpvars(0, tb_usb_otg);
 
-        // Initialize inputs
-        rst_n = 0;
-        ulpi_clk = 0;
+        // 1. Initialize all data inputs
         ulpi_dir = 0;
         ulpi_nxt = 0;
         m_awready = 0;
@@ -128,12 +129,37 @@ module tb_usb_otg();
         pwrite = 0;
         pwdata = 0;
 
-        // Reset sequence
+        // 2. Assert Resets
         #10;
-        rst_n = 1;
+        rst_n = 0; // Active low
         #100;
+        // 3. De-assert Resets
+        rst_n = 1;
+        #20;
 
-        // Add manual test stimulus here...
+        // 4. Constrained Random Stimulus Injection
+        // Generating aggressive random toggling to exercise internal logic
+        repeat(500) begin
+            #10;
+            ulpi_dir = $random;
+            ulpi_nxt = $random;
+            m_awready = $random;
+            m_wready = $random;
+            m_bvalid = $random;
+            m_bresp = $random;
+            m_bid = $random;
+            m_arready = $random;
+            m_rvalid = $random;
+            m_rdata = $random;
+            m_rresp = $random;
+            m_rlast = $random;
+            m_rid = $random;
+            paddr = $random;
+            psel = $random;
+            penable = $random;
+            pwrite = $random;
+            pwdata = $random;
+        end
 
         #1000;
         $finish;

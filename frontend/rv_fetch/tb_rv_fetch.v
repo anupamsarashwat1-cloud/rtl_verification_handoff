@@ -2,21 +2,21 @@
 
 module tb_rv_fetch();
 
-    reg  clk;
-    reg  rst_n;
-    reg  stall;
-    reg  flush;
-    reg  branch_taken;
-    reg  branch_target;
-    wire imem_addr;
-    wire imem_arvalid;
-    reg  imem_arready;
-    reg  imem_rdata;
-    reg  imem_rvalid;
-    reg  imem_rresp;
-    wire pc_out;
-    wire instr_out;
-    wire valid_out;
+    logic clk;
+    logic rst_n;
+    logic stall;
+    logic flush;
+    logic branch_taken;
+    logic branch_target;
+    logic imem_addr;
+    logic imem_arvalid;
+    logic imem_arready;
+    logic imem_rdata;
+    logic imem_rvalid;
+    logic imem_rresp;
+    logic pc_out;
+    logic instr_out;
+    logic valid_out;
 
     // DUT Instantiation
     rv_fetch uut (
@@ -37,19 +37,19 @@ module tb_rv_fetch();
         .valid_out(valid_out)
     );
 
-    // Clock Generation (138.8 MHz -> ~7.2ns period)
+    // Advanced Clock Generation (138.8 MHz -> ~7.2ns period)
     initial begin
         clk = 0;
-        forever #3.6 clk = ~clk;
     end
 
-    // Initial block for stimulus and VCD dumping
+    always #3.6 clk = ~clk;
+
+    // Main Functional Stimulus Block
     initial begin
         $dumpfile("tb_rv_fetch.vcd");
         $dumpvars(0, tb_rv_fetch);
 
-        // Initialize inputs
-        rst_n = 0;
+        // 1. Initialize all data inputs
         stall = 0;
         flush = 0;
         branch_taken = 0;
@@ -59,12 +59,27 @@ module tb_rv_fetch();
         imem_rvalid = 0;
         imem_rresp = 0;
 
-        // Reset sequence
+        // 2. Assert Resets
         #10;
-        rst_n = 1;
+        rst_n = 0; // Active low
         #100;
+        // 3. De-assert Resets
+        rst_n = 1;
+        #20;
 
-        // Add manual test stimulus here...
+        // 4. Constrained Random Stimulus Injection
+        // Generating aggressive random toggling to exercise internal logic
+        repeat(500) begin
+            #10;
+            stall = $random;
+            flush = $random;
+            branch_taken = $random;
+            branch_target = $random;
+            imem_arready = $random;
+            imem_rdata = $random;
+            imem_rvalid = $random;
+            imem_rresp = $random;
+        end
 
         #1000;
         $finish;

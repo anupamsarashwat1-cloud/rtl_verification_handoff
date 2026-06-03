@@ -2,17 +2,17 @@
 
 module tb_plic();
 
-    reg  clk;
-    reg  rst_n;
-    reg  interrupt_sources;
-    reg  psel;
-    reg  penable;
-    reg  pwrite;
-    reg  paddr;
-    reg  pwdata;
-    wire prdata;
-    wire pready;
-    wire irq_targets;
+    logic clk;
+    logic rst_n;
+    logic interrupt_sources;
+    logic psel;
+    logic penable;
+    logic pwrite;
+    logic paddr;
+    logic pwdata;
+    logic prdata;
+    logic pready;
+    logic irq_targets;
 
     // DUT Instantiation
     plic uut (
@@ -29,19 +29,19 @@ module tb_plic();
         .irq_targets(irq_targets)
     );
 
-    // Clock Generation (138.8 MHz -> ~7.2ns period)
+    // Advanced Clock Generation (138.8 MHz -> ~7.2ns period)
     initial begin
         clk = 0;
-        forever #3.6 clk = ~clk;
     end
 
-    // Initial block for stimulus and VCD dumping
+    always #3.6 clk = ~clk;
+
+    // Main Functional Stimulus Block
     initial begin
         $dumpfile("tb_plic.vcd");
         $dumpvars(0, tb_plic);
 
-        // Initialize inputs
-        rst_n = 0;
+        // 1. Initialize all data inputs
         interrupt_sources = 0;
         psel = 0;
         penable = 0;
@@ -49,12 +49,25 @@ module tb_plic();
         paddr = 0;
         pwdata = 0;
 
-        // Reset sequence
+        // 2. Assert Resets
         #10;
-        rst_n = 1;
+        rst_n = 0; // Active low
         #100;
+        // 3. De-assert Resets
+        rst_n = 1;
+        #20;
 
-        // Add manual test stimulus here...
+        // 4. Constrained Random Stimulus Injection
+        // Generating aggressive random toggling to exercise internal logic
+        repeat(500) begin
+            #10;
+            interrupt_sources = $random;
+            psel = $random;
+            penable = $random;
+            pwrite = $random;
+            paddr = $random;
+            pwdata = $random;
+        end
 
         #1000;
         $finish;

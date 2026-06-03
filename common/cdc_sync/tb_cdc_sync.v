@@ -2,10 +2,10 @@
 
 module tb_cdc_sync();
 
-    reg  dst_clk;
-    reg  rst_n;
-    reg  data_in;
-    wire data_out;
+    logic dst_clk;
+    logic rst_n;
+    logic data_in;
+    logic data_out;
 
     // DUT Instantiation
     cdc_sync uut (
@@ -15,22 +15,35 @@ module tb_cdc_sync();
         .data_out(data_out)
     );
 
-    // Initial block for stimulus and VCD dumping
+    // Advanced Clock Generation (138.8 MHz -> ~7.2ns period)
+    initial begin
+        dst_clk = 0;
+    end
+
+    always #3.6 dst_clk = ~dst_clk;
+
+    // Main Functional Stimulus Block
     initial begin
         $dumpfile("tb_cdc_sync.vcd");
         $dumpvars(0, tb_cdc_sync);
 
-        // Initialize inputs
-        dst_clk = 0;
-        rst_n = 0;
+        // 1. Initialize all data inputs
         data_in = 0;
 
-        // Reset sequence
+        // 2. Assert Resets
         #10;
-        rst_n = 1;
+        rst_n = 0; // Active low
         #100;
+        // 3. De-assert Resets
+        rst_n = 1;
+        #20;
 
-        // Add manual test stimulus here...
+        // 4. Constrained Random Stimulus Injection
+        // Generating aggressive random toggling to exercise internal logic
+        repeat(500) begin
+            #10;
+            data_in = $random;
+        end
 
         #1000;
         $finish;

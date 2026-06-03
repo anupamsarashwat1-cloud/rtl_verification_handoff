@@ -2,42 +2,42 @@
 
 module tb_rv_mem();
 
-    reg  clk;
-    reg  rst_n;
-    reg  flush;
-    reg  alu_result;
-    reg  rs2_data;
-    reg  rd_in;
-    reg  funct3;
-    reg  opcode;
-    reg  mem_read;
-    reg  mem_write;
-    reg  reg_write;
-    reg  valid_in;
-    wire dmem_awvalid;
-    reg  dmem_awready;
-    wire dmem_awaddr;
-    wire dmem_wvalid;
-    reg  dmem_wready;
-    wire dmem_wdata;
-    wire dmem_wstrb;
-    reg  dmem_bvalid;
-    wire dmem_bready;
-    wire dmem_arvalid;
-    reg  dmem_arready;
-    wire dmem_araddr;
-    reg  dmem_rvalid;
-    wire dmem_rready;
-    reg  dmem_rdata;
-    reg  dmem_rresp;
-    wire result;
-    wire rd_out;
-    wire reg_write_out;
-    wire valid_out;
-    wire fwd_mem_data;
-    wire fwd_mem_rd;
-    wire fwd_mem_valid;
-    wire mem_stall;
+    logic clk;
+    logic rst_n;
+    logic flush;
+    logic alu_result;
+    logic rs2_data;
+    logic rd_in;
+    logic funct3;
+    logic opcode;
+    logic mem_read;
+    logic mem_write;
+    logic reg_write;
+    logic valid_in;
+    logic dmem_awvalid;
+    logic dmem_awready;
+    logic dmem_awaddr;
+    logic dmem_wvalid;
+    logic dmem_wready;
+    logic dmem_wdata;
+    logic dmem_wstrb;
+    logic dmem_bvalid;
+    logic dmem_bready;
+    logic dmem_arvalid;
+    logic dmem_arready;
+    logic dmem_araddr;
+    logic dmem_rvalid;
+    logic dmem_rready;
+    logic dmem_rdata;
+    logic dmem_rresp;
+    logic result;
+    logic rd_out;
+    logic reg_write_out;
+    logic valid_out;
+    logic fwd_mem_data;
+    logic fwd_mem_rd;
+    logic fwd_mem_valid;
+    logic mem_stall;
 
     // DUT Instantiation
     rv_mem uut (
@@ -79,19 +79,19 @@ module tb_rv_mem();
         .mem_stall(mem_stall)
     );
 
-    // Clock Generation (138.8 MHz -> ~7.2ns period)
+    // Advanced Clock Generation (138.8 MHz -> ~7.2ns period)
     initial begin
         clk = 0;
-        forever #3.6 clk = ~clk;
     end
 
-    // Initial block for stimulus and VCD dumping
+    always #3.6 clk = ~clk;
+
+    // Main Functional Stimulus Block
     initial begin
         $dumpfile("tb_rv_mem.vcd");
         $dumpvars(0, tb_rv_mem);
 
-        // Initialize inputs
-        rst_n = 0;
+        // 1. Initialize all data inputs
         flush = 0;
         alu_result = 0;
         rs2_data = 0;
@@ -110,12 +110,36 @@ module tb_rv_mem();
         dmem_rdata = 0;
         dmem_rresp = 0;
 
-        // Reset sequence
+        // 2. Assert Resets
         #10;
-        rst_n = 1;
+        rst_n = 0; // Active low
         #100;
+        // 3. De-assert Resets
+        rst_n = 1;
+        #20;
 
-        // Add manual test stimulus here...
+        // 4. Constrained Random Stimulus Injection
+        // Generating aggressive random toggling to exercise internal logic
+        repeat(500) begin
+            #10;
+            flush = $random;
+            alu_result = $random;
+            rs2_data = $random;
+            rd_in = $random;
+            funct3 = $random;
+            opcode = $random;
+            mem_read = $random;
+            mem_write = $random;
+            reg_write = $random;
+            valid_in = $random;
+            dmem_awready = $random;
+            dmem_wready = $random;
+            dmem_bvalid = $random;
+            dmem_arready = $random;
+            dmem_rvalid = $random;
+            dmem_rdata = $random;
+            dmem_rresp = $random;
+        end
 
         #1000;
         $finish;

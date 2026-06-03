@@ -59,3 +59,29 @@ graph TD
 1. **Compile**: `iverilog -o sim.vvp axi4_to_ahb.v tb_axi4_to_ahb.v` (Include dependencies using ` -I ../../includes -I` if necessary)
 2. **Simulate**: `vvp sim.vvp`
 3. **View**: `gtkwave tb_axi4_to_ahb.vcd`
+
+## 💉 Injected Stimulus Profile
+An advanced Python DV script has automatically generated a fully functional SystemVerilog testbench for this module. The following aggressive stimulus is applied during simulation:
+
+### Clocks Auto-Toggled:
+- `clk` toggling every 3.6ns (138.8 MHz)
+
+### Reset Sequence:
+- `rst_n` driven to 0 then 1 over 100ns.
+
+### Data Buses Randomized:
+Over 500 consecutive cycles, the following inputs receive constrained `$random` logic values to aggressively exercise datapaths and control flow:
+- `s_awvalid`
+- `s_awaddr`
+- `s_awid`
+- `s_wvalid`
+- `s_wdata`
+- `s_wstrb`
+- `s_bready`
+- `s_arvalid`
+- `s_araddr`
+- `s_arid`
+- `s_rready`
+- `hrdata`
+- `hready`
+- `hresp`

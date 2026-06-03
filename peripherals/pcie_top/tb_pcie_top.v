@@ -2,76 +2,76 @@
 
 module tb_pcie_top();
 
-    reg  pcie_clk;
-    reg  pcie_rst_n;
-    reg  pipe_clk;
-    wire m_awvalid;
-    reg  m_awready;
-    wire m_awaddr;
-    wire m_awid;
-    wire m_awlen;
-    wire m_awsize;
-    wire m_wvalid;
-    reg  m_wready;
-    wire m_wdata;
-    wire m_wstrb;
-    wire m_wlast;
-    reg  m_bvalid;
-    wire m_bready;
-    reg  m_bresp;
-    reg  m_bid;
-    wire m_arvalid;
-    reg  m_arready;
-    wire m_araddr;
-    wire m_arid;
-    wire m_arlen;
-    wire m_arsize;
-    reg  m_rvalid;
-    wire m_rready;
-    reg  m_rdata;
-    reg  m_rresp;
-    reg  m_rlast;
-    reg  m_rid;
-    reg  s_awvalid;
-    wire s_awready;
-    reg  s_awaddr;
-    reg  s_awid;
-    reg  s_awlen;
-    reg  s_awsize;
-    reg  s_wvalid;
-    wire s_wready;
-    reg  s_wdata;
-    reg  s_wstrb;
-    reg  s_wlast;
-    wire s_bvalid;
-    reg  s_bready;
-    wire s_bresp;
-    wire s_bid;
-    reg  s_arvalid;
-    wire s_arready;
-    reg  s_araddr;
-    reg  s_arid;
-    reg  s_arlen;
-    reg  s_arsize;
-    wire s_rvalid;
-    reg  s_rready;
-    wire s_rdata;
-    wire s_rresp;
-    wire s_rlast;
-    wire s_rid;
-    wire pipe_tx_data;
-    wire pipe_tx_datak;
-    reg  pipe_rx_data;
-    reg  pipe_rx_datak;
-    wire pipe_tx_rate;
-    wire pipe_tx_elecidle;
-    wire pipe_tx_compliance;
-    wire pipe_rx_polarity;
-    wire pipe_power_down;
-    reg  pipe_rx_valid;
-    reg  pipe_rx_elecidle;
-    reg  pipe_rx_status;
-    reg  pipe_phy_status;
+    logic pcie_clk;
+    logic pcie_rst_n;
+    logic pipe_clk;
+    logic m_awvalid;
+    logic m_awready;
+    logic m_awaddr;
+    logic m_awid;
+    logic m_awlen;
+    logic m_awsize;
+    logic m_wvalid;
+    logic m_wready;
+    logic m_wdata;
+    logic m_wstrb;
+    logic m_wlast;
+    logic m_bvalid;
+    logic m_bready;
+    logic m_bresp;
+    logic m_bid;
+    logic m_arvalid;
+    logic m_arready;
+    logic m_araddr;
+    logic m_arid;
+    logic m_arlen;
+    logic m_arsize;
+    logic m_rvalid;
+    logic m_rready;
+    logic m_rdata;
+    logic m_rresp;
+    logic m_rlast;
+    logic m_rid;
+    logic s_awvalid;
+    logic s_awready;
+    logic s_awaddr;
+    logic s_awid;
+    logic s_awlen;
+    logic s_awsize;
+    logic s_wvalid;
+    logic s_wready;
+    logic s_wdata;
+    logic s_wstrb;
+    logic s_wlast;
+    logic s_bvalid;
+    logic s_bready;
+    logic s_bresp;
+    logic s_bid;
+    logic s_arvalid;
+    logic s_arready;
+    logic s_araddr;
+    logic s_arid;
+    logic s_arlen;
+    logic s_arsize;
+    logic s_rvalid;
+    logic s_rready;
+    logic s_rdata;
+    logic s_rresp;
+    logic s_rlast;
+    logic s_rid;
+    logic pipe_tx_data;
+    logic pipe_tx_datak;
+    logic pipe_rx_data;
+    logic pipe_rx_datak;
+    logic pipe_tx_rate;
+    logic pipe_tx_elecidle;
+    logic pipe_tx_compliance;
+    logic pipe_rx_polarity;
+    logic pipe_power_down;
+    logic pipe_rx_valid;
+    logic pipe_rx_elecidle;
+    logic pipe_rx_status;
+    logic pipe_phy_status;
 
     // DUT Instantiation
     pcie_top uut (
@@ -147,15 +147,21 @@ module tb_pcie_top();
         .pipe_phy_status(pipe_phy_status)
     );
 
-    // Initial block for stimulus and VCD dumping
+    // Advanced Clock Generation (138.8 MHz -> ~7.2ns period)
+    initial begin
+        pcie_clk = 0;
+        pipe_clk = 0;
+    end
+
+    always #3.6 pcie_clk = ~pcie_clk;
+    always #3.6 pipe_clk = ~pipe_clk;
+
+    // Main Functional Stimulus Block
     initial begin
         $dumpfile("tb_pcie_top.vcd");
         $dumpvars(0, tb_pcie_top);
 
-        // Initialize inputs
-        pcie_clk = 0;
-        pcie_rst_n = 0;
-        pipe_clk = 0;
+        // 1. Initialize all data inputs
         m_awready = 0;
         m_wready = 0;
         m_bvalid = 0;
@@ -190,7 +196,52 @@ module tb_pcie_top();
         pipe_rx_status = 0;
         pipe_phy_status = 0;
 
-        // Add manual test stimulus here...
+        // 2. Assert Resets
+        #10;
+        pcie_rst_n = 0; // Active low
+        #100;
+        // 3. De-assert Resets
+        pcie_rst_n = 1;
+        #20;
+
+        // 4. Constrained Random Stimulus Injection
+        // Generating aggressive random toggling to exercise internal logic
+        repeat(500) begin
+            #10;
+            m_awready = $random;
+            m_wready = $random;
+            m_bvalid = $random;
+            m_bresp = $random;
+            m_bid = $random;
+            m_arready = $random;
+            m_rvalid = $random;
+            m_rdata = $random;
+            m_rresp = $random;
+            m_rlast = $random;
+            m_rid = $random;
+            s_awvalid = $random;
+            s_awaddr = $random;
+            s_awid = $random;
+            s_awlen = $random;
+            s_awsize = $random;
+            s_wvalid = $random;
+            s_wdata = $random;
+            s_wstrb = $random;
+            s_wlast = $random;
+            s_bready = $random;
+            s_arvalid = $random;
+            s_araddr = $random;
+            s_arid = $random;
+            s_arlen = $random;
+            s_arsize = $random;
+            s_rready = $random;
+            pipe_rx_data = $random;
+            pipe_rx_datak = $random;
+            pipe_rx_valid = $random;
+            pipe_rx_elecidle = $random;
+            pipe_rx_status = $random;
+            pipe_phy_status = $random;
+        end
 
         #1000;
         $finish;

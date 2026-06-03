@@ -2,46 +2,46 @@
 
 module tb_l2_cache_top();
 
-    reg  clk;
-    reg  rst_n;
-    reg  s_arvalid;
-    wire s_arready;
-    reg  s_araddr;
-    wire s_rvalid;
-    reg  s_rready;
-    wire s_rdata;
-    wire s_rresp;
-    reg  s_awvalid;
-    wire s_awready;
-    reg  s_awaddr;
-    reg  s_wvalid;
-    wire s_wready;
-    reg  s_wdata;
-    reg  s_wstrb;
-    wire s_bvalid;
-    reg  s_bready;
-    wire s_bresp;
-    wire m_arvalid;
-    reg  m_arready;
-    wire m_araddr;
-    reg  m_rvalid;
-    wire m_rready;
-    reg  m_rdata;
-    reg  m_rresp;
-    wire m_awvalid;
-    reg  m_awready;
-    wire m_awaddr;
-    wire m_wvalid;
-    reg  m_wready;
-    wire m_wdata;
-    wire m_wstrb;
-    reg  m_bvalid;
-    wire m_bready;
-    wire snoop_valid;
-    wire snoop_addr;
-    wire snoop_type;
-    reg  snoop_ack;
-    reg  snoop_data_valid;
+    logic clk;
+    logic rst_n;
+    logic s_arvalid;
+    logic s_arready;
+    logic s_araddr;
+    logic s_rvalid;
+    logic s_rready;
+    logic s_rdata;
+    logic s_rresp;
+    logic s_awvalid;
+    logic s_awready;
+    logic s_awaddr;
+    logic s_wvalid;
+    logic s_wready;
+    logic s_wdata;
+    logic s_wstrb;
+    logic s_bvalid;
+    logic s_bready;
+    logic s_bresp;
+    logic m_arvalid;
+    logic m_arready;
+    logic m_araddr;
+    logic m_rvalid;
+    logic m_rready;
+    logic m_rdata;
+    logic m_rresp;
+    logic m_awvalid;
+    logic m_awready;
+    logic m_awaddr;
+    logic m_wvalid;
+    logic m_wready;
+    logic m_wdata;
+    logic m_wstrb;
+    logic m_bvalid;
+    logic m_bready;
+    logic snoop_valid;
+    logic snoop_addr;
+    logic snoop_type;
+    logic snoop_ack;
+    logic snoop_data_valid;
 
     // DUT Instantiation
     l2_cache_top uut (
@@ -87,19 +87,19 @@ module tb_l2_cache_top();
         .snoop_data_valid(snoop_data_valid)
     );
 
-    // Clock Generation (138.8 MHz -> ~7.2ns period)
+    // Advanced Clock Generation (138.8 MHz -> ~7.2ns period)
     initial begin
         clk = 0;
-        forever #3.6 clk = ~clk;
     end
 
-    // Initial block for stimulus and VCD dumping
+    always #3.6 clk = ~clk;
+
+    // Main Functional Stimulus Block
     initial begin
         $dumpfile("tb_l2_cache_top.vcd");
         $dumpvars(0, tb_l2_cache_top);
 
-        // Initialize inputs
-        rst_n = 0;
+        // 1. Initialize all data inputs
         s_arvalid = 0;
         s_araddr = 0;
         s_rready = 0;
@@ -119,12 +119,37 @@ module tb_l2_cache_top();
         snoop_ack = 0;
         snoop_data_valid = 0;
 
-        // Reset sequence
+        // 2. Assert Resets
         #10;
-        rst_n = 1;
+        rst_n = 0; // Active low
         #100;
+        // 3. De-assert Resets
+        rst_n = 1;
+        #20;
 
-        // Add manual test stimulus here...
+        // 4. Constrained Random Stimulus Injection
+        // Generating aggressive random toggling to exercise internal logic
+        repeat(500) begin
+            #10;
+            s_arvalid = $random;
+            s_araddr = $random;
+            s_rready = $random;
+            s_awvalid = $random;
+            s_awaddr = $random;
+            s_wvalid = $random;
+            s_wdata = $random;
+            s_wstrb = $random;
+            s_bready = $random;
+            m_arready = $random;
+            m_rvalid = $random;
+            m_rdata = $random;
+            m_rresp = $random;
+            m_awready = $random;
+            m_wready = $random;
+            m_bvalid = $random;
+            snoop_ack = $random;
+            snoop_data_valid = $random;
+        end
 
         #1000;
         $finish;

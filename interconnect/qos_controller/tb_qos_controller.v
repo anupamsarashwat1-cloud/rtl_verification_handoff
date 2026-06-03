@@ -2,18 +2,18 @@
 
 module tb_qos_controller();
 
-    reg  clk;
-    reg  rst_n;
-    reg  cfg_base_qos;
-    reg  cfg_boost_qos;
-    reg  cfg_bw_limit;
-    reg  cfg_time_win;
-    reg  m_arvalid;
-    reg  m_arready;
-    reg  m_awvalid;
-    reg  m_awready;
-    wire m_arqos;
-    wire m_awqos;
+    logic clk;
+    logic rst_n;
+    logic [3:0] cfg_base_qos [0:14];
+    logic [3:0] cfg_boost_qos [0:14];
+    logic [15:0] cfg_bw_limit [0:14];
+    logic [15:0] cfg_time_win;
+    logic [14:0] m_arvalid;
+    logic [14:0] m_arready;
+    logic [14:0] m_awvalid;
+    logic [14:0] m_awready;
+    logic [3:0] m_arqos [0:14];
+    logic [3:0] m_awqos [0:14];
 
     // DUT Instantiation
     qos_controller uut (
@@ -31,34 +31,51 @@ module tb_qos_controller();
         .m_awqos(m_awqos)
     );
 
-    // Clock Generation (138.8 MHz -> ~7.2ns period)
+    // Advanced Clock Generation (138.8 MHz -> ~7.2ns period)
     initial begin
         clk = 0;
-        forever #3.6 clk = ~clk;
     end
 
-    // Initial block for stimulus and VCD dumping
+    always #3.6 clk = ~clk;
+
+    // Main Functional Stimulus Block
     initial begin
         $dumpfile("tb_qos_controller.vcd");
         $dumpvars(0, tb_qos_controller);
 
-        // Initialize inputs
-        rst_n = 0;
-        cfg_base_qos = 0;
-        cfg_boost_qos = 0;
-        cfg_bw_limit = 0;
+        // 1. Initialize all data inputs
+        // Unpacked arrays cannot be assigned 0 directly without a loop
+        // cfg_base_qos = 0;
+        // cfg_boost_qos = 0;
+        // cfg_bw_limit = 0;
         cfg_time_win = 0;
         m_arvalid = 0;
         m_arready = 0;
         m_awvalid = 0;
         m_awready = 0;
 
-        // Reset sequence
+        // 2. Assert Resets
         #10;
-        rst_n = 1;
+        rst_n = 0; // Active low
         #100;
+        // 3. De-assert Resets
+        rst_n = 1;
+        #20;
 
-        // Add manual test stimulus here...
+        // 4. Constrained Random Stimulus Injection
+        // Generating aggressive random toggling to exercise internal logic
+        repeat(500) begin
+            #10;
+            // Unpacked arrays cannot be randomized directly without a loop
+            // cfg_base_qos = $random;
+            // cfg_boost_qos = $random;
+            // cfg_bw_limit = $random;
+            cfg_time_win = $random;
+            m_arvalid = $random;
+            m_arready = $random;
+            m_awvalid = $random;
+            m_awready = $random;
+        end
 
         #1000;
         $finish;

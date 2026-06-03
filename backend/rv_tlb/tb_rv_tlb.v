@@ -2,33 +2,33 @@
 
 module tb_rv_tlb();
 
-    reg  clk;
-    reg  rst_n;
-    reg  va_in;
-    reg  asid_in;
-    reg  req_valid;
-    wire pa_out;
-    wire hit;
-    wire perm_r;
-    wire perm_w;
-    wire perm_x;
-    wire perm_u;
-    wire page_fault;
-    reg  fill_valid;
-    reg  fill_va;
-    reg  fill_pa;
-    reg  fill_asid;
-    reg  fill_perm;
-    reg  fill_level;
-    reg  sfence_vma;
-    reg  sfence_asid;
-    reg  sfence_asid_val;
-    reg  sfence_va;
-    reg  sfence_va_val;
-    reg  access_r;
-    reg  access_w;
-    reg  access_x;
-    reg  priv_s;
+    logic clk;
+    logic rst_n;
+    logic va_in;
+    logic asid_in;
+    logic req_valid;
+    logic pa_out;
+    logic hit;
+    logic perm_r;
+    logic perm_w;
+    logic perm_x;
+    logic perm_u;
+    logic page_fault;
+    logic fill_valid;
+    logic fill_va;
+    logic fill_pa;
+    logic fill_asid;
+    logic fill_perm;
+    logic fill_level;
+    logic sfence_vma;
+    logic sfence_asid;
+    logic sfence_asid_val;
+    logic sfence_va;
+    logic sfence_va_val;
+    logic access_r;
+    logic access_w;
+    logic access_x;
+    logic priv_s;
 
     // DUT Instantiation
     rv_tlb uut (
@@ -61,19 +61,19 @@ module tb_rv_tlb();
         .priv_s(priv_s)
     );
 
-    // Clock Generation (138.8 MHz -> ~7.2ns period)
+    // Advanced Clock Generation (138.8 MHz -> ~7.2ns period)
     initial begin
         clk = 0;
-        forever #3.6 clk = ~clk;
     end
 
-    // Initial block for stimulus and VCD dumping
+    always #3.6 clk = ~clk;
+
+    // Main Functional Stimulus Block
     initial begin
         $dumpfile("tb_rv_tlb.vcd");
         $dumpvars(0, tb_rv_tlb);
 
-        // Initialize inputs
-        rst_n = 0;
+        // 1. Initialize all data inputs
         va_in = 0;
         asid_in = 0;
         req_valid = 0;
@@ -93,12 +93,37 @@ module tb_rv_tlb();
         access_x = 0;
         priv_s = 0;
 
-        // Reset sequence
+        // 2. Assert Resets
         #10;
-        rst_n = 1;
+        rst_n = 0; // Active low
         #100;
+        // 3. De-assert Resets
+        rst_n = 1;
+        #20;
 
-        // Add manual test stimulus here...
+        // 4. Constrained Random Stimulus Injection
+        // Generating aggressive random toggling to exercise internal logic
+        repeat(500) begin
+            #10;
+            va_in = $random;
+            asid_in = $random;
+            req_valid = $random;
+            fill_valid = $random;
+            fill_va = $random;
+            fill_pa = $random;
+            fill_asid = $random;
+            fill_perm = $random;
+            fill_level = $random;
+            sfence_vma = $random;
+            sfence_asid = $random;
+            sfence_asid_val = $random;
+            sfence_va = $random;
+            sfence_va_val = $random;
+            access_r = $random;
+            access_w = $random;
+            access_x = $random;
+            priv_s = $random;
+        end
 
         #1000;
         $finish;

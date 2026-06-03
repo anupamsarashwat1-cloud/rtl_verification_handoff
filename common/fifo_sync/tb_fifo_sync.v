@@ -2,15 +2,15 @@
 
 module tb_fifo_sync();
 
-    reg  clk;
-    reg  rst_n;
-    reg  wr_en;
-    reg  rd_en;
-    reg  wr_data;
-    wire rd_data;
-    wire full;
-    wire empty;
-    wire count;
+    logic clk;
+    logic rst_n;
+    logic wr_en;
+    logic rd_en;
+    logic wr_data;
+    logic rd_data;
+    logic full;
+    logic empty;
+    logic count;
 
     // DUT Instantiation
     fifo_sync uut (
@@ -25,29 +25,39 @@ module tb_fifo_sync();
         .count(count)
     );
 
-    // Clock Generation (138.8 MHz -> ~7.2ns period)
+    // Advanced Clock Generation (138.8 MHz -> ~7.2ns period)
     initial begin
         clk = 0;
-        forever #3.6 clk = ~clk;
     end
 
-    // Initial block for stimulus and VCD dumping
+    always #3.6 clk = ~clk;
+
+    // Main Functional Stimulus Block
     initial begin
         $dumpfile("tb_fifo_sync.vcd");
         $dumpvars(0, tb_fifo_sync);
 
-        // Initialize inputs
-        rst_n = 0;
+        // 1. Initialize all data inputs
         wr_en = 0;
         rd_en = 0;
         wr_data = 0;
 
-        // Reset sequence
+        // 2. Assert Resets
         #10;
-        rst_n = 1;
+        rst_n = 0; // Active low
         #100;
+        // 3. De-assert Resets
+        rst_n = 1;
+        #20;
 
-        // Add manual test stimulus here...
+        // 4. Constrained Random Stimulus Injection
+        // Generating aggressive random toggling to exercise internal logic
+        repeat(500) begin
+            #10;
+            wr_en = $random;
+            rd_en = $random;
+            wr_data = $random;
+        end
 
         #1000;
         $finish;
