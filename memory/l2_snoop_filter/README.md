@@ -3,6 +3,8 @@
 ## 📝 Overview
 This directory contains the Verilog source, testbench, and verification instructions for the `l2_snoop_filter` module.
 
+The `l2_snoop_filter` module is a MESI Directory-based snoop filter that tracks L1 D-Cache coherence state for 4 application cores. It maintains strict inclusion using a set-associative directory array (64 sets × 32 ways) holding the MESI state, sharer mask, and tags. It handles crossbar/L2 controller requests, broadcasts snoop requests to L1 caches when necessary (e.g., GetS, GetM, Inv), and aggregates snoop responses to provide hit, dirty, and owner information back to the L2 controller.
+
 ## 🎯 What to Test
 The verification engineer should ensure that:
 1. The module resets correctly and all internal states initialize to safe values.
@@ -12,23 +14,23 @@ The verification engineer should ensure that:
 ## 🔍 GTKWave Signals to Observe
 Add the following key signals to your GTKWave trace for structural inspection:
 ### Inputs
-- `uut.clk`
-- `uut.rst_n`
-- `uut.req_valid`
-- `uut.req_addr`
-- `uut.req_type`
-- `uut.req_core`
-- `uut.snoop_ack`
-- `uut.snoop_data_valid`
+- `uut.clk`: The main system clock driving the sequential logic.
+- `uut.rst_n`: Active-low asynchronous reset signal.
+- `uut.req_valid`: Indicates a valid request from the crossbar/L2 controller.
+- `uut.req_addr`: 40-bit address bus for the request.
+- `uut.req_type`: 2-bit request type (e.g., ReadShared, ReadUnique).
+- `uut.req_core`: 2-bit ID of the core making the request.
+- `uut.snoop_ack`: Bitmask of acknowledgments from the L1 D-Caches.
+- `uut.snoop_data_valid`: Bitmask indicating valid data in the L1 responses.
 
 ### Outputs
-- `uut.snoop_valid`
-- `uut.snoop_addr`
-- `uut.snoop_type`
-- `uut.resp_valid`
-- `uut.resp_hit`
-- `uut.resp_dirty`
-- `uut.resp_owner`
+- `uut.snoop_valid`: Bitmask indicating which L1 caches are being snooped.
+- `uut.snoop_addr`: 40-bit address bus for the snoop request to L1 caches.
+- `uut.snoop_type`: 2-bit snoop request type (e.g., GetS, GetM, Inv).
+- `uut.resp_valid`: Indicates a valid response to the L2 controller.
+- `uut.resp_hit`: Indicates a cache hit in the snoop filter directory.
+- `uut.resp_dirty`: Indicates that the requested line is dirty (Modified state).
+- `uut.resp_owner`: Indicates the core ID that holds the Modified state.
 
 ## 🏗 Structural Block Diagram
 The following Mermaid diagram maps the exact sub-module hierarchy instantiated within `l2_snoop_filter`. Use this to verify that structural boundaries match the behavioral expectations.

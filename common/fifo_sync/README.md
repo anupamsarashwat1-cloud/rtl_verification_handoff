@@ -3,6 +3,8 @@
 ## 📝 Overview
 This directory contains the Verilog source, testbench, and verification instructions for the `fifo_sync` module.
 
+The fifo_sync module implements a synchronous First-In-First-Out (FIFO) memory buffer used to safely queue data within a single clock domain. It uses a parameterized memory depth and width, and calculates the difference between write and read pointers to provide accurate full, empty, and element count status indicators in real-time.
+
 ## 🎯 What to Test
 The verification engineer should ensure that:
 1. The module resets correctly and all internal states initialize to safe values.
@@ -12,17 +14,17 @@ The verification engineer should ensure that:
 ## 🔍 GTKWave Signals to Observe
 Add the following key signals to your GTKWave trace for structural inspection:
 ### Inputs
-- `uut.clk`
-- `uut.rst_n`
-- `uut.wr_en`
-- `uut.rd_en`
-- `uut.wr_data`
+- `uut.clk`: The single system clock driving both read and write operations for the FIFO.
+- `uut.rst_n`: The active-low reset signal that clears internal pointers and count.
+- `uut.wr_en`: The write enable signal indicating valid data should be pushed into the FIFO.
+- `uut.rd_en`: The read enable signal indicating data should be popped from the FIFO.
+- `uut.wr_data`: The input data bus to be written into the FIFO memory.
 
 ### Outputs
-- `uut.rd_data`
-- `uut.full`
-- `uut.empty`
-- `uut.count`
+- `uut.rd_data`: The output data bus providing the value read from the FIFO memory.
+- `uut.full`: The output flag indicating the FIFO has reached its maximum capacity.
+- `uut.empty`: The output flag indicating the FIFO contains no data.
+- `uut.count`: The output bus indicating the current number of elements stored in the FIFO.
 
 ## 🏗 Structural Block Diagram
 The following Mermaid diagram maps the exact sub-module hierarchy instantiated within `fifo_sync`. Use this to verify that structural boundaries match the behavioral expectations.

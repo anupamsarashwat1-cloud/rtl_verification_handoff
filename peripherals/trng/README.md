@@ -3,6 +3,8 @@
 ## 📝 Overview
 This directory contains the Verilog source, testbench, and verification instructions for the `trng` module.
 
+The `trng` module implements a True Random Number Generator based on Free-running Ring Oscillators (FIRO/GARO). It includes a Von Neumann extractor to remove bias and features NIST SP 800-90B health tests (repetition count and adaptive proportion). The module aggregates entropy into a 256-bit accumulator and interfaces via an APB bus for configuration and a hardware DRBG interface for seeding.
+
 ## 🎯 What to Test
 The verification engineer should ensure that:
 1. The module resets correctly and all internal states initialize to safe values.
@@ -12,22 +14,22 @@ The verification engineer should ensure that:
 ## 🔍 GTKWave Signals to Observe
 Add the following key signals to your GTKWave trace for structural inspection:
 ### Inputs
-- `uut.clk`
-- `uut.rst_n`
-- `uut.paddr`
-- `uut.psel`
-- `uut.penable`
-- `uut.pwrite`
-- `uut.pwdata`
-- `uut.trng_ready`
+- `uut.clk`: The main system clock driving the sequential logic.
+- `uut.rst_n`: Active-low asynchronous reset signal.
+- `uut.paddr`: APB slave address bus for register access.
+- `uut.psel`: APB slave select signal.
+- `uut.penable`: APB slave enable signal.
+- `uut.pwrite`: APB slave write enable signal.
+- `uut.pwdata`: APB slave write data bus.
+- `uut.trng_ready`: Hardware interface ready signal indicating readiness to accept entropy.
 
 ### Outputs
-- `uut.prdata`
-- `uut.pready`
-- `uut.pslverr`
-- `uut.trng_entropy`
-- `uut.trng_valid`
-- `uut.trng_irq`
+- `uut.prdata`: APB slave read data bus.
+- `uut.pready`: APB slave ready signal indicating transfer completion.
+- `uut.pslverr`: APB slave error signal indicating transfer failure.
+- `uut.trng_entropy`: 256-bit output entropy data bus.
+- `uut.trng_valid`: Signal indicating that the 256-bit entropy output is valid.
+- `uut.trng_irq`: Interrupt request signal indicating a health test failure.
 
 ## 🏗 Structural Block Diagram
 The following Mermaid diagram maps the exact sub-module hierarchy instantiated within `trng`. Use this to verify that structural boundaries match the behavioral expectations.

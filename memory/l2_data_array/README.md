@@ -3,6 +3,8 @@
 ## 📝 Overview
 This directory contains the Verilog source, testbench, and verification instructions for the `l2_data_array` module.
 
+The `l2_data_array` module is an L2 Cache Data Array that wraps two `sram_32x64_180nm` SRAM macros to provide two memory banks. It manages chip select, write enable, and byte write mask signals for both banks. A registered multiplexer correctly drives read data (`dout`) from the selected bank with a one-cycle latency, which addresses a previously reported LVS floating-net issue.
+
 ## 🎯 What to Test
 The verification engineer should ensure that:
 1. The module resets correctly and all internal states initialize to safe values.
@@ -12,18 +14,18 @@ The verification engineer should ensure that:
 ## 🔍 GTKWave Signals to Observe
 Add the following key signals to your GTKWave trace for structural inspection:
 ### Inputs
-- `uut.clk`
-- `uut.rst_n`
-- `uut.bank_sel`
-- `uut.cs`
-- `uut.we`
-- `uut.wmask`
-- `uut.addr`
-- `uut.din`
+- `uut.clk`: The main system clock driving the sequential logic.
+- `uut.rst_n`: Active-low asynchronous reset signal.
+- `uut.bank_sel`: Selects between bank 0 (0) and bank 1 (1) for read/write operations.
+- `uut.cs`: Chip select signal to activate the data array.
+- `uut.we`: Write enable signal to allow writing into the selected bank.
+- `uut.wmask`: 4-bit byte write mask for partial word writes.
+- `uut.addr`: 6-bit address bus for addressing the 64-deep SRAM macros.
+- `uut.din`: 32-bit write data input.
 
 ### Outputs
-- `uut.dout`
-- `uut.dout_valid`
+- `uut.dout`: 32-bit read data output from the selected SRAM bank.
+- `uut.dout_valid`: Indicates valid read data one cycle after a read request.
 
 ## 🏗 Structural Block Diagram
 The following Mermaid diagram maps the exact sub-module hierarchy instantiated within `l2_data_array`. Use this to verify that structural boundaries match the behavioral expectations.

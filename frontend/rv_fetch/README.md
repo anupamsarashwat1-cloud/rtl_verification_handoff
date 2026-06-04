@@ -3,6 +3,8 @@
 ## 📝 Overview
 This directory contains the Verilog source, testbench, and verification instructions for the `rv_fetch` module.
 
+The rv_fetch module implements the instruction fetch stage of the RISC-V processor. It maintains the program counter (PC) and an FSM that interacts with the instruction memory via an AXI4-Lite read interface to fetch 32-bit instructions. It automatically increments the PC for sequential execution or asynchronously updates it when a branch or jump is taken or a pipeline flush is commanded.
+
 ## 🎯 What to Test
 The verification engineer should ensure that:
 1. The module resets correctly and all internal states initialize to safe values.
@@ -12,23 +14,23 @@ The verification engineer should ensure that:
 ## 🔍 GTKWave Signals to Observe
 Add the following key signals to your GTKWave trace for structural inspection:
 ### Inputs
-- `uut.clk`
-- `uut.rst_n`
-- `uut.stall`
-- `uut.flush`
-- `uut.branch_taken`
-- `uut.branch_target`
-- `uut.imem_arready`
-- `uut.imem_rdata`
-- `uut.imem_rvalid`
-- `uut.imem_rresp`
+- `uut.clk`: The system clock driving the fetch FSM and PC register.
+- `uut.rst_n`: The active-low reset signal that initializes the PC to a default boot address and resets the state machine.
+- `uut.stall`: The control signal to pause instruction fetching and pipeline updates during a hazard.
+- `uut.flush`: The control signal to immediately discard the current fetch operation and reset the state machine.
+- `uut.branch_taken`: A signal from the execution stage indicating a branch or jump was taken, requiring a PC update.
+- `uut.branch_target`: The 64-bit target address to jump to when `branch_taken` is asserted.
+- `uut.imem_arready`: The AXI4-Lite signal indicating the instruction memory is ready to accept a read address.
+- `uut.imem_rdata`: The 32-bit instruction data returned by the instruction memory.
+- `uut.imem_rvalid`: The AXI4-Lite signal indicating the returned instruction data is valid.
+- `uut.imem_rresp`: The AXI4-Lite read response indicating the status of the memory read transaction.
 
 ### Outputs
-- `uut.imem_addr`
-- `uut.imem_arvalid`
-- `uut.pc_out`
-- `uut.instr_out`
-- `uut.valid_out`
+- `uut.imem_addr`: The 64-bit address sent to the instruction memory to fetch the next instruction.
+- `uut.imem_arvalid`: The AXI4-Lite signal indicating a valid read address is being presented.
+- `uut.pc_out`: The program counter of the successfully fetched instruction, passed to the decode stage.
+- `uut.instr_out`: The 32-bit fetched instruction passed down the pipeline.
+- `uut.valid_out`: A flag indicating that the instruction passed to decode is valid.
 
 ## 🏗 Structural Block Diagram
 The following Mermaid diagram maps the exact sub-module hierarchy instantiated within `rv_fetch`. Use this to verify that structural boundaries match the behavioral expectations.

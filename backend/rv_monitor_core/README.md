@@ -3,6 +3,8 @@
 ## 📝 Overview
 This directory contains the Verilog source, testbench, and verification instructions for the `rv_monitor_core` module.
 
+The `rv_monitor_core` module is a 64-bit RV64IMAC core intended for system monitoring, similar to the SiFive E51. It operates in Machine mode only (no MMU) and features a simple 5-stage pipeline integrating `rv_decode` and `rv_execute` stages but omitting the FPU. It interacts directly with tightly-integrated memory or AXI-Lite components using direct AXI interfaces for both instructions and data, bypassing data caching.
+
 ## 🎯 What to Test
 The verification engineer should ensure that:
 1. The module resets correctly and all internal states initialize to safe values.
@@ -12,48 +14,48 @@ The verification engineer should ensure that:
 ## 🔍 GTKWave Signals to Observe
 Add the following key signals to your GTKWave trace for structural inspection:
 ### Inputs
-- `uut.clk`
-- `uut.rst_n`
-- `uut.irq_m_ext`
-- `uut.irq_m_timer`
-- `uut.irq_m_soft`
-- `uut.imem_arready`
-- `uut.imem_rdata`
-- `uut.imem_rvalid`
-- `uut.imem_rresp`
-- `uut.dmem_awready`
-- `uut.dmem_wready`
-- `uut.dmem_bvalid`
-- `uut.dmem_bresp`
-- `uut.dmem_arready`
-- `uut.dmem_rvalid`
-- `uut.dmem_rdata`
-- `uut.dmem_rlast`
-- `uut.dmem_rresp`
-- `uut.halt_req`
-- `uut.resume_req`
+- `uut.clk`: The main system clock driving the sequential logic.
+- `uut.rst_n`: Active-low asynchronous reset signal.
+- `uut.irq_m_ext`: Machine external interrupt.
+- `uut.irq_m_timer`: Machine timer interrupt.
+- `uut.irq_m_soft`: Machine software interrupt.
+- `uut.imem_arready`: AXI4-Lite instruction memory read address ready.
+- `uut.imem_rdata`: AXI4-Lite instruction memory read data.
+- `uut.imem_rvalid`: AXI4-Lite instruction memory read valid.
+- `uut.imem_rresp`: AXI4-Lite instruction memory read response.
+- `uut.dmem_awready`: AXI4 data memory write address ready.
+- `uut.dmem_wready`: AXI4 data memory write data ready.
+- `uut.dmem_bvalid`: AXI4 data memory write response valid.
+- `uut.dmem_bresp`: AXI4 data memory write response.
+- `uut.dmem_arready`: AXI4 data memory read address ready.
+- `uut.dmem_rvalid`: AXI4 data memory read data valid.
+- `uut.dmem_rdata`: AXI4 data memory read data.
+- `uut.dmem_rlast`: AXI4 data memory read last transfer flag.
+- `uut.dmem_rresp`: AXI4 data memory read response.
+- `uut.halt_req`: Debug halt request.
+- `uut.resume_req`: Debug resume request.
 
 ### Outputs
-- `uut.imem_araddr`
-- `uut.imem_arvalid`
-- `uut.dmem_awvalid`
-- `uut.dmem_awaddr`
-- `uut.dmem_awlen`
-- `uut.dmem_awsize`
-- `uut.dmem_awburst`
-- `uut.dmem_wvalid`
-- `uut.dmem_wdata`
-- `uut.dmem_wstrb`
-- `uut.dmem_wlast`
-- `uut.dmem_bready`
-- `uut.dmem_arvalid`
-- `uut.dmem_araddr`
-- `uut.dmem_arlen`
-- `uut.dmem_arsize`
-- `uut.dmem_arburst`
-- `uut.dmem_rready`
-- `uut.hart_halted`
-- `uut.hart_running`
+- `uut.imem_araddr`: AXI4-Lite instruction memory read address.
+- `uut.imem_arvalid`: AXI4-Lite instruction memory read address valid.
+- `uut.dmem_awvalid`: AXI4 data memory write address valid.
+- `uut.dmem_awaddr`: AXI4 data memory write address.
+- `uut.dmem_awlen`: AXI4 data memory write burst length.
+- `uut.dmem_awsize`: AXI4 data memory write burst size.
+- `uut.dmem_awburst`: AXI4 data memory write burst type.
+- `uut.dmem_wvalid`: AXI4 data memory write data valid.
+- `uut.dmem_wdata`: AXI4 data memory write data.
+- `uut.dmem_wstrb`: AXI4 data memory write byte strobe.
+- `uut.dmem_wlast`: AXI4 data memory write last transfer flag.
+- `uut.dmem_bready`: AXI4 data memory write response ready.
+- `uut.dmem_arvalid`: AXI4 data memory read address valid.
+- `uut.dmem_araddr`: AXI4 data memory read address.
+- `uut.dmem_arlen`: AXI4 data memory read burst length.
+- `uut.dmem_arsize`: AXI4 data memory read burst size.
+- `uut.dmem_arburst`: AXI4 data memory read burst type.
+- `uut.dmem_rready`: AXI4 data memory read data ready.
+- `uut.hart_halted`: Debug status indicating the hart is halted.
+- `uut.hart_running`: Debug status indicating the hart is running.
 
 ## 🏗 Structural Block Diagram
 The following Mermaid diagram maps the exact sub-module hierarchy instantiated within `rv_monitor_core`. Use this to verify that structural boundaries match the behavioral expectations.

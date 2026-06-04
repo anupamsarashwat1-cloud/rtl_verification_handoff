@@ -3,6 +3,8 @@
 ## 📝 Overview
 This directory contains the Verilog source, testbench, and verification instructions for the `spi_master` module.
 
+The `spi_master` is a Serial Peripheral Interface (SPI) master controller used to communicate synchronously with up to 4 external slave devices. The module features an APB slave interface for software to configure the SPI clock frequency (`clk_div`), clock polarity (`cpol`), clock phase (`cpha`), and active slave select (`cs_select`). A transaction is initiated by writing to the transmit data register, which activates the internal shift register to serialize data over the `spi_mosi` line while simultaneously sampling incoming data from `spi_miso`. An interrupt (`irq`) is asserted when a byte transfer finishes, providing software with the newly shifted-in data and signaling readiness for the next operation.
+
 ## 🎯 What to Test
 The verification engineer should ensure that:
 1. The module resets correctly and all internal states initialize to safe values.
@@ -12,22 +14,22 @@ The verification engineer should ensure that:
 ## 🔍 GTKWave Signals to Observe
 Add the following key signals to your GTKWave trace for structural inspection:
 ### Inputs
-- `uut.clk`
-- `uut.rst_n`
-- `uut.psel`
-- `uut.penable`
-- `uut.pwrite`
-- `uut.paddr`
-- `uut.pwdata`
-- `uut.spi_miso`
+- `uut.clk`: The main system clock driving the sequential logic.
+- `uut.rst_n`: Active-low asynchronous reset signal.
+- `uut.psel`: APB slave select signal.
+- `uut.penable`: APB enable signal.
+- `uut.pwrite`: APB write control signal.
+- `uut.paddr`: 4-bit APB address bus for register selection.
+- `uut.pwdata`: 32-bit APB write data bus.
+- `uut.spi_miso`: SPI Master In Slave Out (MISO) serial data input from the peripheral.
 
 ### Outputs
-- `uut.prdata`
-- `uut.pready`
-- `uut.spi_clk`
-- `uut.spi_mosi`
-- `uut.spi_csn`
-- `uut.irq`
+- `uut.prdata`: 32-bit APB read data bus.
+- `uut.pready`: APB ready signal for CSR accesses.
+- `uut.spi_clk`: SPI clock output to the peripheral.
+- `uut.spi_mosi`: SPI Master Out Slave In (MOSI) serial data output to the peripheral.
+- `uut.spi_csn`: 4-bit active-low Chip Select signals to address multiple SPI slaves.
+- `uut.irq`: Interrupt request signal pulsed upon transfer completion.
 
 ## 🏗 Structural Block Diagram
 The following Mermaid diagram maps the exact sub-module hierarchy instantiated within `spi_master`. Use this to verify that structural boundaries match the behavioral expectations.

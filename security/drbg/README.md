@@ -3,6 +3,8 @@
 ## 📝 Overview
 This directory contains the Verilog source, testbench, and verification instructions for the `drbg` module.
 
+The `drbg` module implements an HMAC-DRBG (Deterministic Random Bit Generator) based on NIST SP 800-90A using SHA-256. It interfaces with the system via an APB slave interface for configuration and provides random bit sequences. It also interfaces directly with a Hardware True Random Number Generator (TRNG) for seeding entropy, and features an interrupt mechanism to signal when random generation or internal operations complete.
+
 ## 🎯 What to Test
 The verification engineer should ensure that:
 1. The module resets correctly and all internal states initialize to safe values.
@@ -12,22 +14,22 @@ The verification engineer should ensure that:
 ## 🔍 GTKWave Signals to Observe
 Add the following key signals to your GTKWave trace for structural inspection:
 ### Inputs
-- `uut.clk`
-- `uut.rst_n`
-- `uut.paddr`
-- `uut.psel`
-- `uut.penable`
-- `uut.pwrite`
-- `uut.pwdata`
-- `uut.trng_entropy`
-- `uut.trng_valid`
+- `uut.clk`: The main clock signal for the module.
+- `uut.rst_n`: Active-low asynchronous reset signal.
+- `uut.paddr`: APB slave address bus.
+- `uut.psel`: APB slave select signal.
+- `uut.penable`: APB slave enable signal.
+- `uut.pwrite`: APB slave write enable signal.
+- `uut.pwdata`: APB slave write data bus.
+- `uut.trng_entropy`: 256-bit entropy input bus from the hardware TRNG.
+- `uut.trng_valid`: Valid signal indicating fresh entropy from the TRNG.
 
 ### Outputs
-- `uut.prdata`
-- `uut.pready`
-- `uut.pslverr`
-- `uut.trng_ready`
-- `uut.drbg_irq`
+- `uut.prdata`: APB slave read data bus.
+- `uut.pready`: APB slave ready signal.
+- `uut.pslverr`: APB slave error signal.
+- `uut.trng_ready`: Ready signal to the TRNG indicating the DRBG is ready for entropy.
+- `uut.drbg_irq`: Interrupt request signal asserted when an operation is done.
 
 ## 🏗 Structural Block Diagram
 The following Mermaid diagram maps the exact sub-module hierarchy instantiated within `drbg`. Use this to verify that structural boundaries match the behavioral expectations.

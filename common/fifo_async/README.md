@@ -3,6 +3,8 @@
 ## 📝 Overview
 This directory contains the Verilog source, testbench, and verification instructions for the `fifo_async` module.
 
+The fifo_async module is an asynchronous First-In-First-Out (FIFO) buffer that safely transfers data between two independent clock domains. It utilizes a parameterized dual-port memory array for storage and employs Gray-code pointers synchronized across the read and write clock domains to accurately generate full and empty status flags while avoiding metastability issues.
+
 ## 🎯 What to Test
 The verification engineer should ensure that:
 1. The module resets correctly and all internal states initialize to safe values.
@@ -12,18 +14,18 @@ The verification engineer should ensure that:
 ## 🔍 GTKWave Signals to Observe
 Add the following key signals to your GTKWave trace for structural inspection:
 ### Inputs
-- `uut.wr_clk`
-- `uut.wr_rst_n`
-- `uut.wr_en`
-- `uut.wr_data`
-- `uut.rd_clk`
-- `uut.rd_rst_n`
-- `uut.rd_en`
+- `uut.wr_clk`: The write domain clock signal that drives data into the FIFO.
+- `uut.wr_rst_n`: The active-low reset signal for the write clock domain.
+- `uut.wr_en`: The write enable signal that indicates valid data is present on the write data bus.
+- `uut.wr_data`: The input data bus to be pushed into the FIFO.
+- `uut.rd_clk`: The read domain clock signal used to pop data from the FIFO.
+- `uut.rd_rst_n`: The active-low reset signal for the read clock domain.
+- `uut.rd_en`: The read enable signal indicating the read domain is ready to accept data.
 
 ### Outputs
-- `uut.full`
-- `uut.rd_data`
-- `uut.empty`
+- `uut.full`: The output flag indicating the FIFO is full and cannot accept new data.
+- `uut.rd_data`: The output data bus providing the oldest data from the FIFO.
+- `uut.empty`: The output flag indicating the FIFO is empty and has no data available to read.
 
 ## 🏗 Structural Block Diagram
 The following Mermaid diagram maps the exact sub-module hierarchy instantiated within `fifo_async`. Use this to verify that structural boundaries match the behavioral expectations.

@@ -3,6 +3,8 @@
 ## 📝 Overview
 This directory contains the Verilog source, testbench, and verification instructions for the `mmc_controller` module.
 
+The `mmc_controller` module implements an eMMC 5.1 / SD 3.0 Host Controller. It supports an AXI4 Master interface for direct memory access (DMA) block transfers, allowing efficient reading and writing of data. Configuration and status monitoring, including SD Host Controller Standard (SDHC) registers, are accessed via an APB slave interface. It also directly drives the physical SD/eMMC bus pins including clock, command, and data lines.
+
 ## 🎯 What to Test
 The verification engineer should ensure that:
 1. The module resets correctly and all internal states initialize to safe values.
@@ -12,48 +14,48 @@ The verification engineer should ensure that:
 ## 🔍 GTKWave Signals to Observe
 Add the following key signals to your GTKWave trace for structural inspection:
 ### Inputs
-- `uut.clk`
-- `uut.rst_n`
-- `uut.m_awready`
-- `uut.m_wready`
-- `uut.m_bvalid`
-- `uut.m_bresp`
-- `uut.m_bid`
-- `uut.m_arready`
-- `uut.m_rvalid`
-- `uut.m_rdata`
-- `uut.m_rresp`
-- `uut.m_rlast`
-- `uut.m_rid`
-- `uut.paddr`
-- `uut.psel`
-- `uut.penable`
-- `uut.pwrite`
-- `uut.pwdata`
+- `uut.clk`: The main system clock driving the sequential logic.
+- `uut.rst_n`: Active-low asynchronous reset signal.
+- `uut.m_awready`: AXI4 write address ready signal from the slave.
+- `uut.m_wready`: AXI4 write data ready signal from the slave.
+- `uut.m_bvalid`: AXI4 write response valid signal from the slave.
+- `uut.m_bresp`: AXI4 write response status from the slave.
+- `uut.m_bid`: AXI4 write response ID from the slave.
+- `uut.m_arready`: AXI4 read address ready signal from the slave.
+- `uut.m_rvalid`: AXI4 read data valid signal from the slave.
+- `uut.m_rdata`: AXI4 read data bus from the slave.
+- `uut.m_rresp`: AXI4 read response status from the slave.
+- `uut.m_rlast`: AXI4 read last transfer signal from the slave.
+- `uut.m_rid`: AXI4 read ID from the slave.
+- `uut.paddr`: APB slave address bus for register access.
+- `uut.psel`: APB slave select signal.
+- `uut.penable`: APB slave enable signal.
+- `uut.pwrite`: APB slave write enable signal.
+- `uut.pwdata`: APB slave write data bus.
 
 ### Outputs
-- `uut.m_awvalid`
-- `uut.m_awaddr`
-- `uut.m_awid`
-- `uut.m_awlen`
-- `uut.m_awsize`
-- `uut.m_wvalid`
-- `uut.m_wdata`
-- `uut.m_wstrb`
-- `uut.m_wlast`
-- `uut.m_bready`
-- `uut.m_arvalid`
-- `uut.m_araddr`
-- `uut.m_arid`
-- `uut.m_arlen`
-- `uut.m_arsize`
-- `uut.m_rready`
-- `uut.prdata`
-- `uut.pready`
-- `uut.pslverr`
-- `uut.mmc_irq`
-- `uut.sd_clk`
-- `uut.sd_reset_n`
+- `uut.m_awvalid`: AXI4 write address valid signal.
+- `uut.m_awaddr`: AXI4 write address bus.
+- `uut.m_awid`: AXI4 write address ID.
+- `uut.m_awlen`: AXI4 write burst length.
+- `uut.m_awsize`: AXI4 write burst size.
+- `uut.m_wvalid`: AXI4 write data valid signal.
+- `uut.m_wdata`: AXI4 write data bus.
+- `uut.m_wstrb`: AXI4 write strobe bus.
+- `uut.m_wlast`: AXI4 write last transfer signal.
+- `uut.m_bready`: AXI4 write response ready signal.
+- `uut.m_arvalid`: AXI4 read address valid signal.
+- `uut.m_araddr`: AXI4 read address bus.
+- `uut.m_arid`: AXI4 read address ID.
+- `uut.m_arlen`: AXI4 read burst length.
+- `uut.m_arsize`: AXI4 read burst size.
+- `uut.m_rready`: AXI4 read data ready signal.
+- `uut.prdata`: APB slave read data bus.
+- `uut.pready`: APB slave ready signal indicating transfer completion.
+- `uut.pslverr`: APB slave error signal indicating transfer failure.
+- `uut.mmc_irq`: Interrupt request signal from the MMC controller.
+- `uut.sd_clk`: Clock output for the SD/eMMC physical interface.
+- `uut.sd_reset_n`: Active-low reset output for the SD/eMMC physical interface.
 
 ## 🏗 Structural Block Diagram
 The following Mermaid diagram maps the exact sub-module hierarchy instantiated within `mmc_controller`. Use this to verify that structural boundaries match the behavioral expectations.

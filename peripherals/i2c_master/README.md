@@ -3,6 +3,8 @@
 ## 📝 Overview
 This directory contains the Verilog source, testbench, and verification instructions for the `i2c_master` module.
 
+The `i2c_master` is a generic I2C Master Controller that facilitates serial communication with external I2C peripherals. Programmed via an APB slave interface, software can configure the bus clock frequency using a programmable prescaler, and issue discrete byte-level commands (START, STOP, READ, WRITE, ACK). The module implements a finite state machine to correctly sequence the open-drain SCL (clock) and SDA (data) lines while monitoring for slave acknowledgments. Interrupts are generated upon the completion of a transaction or byte transfer to efficiently notify the host processor without continuous polling.
+
 ## 🎯 What to Test
 The verification engineer should ensure that:
 1. The module resets correctly and all internal states initialize to safe values.
@@ -12,18 +14,18 @@ The verification engineer should ensure that:
 ## 🔍 GTKWave Signals to Observe
 Add the following key signals to your GTKWave trace for structural inspection:
 ### Inputs
-- `uut.clk`
-- `uut.rst_n`
-- `uut.psel`
-- `uut.penable`
-- `uut.pwrite`
-- `uut.paddr`
-- `uut.pwdata`
+- `uut.clk`: The main system clock driving the sequential logic.
+- `uut.rst_n`: Active-low asynchronous reset signal.
+- `uut.psel`: APB slave select signal.
+- `uut.penable`: APB enable signal.
+- `uut.pwrite`: APB write control signal.
+- `uut.paddr`: 4-bit APB address bus for register selection.
+- `uut.pwdata`: 32-bit APB write data bus.
 
 ### Outputs
-- `uut.prdata`
-- `uut.pready`
-- `uut.irq`
+- `uut.prdata`: 32-bit APB read data bus.
+- `uut.pready`: APB ready signal for CSR accesses.
+- `uut.irq`: Interrupt request signal triggered on transaction completion.
 
 ## 🏗 Structural Block Diagram
 The following Mermaid diagram maps the exact sub-module hierarchy instantiated within `i2c_master`. Use this to verify that structural boundaries match the behavioral expectations.

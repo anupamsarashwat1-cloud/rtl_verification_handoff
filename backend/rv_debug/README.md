@@ -3,6 +3,8 @@
 ## 📝 Overview
 This directory contains the Verilog source, testbench, and verification instructions for the `rv_debug` module.
 
+The `rv_debug` module implements a JTAG Debug Module conforming to the RISC-V Debug Specification 0.13. It provides an interface between an external debugger and the internal harts via a standard 4-pin JTAG TAP controller. It features Debug Module Interface (DMI) registers, abstract commands for accessing core registers, and system bus access (via an AXI4 master) to read or write memory transparently. Furthermore, the module supports advanced debug operations such as halting, resuming, hardware triggers, and a configurable program buffer for executing complex debug instruction sequences on the core.
+
 ## 🎯 What to Test
 The verification engineer should ensure that:
 1. The module resets correctly and all internal states initialize to safe values.
@@ -12,43 +14,43 @@ The verification engineer should ensure that:
 ## 🔍 GTKWave Signals to Observe
 Add the following key signals to your GTKWave trace for structural inspection:
 ### Inputs
-- `uut.clk`
-- `uut.rst_n`
-- `uut.tck`
-- `uut.tms`
-- `uut.tdi`
-- `uut.hart_halted`
-- `uut.hart_running`
-- `uut.hart_unavail`
-- `uut.reg_rdata`
-- `uut.cmd_done`
-- `uut.cmd_err`
-- `uut.sb_arready`
-- `uut.sb_rvalid`
-- `uut.sb_rdata`
-- `uut.sb_rresp`
-- `uut.sb_awready`
-- `uut.sb_wready`
-- `uut.sb_bvalid`
+- `uut.clk`: The main system clock driving the sequential logic.
+- `uut.rst_n`: Active-low asynchronous reset signal.
+- `uut.tck`: JTAG Test Clock.
+- `uut.tms`: JTAG Test Mode Select.
+- `uut.tdi`: JTAG Test Data In.
+- `uut.hart_halted`: Multi-bit signal indicating which harts are currently halted.
+- `uut.hart_running`: Multi-bit signal indicating which harts are currently running.
+- `uut.hart_unavail`: Multi-bit signal indicating which harts are unavailable.
+- `uut.reg_rdata`: Read data from the hart's GPR/CSR registers.
+- `uut.cmd_done`: Abstract command completion status from the hart.
+- `uut.cmd_err`: Abstract command error status from the hart.
+- `uut.sb_arready`: AXI4 system bus read address ready.
+- `uut.sb_rvalid`: AXI4 system bus read data valid.
+- `uut.sb_rdata`: AXI4 system bus read data.
+- `uut.sb_rresp`: AXI4 system bus read response.
+- `uut.sb_awready`: AXI4 system bus write address ready.
+- `uut.sb_wready`: AXI4 system bus write data ready.
+- `uut.sb_bvalid`: AXI4 system bus write response valid.
 
 ### Outputs
-- `uut.tdo`
-- `uut.halt_req`
-- `uut.resume_req`
-- `uut.reg_sel`
-- `uut.reg_wr`
-- `uut.reg_wdata`
-- `uut.cmd_exec`
-- `uut.sb_arvalid`
-- `uut.sb_araddr`
-- `uut.sb_rready`
-- `uut.sb_awvalid`
-- `uut.sb_awaddr`
-- `uut.sb_wvalid`
-- `uut.sb_wdata`
-- `uut.sb_wstrb`
-- `uut.sb_wlast`
-- `uut.sb_bready`
+- `uut.tdo`: JTAG Test Data Out.
+- `uut.halt_req`: Multi-bit request signal to halt specific harts.
+- `uut.resume_req`: Multi-bit request signal to resume specific harts.
+- `uut.reg_sel`: Address selection for GPR/CSR abstract commands.
+- `uut.reg_wr`: Write enable for GPR/CSR abstract commands.
+- `uut.reg_wdata`: Write data for GPR/CSR abstract commands.
+- `uut.cmd_exec`: Execute signal to trigger an abstract command on the hart.
+- `uut.sb_arvalid`: AXI4 system bus read address valid.
+- `uut.sb_araddr`: AXI4 system bus read address bus.
+- `uut.sb_rready`: AXI4 system bus read data ready.
+- `uut.sb_awvalid`: AXI4 system bus write address valid.
+- `uut.sb_awaddr`: AXI4 system bus write address bus.
+- `uut.sb_wvalid`: AXI4 system bus write data valid.
+- `uut.sb_wdata`: AXI4 system bus write data bus.
+- `uut.sb_wstrb`: AXI4 system bus write byte strobe.
+- `uut.sb_wlast`: AXI4 system bus write last transfer indicator.
+- `uut.sb_bready`: AXI4 system bus write response ready.
 
 ## 🏗 Structural Block Diagram
 The following Mermaid diagram maps the exact sub-module hierarchy instantiated within `rv_debug`. Use this to verify that structural boundaries match the behavioral expectations.

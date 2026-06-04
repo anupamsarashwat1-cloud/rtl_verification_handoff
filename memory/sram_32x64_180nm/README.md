@@ -3,6 +3,8 @@
 ## 📝 Overview
 This directory contains the Verilog source, testbench, and verification instructions for the `sram_32x64_180nm` module.
 
+The `sram_32x64_180nm` module is a behavioral simulation model of an SCL 180nm SRAM macro with a 64x32-bit (256-byte) capacity. It supports synchronous write-first reads and byte-level write masking. This behavioral model is meant to be replaced by a compiled hard macro from the foundry memory compiler during physical implementation.
+
 ## 🎯 What to Test
 The verification engineer should ensure that:
 1. The module resets correctly and all internal states initialize to safe values.
@@ -12,15 +14,15 @@ The verification engineer should ensure that:
 ## 🔍 GTKWave Signals to Observe
 Add the following key signals to your GTKWave trace for structural inspection:
 ### Inputs
-- `uut.clk0`
-- `uut.csb0`
-- `uut.web0`
-- `uut.wmask0`
-- `uut.addr0`
-- `uut.din0`
+- `uut.clk0`: The main clock signal for the SRAM macro.
+- `uut.csb0`: Active-low chip select to enable the SRAM array.
+- `uut.web0`: Active-low write enable signal.
+- `uut.wmask0`: Active-high byte write mask (4 bits) for partial writes.
+- `uut.addr0`: 6-bit address bus corresponding to 64 locations.
+- `uut.din0`: 32-bit data input bus for write operations.
 
 ### Outputs
-- `uut.dout0`
+- `uut.dout0`: 32-bit data output bus for read operations. Must be connected to avoid LVS failures.
 
 ## 🏗 Structural Block Diagram
 The following Mermaid diagram maps the exact sub-module hierarchy instantiated within `sram_32x64_180nm`. Use this to verify that structural boundaries match the behavioral expectations.

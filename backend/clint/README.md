@@ -3,6 +3,8 @@
 ## 📝 Overview
 This directory contains the Verilog source, testbench, and verification instructions for the `clint` module.
 
+The clint (Core-Local Interruptor) module handles machine-level timer and software interrupts for a multi-hart RISC-V system. It implements a 64-bit real-time counter (mtime) and per-hart memory-mapped registers for time comparators (mtimecmp) and software interrupt pending bits (msip). Using an APB slave interface, it provides software access to these registers to generate precise timer interrupts (mtip) and inter-processor software interrupts (msip).
+
 ## 🎯 What to Test
 The verification engineer should ensure that:
 1. The module resets correctly and all internal states initialize to safe values.
@@ -12,19 +14,19 @@ The verification engineer should ensure that:
 ## 🔍 GTKWave Signals to Observe
 Add the following key signals to your GTKWave trace for structural inspection:
 ### Inputs
-- `uut.clk`
-- `uut.rst_n`
-- `uut.psel`
-- `uut.penable`
-- `uut.pwrite`
-- `uut.paddr`
-- `uut.pwdata`
+- `uut.clk`: The system clock driving the real-time counter and the APB slave interface.
+- `uut.rst_n`: The active-low reset signal that initializes the counters and APB registers.
+- `uut.psel`: The APB select signal indicating a valid bus transaction for this module.
+- `uut.penable`: The APB enable signal for the second phase of the bus transfer.
+- `uut.pwrite`: The APB write/read control signal (high for write, low for read).
+- `uut.paddr`: The APB 16-bit address bus to select specific memory-mapped registers.
+- `uut.pwdata`: The APB 32-bit write data bus.
 
 ### Outputs
-- `uut.prdata`
-- `uut.pready`
-- `uut.msip`
-- `uut.mtip`
+- `uut.prdata`: The APB 32-bit read data bus returning register values.
+- `uut.pready`: The APB ready signal, hardwired high for zero-wait state accesses.
+- `uut.msip`: The per-hart Machine Software Interrupt Pending output flags.
+- `uut.mtip`: The per-hart Machine Timer Interrupt Pending output flags.
 
 ## 🏗 Structural Block Diagram
 The following Mermaid diagram maps the exact sub-module hierarchy instantiated within `clint`. Use this to verify that structural boundaries match the behavioral expectations.

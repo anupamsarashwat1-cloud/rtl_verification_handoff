@@ -3,6 +3,8 @@
 ## 📝 Overview
 This directory contains the Verilog source, testbench, and verification instructions for the `uart_16550` module.
 
+The `uart_16550` module is a Multi-Mode UART based on the standard 16550 architecture. It provides support for Local Interconnect Network (LIN), Infrared Data Association (IrDA), and 9-bit data transmission modes. The module interfaces over an APB bus for configuration and provides separated multiplexed pins for standard serial, IrDA, and LIN communications.
+
 ## 🎯 What to Test
 The verification engineer should ensure that:
 1. The module resets correctly and all internal states initialize to safe values.
@@ -12,25 +14,25 @@ The verification engineer should ensure that:
 ## 🔍 GTKWave Signals to Observe
 Add the following key signals to your GTKWave trace for structural inspection:
 ### Inputs
-- `uut.clk`
-- `uut.rst_n`
-- `uut.paddr`
-- `uut.psel`
-- `uut.penable`
-- `uut.pwrite`
-- `uut.pwdata`
-- `uut.rxd`
-- `uut.irda_rx`
-- `uut.lin_rx`
+- `uut.clk`: The main system clock driving the sequential logic.
+- `uut.rst_n`: Active-low asynchronous reset signal.
+- `uut.paddr`: APB slave address bus for register access.
+- `uut.psel`: APB slave select signal.
+- `uut.penable`: APB slave enable signal.
+- `uut.pwrite`: APB slave write enable signal.
+- `uut.pwdata`: APB slave write data bus.
+- `uut.rxd`: Standard serial receive data input pin.
+- `uut.irda_rx`: IrDA receive data input pin.
+- `uut.lin_rx`: LIN receive data input pin.
 
 ### Outputs
-- `uut.prdata`
-- `uut.pready`
-- `uut.pslverr`
-- `uut.uart_irq`
-- `uut.txd`
-- `uut.irda_tx`
-- `uut.lin_tx`
+- `uut.prdata`: APB slave read data bus.
+- `uut.pready`: APB slave ready signal indicating transfer completion.
+- `uut.pslverr`: APB slave error signal indicating transfer failure.
+- `uut.uart_irq`: Interrupt request signal from the UART core.
+- `uut.txd`: Standard serial transmit data output pin.
+- `uut.irda_tx`: IrDA transmit data output pin.
+- `uut.lin_tx`: LIN transmit data output pin.
 
 ## 🏗 Structural Block Diagram
 The following Mermaid diagram maps the exact sub-module hierarchy instantiated within `uart_16550`. Use this to verify that structural boundaries match the behavioral expectations.

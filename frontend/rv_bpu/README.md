@@ -3,6 +3,8 @@
 ## 📝 Overview
 This directory contains the Verilog source, testbench, and verification instructions for the `rv_bpu` module.
 
+The rv_bpu module is an advanced Branch Prediction Unit (BPU) for a RISC-V core, implementing a tournament predictor that dynamically selects between a Gshare global history predictor and a local history predictor using a meta-predictor table. It also includes a 512-entry direct-mapped Branch Target Buffer (BTB) to cache and provide branch target addresses, ultimately minimizing pipeline stalls caused by control flow changes.
+
 ## 🎯 What to Test
 The verification engineer should ensure that:
 1. The module resets correctly and all internal states initialize to safe values.
@@ -12,21 +14,21 @@ The verification engineer should ensure that:
 ## 🔍 GTKWave Signals to Observe
 Add the following key signals to your GTKWave trace for structural inspection:
 ### Inputs
-- `uut.clk`
-- `uut.rst_n`
-- `uut.fetch_pc`
-- `uut.fetch_valid`
-- `uut.ex_pc`
-- `uut.ex_is_branch`
-- `uut.ex_is_jal`
-- `uut.ex_taken`
-- `uut.ex_target`
-- `uut.ex_valid`
+- `uut.clk`: The main system clock driving the sequential logic of the BPU.
+- `uut.rst_n`: The active-low reset signal that initializes all predictor tables and history registers to safe, weakly-biased states.
+- `uut.fetch_pc`: The program counter of the instruction currently being fetched.
+- `uut.fetch_valid`: The signal indicating that a valid instruction fetch is occurring, prompting a prediction.
+- `uut.ex_pc`: The program counter of a branch instruction that has just been resolved in the execution stage.
+- `uut.ex_is_branch`: A flag indicating the resolved instruction in the execute stage is a conditional branch.
+- `uut.ex_is_jal`: A flag indicating the resolved instruction is an unconditional jump (JAL).
+- `uut.ex_taken`: The actual resolved outcome (taken or not taken) of the branch in the execute stage.
+- `uut.ex_target`: The actual resolved target address of the branch or jump.
+- `uut.ex_valid`: A signal validating that the execution stage is providing valid branch resolution data to update the predictors.
 
 ### Outputs
-- `uut.pred_taken`
-- `uut.pred_target`
-- `uut.pred_valid`
+- `uut.pred_taken`: The predicted outcome for the current fetched branch (asserted if predicted taken).
+- `uut.pred_target`: The predicted target address provided by the BTB for a taken branch.
+- `uut.pred_valid`: A flag indicating that a valid prediction was made (e.g., a BTB hit).
 
 ## 🏗 Structural Block Diagram
 The following Mermaid diagram maps the exact sub-module hierarchy instantiated within `rv_bpu`. Use this to verify that structural boundaries match the behavioral expectations.

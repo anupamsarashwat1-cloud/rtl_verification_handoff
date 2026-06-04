@@ -3,6 +3,8 @@
 ## 📝 Overview
 This directory contains the Verilog source, testbench, and verification instructions for the `ddr_phy_if` module.
 
+The `ddr_phy_if` module provides the physical layer (PHY) interface between the DFI 4.0 compliant memory controller and the external DDR4 SDRAM pins. It handles the generation of true differential DDR clocks (`ddr_ck_p`/`n`) at half the system clock frequency and explicitly drives command, address, and data mask pins. Additionally, it accurately models bi-directional data strobe (`ddr_dqs`) and data (`ddr_dq`) tri-state logic, actively driving during write operations and capturing read data on the correct timing edges during read operations.
+
 ## 🎯 What to Test
 The verification engineer should ensure that:
 1. The module resets correctly and all internal states initialize to safe values.
@@ -12,32 +14,32 @@ The verification engineer should ensure that:
 ## 🔍 GTKWave Signals to Observe
 Add the following key signals to your GTKWave trace for structural inspection:
 ### Inputs
-- `uut.clk`
-- `uut.rst_n`
-- `uut.dfi_ck_en`
-- `uut.dfi_cs_n`
-- `uut.dfi_ras_n`
-- `uut.dfi_cas_n`
-- `uut.dfi_we_n`
-- `uut.dfi_bank`
-- `uut.dfi_addr`
-- `uut.dfi_wrdata_valid`
-- `uut.dfi_wrdata`
-- `uut.dfi_wrdata_mask`
+- `uut.clk`: The system clock, running at twice the intended DDR frequency.
+- `uut.rst_n`: Active-low asynchronous reset signal.
+- `uut.dfi_ck_en`: DFI clock enable signal to toggle DDR clocks.
+- `uut.dfi_cs_n`: DFI active-low chip select command.
+- `uut.dfi_ras_n`: DFI active-low row address strobe command.
+- `uut.dfi_cas_n`: DFI active-low column address strobe command.
+- `uut.dfi_we_n`: DFI active-low write enable command.
+- `uut.dfi_bank`: DFI bank address.
+- `uut.dfi_addr`: DFI row/column multiplexed address.
+- `uut.dfi_wrdata_valid`: DFI write data valid signal indicating a write phase.
+- `uut.dfi_wrdata`: DFI write data bus to be driven onto DQ.
+- `uut.dfi_wrdata_mask`: DFI write data mask to be driven onto DM.
 
 ### Outputs
-- `uut.dfi_rddata`
-- `uut.dfi_rddata_valid`
-- `uut.ddr_ck_p`
-- `uut.ddr_ck_n`
-- `uut.ddr_cke`
-- `uut.ddr_cs_n`
-- `uut.ddr_ras_n`
-- `uut.ddr_cas_n`
-- `uut.ddr_we_n`
-- `uut.ddr_ba`
-- `uut.ddr_addr`
-- `uut.ddr_dm`
+- `uut.dfi_rddata`: DFI read data bus captured from the DQ pins.
+- `uut.dfi_rddata_valid`: DFI read data valid flag indicating successful read capture.
+- `uut.ddr_ck_p`: Physical differential DDR4 clock (positive).
+- `uut.ddr_ck_n`: Physical differential DDR4 clock (negative).
+- `uut.ddr_cke`: Physical DDR4 clock enable pin.
+- `uut.ddr_cs_n`: Physical DDR4 chip select pin.
+- `uut.ddr_ras_n`: Physical DDR4 row address strobe pin.
+- `uut.ddr_cas_n`: Physical DDR4 column address strobe pin.
+- `uut.ddr_we_n`: Physical DDR4 write enable pin.
+- `uut.ddr_ba`: Physical DDR4 bank address pins.
+- `uut.ddr_addr`: Physical DDR4 multiplexed address pins.
+- `uut.ddr_dm`: Physical DDR4 data mask pins.
 
 ## 🏗 Structural Block Diagram
 The following Mermaid diagram maps the exact sub-module hierarchy instantiated within `ddr_phy_if`. Use this to verify that structural boundaries match the behavioral expectations.

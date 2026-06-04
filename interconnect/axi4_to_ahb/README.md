@@ -3,6 +3,8 @@
 ## 📝 Overview
 This directory contains the Verilog source, testbench, and verification instructions for the `axi4_to_ahb` module.
 
+The `axi4_to_ahb` module acts as a bridge translating AXI4-Lite transactions to AHB3-Lite transfers. It employs a state machine to decode AXI read and write requests and sequence the corresponding AHB address and data phases seamlessly. It actively responds with AXI ready signals based on AHB bus conditions, returning appropriate responses (e.g., `s_bresp`, `s_rresp`) and read data back to the AXI master upon transfer completion.
+
 ## 🎯 What to Test
 The verification engineer should ensure that:
 1. The module resets correctly and all internal states initialize to safe values.
@@ -12,40 +14,40 @@ The verification engineer should ensure that:
 ## 🔍 GTKWave Signals to Observe
 Add the following key signals to your GTKWave trace for structural inspection:
 ### Inputs
-- `uut.clk`
-- `uut.rst_n`
-- `uut.s_awvalid`
-- `uut.s_awaddr`
-- `uut.s_awid`
-- `uut.s_wvalid`
-- `uut.s_wdata`
-- `uut.s_wstrb`
-- `uut.s_bready`
-- `uut.s_arvalid`
-- `uut.s_araddr`
-- `uut.s_arid`
-- `uut.s_rready`
-- `uut.hrdata`
-- `uut.hready`
-- `uut.hresp`
+- `uut.clk`: The main system clock driving the sequential state machine.
+- `uut.rst_n`: Active-low asynchronous reset signal.
+- `uut.s_awvalid`: AXI4-Lite write address valid signal.
+- `uut.s_awaddr`: AXI4-Lite 40-bit write address bus.
+- `uut.s_awid`: AXI4-Lite write address ID.
+- `uut.s_wvalid`: AXI4-Lite write data valid signal.
+- `uut.s_wdata`: AXI4-Lite write data bus.
+- `uut.s_wstrb`: AXI4-Lite write data strobe.
+- `uut.s_bready`: AXI4-Lite write response ready signal.
+- `uut.s_arvalid`: AXI4-Lite read address valid signal.
+- `uut.s_araddr`: AXI4-Lite 40-bit read address bus.
+- `uut.s_arid`: AXI4-Lite read address ID.
+- `uut.s_rready`: AXI4-Lite read data ready signal.
+- `uut.hrdata`: AHB3-Lite 32-bit read data bus from the peripheral.
+- `uut.hready`: AHB3-Lite ready signal indicating transfer completion.
+- `uut.hresp`: AHB3-Lite response signal from the peripheral.
 
 ### Outputs
-- `uut.s_awready`
-- `uut.s_wready`
-- `uut.s_bvalid`
-- `uut.s_bresp`
-- `uut.s_bid`
-- `uut.s_arready`
-- `uut.s_rvalid`
-- `uut.s_rdata`
-- `uut.s_rresp`
-- `uut.s_rlast`
-- `uut.haddr`
-- `uut.hwrite`
-- `uut.htrans`
-- `uut.hsize`
-- `uut.hburst`
-- `uut.hwdata`
+- `uut.s_awready`: AXI4-Lite write address ready signal.
+- `uut.s_wready`: AXI4-Lite write data ready signal.
+- `uut.s_bvalid`: AXI4-Lite write response valid signal.
+- `uut.s_bresp`: AXI4-Lite write response signal.
+- `uut.s_bid`: AXI4-Lite write response ID.
+- `uut.s_arready`: AXI4-Lite read address ready signal.
+- `uut.s_rvalid`: AXI4-Lite read data valid signal.
+- `uut.s_rdata`: AXI4-Lite read data bus.
+- `uut.s_rresp`: AXI4-Lite read response signal.
+- `uut.s_rlast`: AXI4-Lite read last signal.
+- `uut.haddr`: AHB3-Lite 32-bit address bus.
+- `uut.hwrite`: AHB3-Lite write control signal (1 for write, 0 for read).
+- `uut.htrans`: AHB3-Lite transfer type (e.g., NONSEQ).
+- `uut.hsize`: AHB3-Lite transfer size.
+- `uut.hburst`: AHB3-Lite burst type.
+- `uut.hwdata`: AHB3-Lite 32-bit write data bus.
 
 ## 🏗 Structural Block Diagram
 The following Mermaid diagram maps the exact sub-module hierarchy instantiated within `axi4_to_ahb`. Use this to verify that structural boundaries match the behavioral expectations.

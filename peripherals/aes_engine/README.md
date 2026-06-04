@@ -3,6 +3,8 @@
 ## 📝 Overview
 This directory contains the Verilog source, testbench, and verification instructions for the `aes_engine` module.
 
+The `aes_engine` is a hardware accelerator that implements the Advanced Encryption Standard (AES) algorithm with a 256-bit key size. It supports multiple block cipher modes of operation, including ECB, CBC, CTR, and GCM, enabling versatile cryptographic operations such as authenticated encryption. The module interfaces with the system via an APB slave port for configuration (setting modes, keys, initialization vectors, and handling status/interrupts) and utilizes AXI4-Stream interfaces for high-throughput plaintext and ciphertext data movement. Under the hood, it processes 128-bit blocks through 14 encryption rounds, managing state transformations and recursive mode operations like IV XORing for CBC.
+
 ## 🎯 What to Test
 The verification engineer should ensure that:
 1. The module resets correctly and all internal states initialize to safe values.
@@ -12,27 +14,27 @@ The verification engineer should ensure that:
 ## 🔍 GTKWave Signals to Observe
 Add the following key signals to your GTKWave trace for structural inspection:
 ### Inputs
-- `uut.clk`
-- `uut.rst_n`
-- `uut.paddr`
-- `uut.psel`
-- `uut.penable`
-- `uut.pwrite`
-- `uut.pwdata`
-- `uut.s_axis_tdata`
-- `uut.s_axis_tvalid`
-- `uut.s_axis_tlast`
-- `uut.m_axis_tready`
+- `uut.clk`: The main system clock driving the sequential logic.
+- `uut.rst_n`: Active-low asynchronous reset signal.
+- `uut.paddr`: 32-bit APB address bus for accessing internal registers (control, keys, IVs).
+- `uut.psel`: APB slave select signal indicating the module is targeted.
+- `uut.penable`: APB enable signal used to time transfers.
+- `uut.pwrite`: APB write control signal (1 for write, 0 for read).
+- `uut.pwdata`: 32-bit APB write data bus.
+- `uut.s_axis_tdata`: 32-bit AXI4-Stream input data (plaintext or ciphertext).
+- `uut.s_axis_tvalid`: AXI4-Stream valid signal indicating valid input data is available.
+- `uut.s_axis_tlast`: AXI4-Stream last signal marking the end of a data packet.
+- `uut.m_axis_tready`: AXI4-Stream ready signal from the downstream receiver.
 
 ### Outputs
-- `uut.prdata`
-- `uut.pready`
-- `uut.pslverr`
-- `uut.s_axis_tready`
-- `uut.m_axis_tdata`
-- `uut.m_axis_tvalid`
-- `uut.m_axis_tlast`
-- `uut.aes_irq`
+- `uut.prdata`: 32-bit APB read data bus for returning register values.
+- `uut.pready`: APB ready signal indicating the completion of a transfer.
+- `uut.pslverr`: APB slave error signal indicating a transfer failure.
+- `uut.s_axis_tready`: AXI4-Stream ready signal indicating the engine can accept input data.
+- `uut.m_axis_tdata`: 32-bit AXI4-Stream output data (ciphertext or plaintext).
+- `uut.m_axis_tvalid`: AXI4-Stream valid signal indicating the output data is valid.
+- `uut.m_axis_tlast`: AXI4-Stream last signal marking the end of an output data packet.
+- `uut.aes_irq`: Interrupt request signal indicating encryption/decryption completion.
 
 ## 🏗 Structural Block Diagram
 The following Mermaid diagram maps the exact sub-module hierarchy instantiated within `aes_engine`. Use this to verify that structural boundaries match the behavioral expectations.

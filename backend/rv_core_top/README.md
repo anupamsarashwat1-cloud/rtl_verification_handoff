@@ -3,6 +3,8 @@
 ## 📝 Overview
 This directory contains the Verilog source, testbench, and verification instructions for the `rv_core_top` module.
 
+The `rv_core_top` module is the top-level integration of the SMVDU-TITAN-X RV64GC core. It instantiates and connects key microarchitectural blocks including the Integer Pipeline (fetch, decode, execute stages), Floating-Point Unit (FPU), Memory Management Units (MMU) for instruction and data, Instruction Cache (I-Cache), Data Cache (D-Cache), and Physical Memory Protection (PMP). It features AXI4 master interfaces for instruction fetch and data memory access (including page table walks), L2 cache snoop ports for coherency, and debug control signals to interface with the JTAG Debug Module.
+
 ## 🎯 What to Test
 The verification engineer should ensure that:
 1. The module resets correctly and all internal states initialize to safe values.
@@ -12,60 +14,60 @@ The verification engineer should ensure that:
 ## 🔍 GTKWave Signals to Observe
 Add the following key signals to your GTKWave trace for structural inspection:
 ### Inputs
-- `uut.clk`
-- `uut.rst_n`
-- `uut.irq_m_ext`
-- `uut.irq_m_timer`
-- `uut.irq_m_soft`
-- `uut.imem_arready`
-- `uut.imem_rvalid`
-- `uut.imem_rdata`
-- `uut.imem_rlast`
-- `uut.imem_rresp`
-- `uut.dmem_awready`
-- `uut.dmem_wready`
-- `uut.dmem_bvalid`
-- `uut.dmem_bresp`
-- `uut.dmem_arready`
-- `uut.dmem_rvalid`
-- `uut.dmem_rdata`
-- `uut.dmem_rlast`
-- `uut.dmem_rresp`
-- `uut.snoop_valid`
-- `uut.snoop_addr`
-- `uut.snoop_type`
-- `uut.halt_req`
-- `uut.resume_req`
+- `uut.clk`: The main system clock driving the sequential logic.
+- `uut.rst_n`: Active-low asynchronous reset signal.
+- `uut.irq_m_ext`: External machine-level interrupt request.
+- `uut.irq_m_timer`: Machine-level timer interrupt request.
+- `uut.irq_m_soft`: Machine-level software interrupt request.
+- `uut.imem_arready`: AXI4 instruction memory read address ready.
+- `uut.imem_rvalid`: AXI4 instruction memory read data valid.
+- `uut.imem_rdata`: AXI4 instruction memory read data bus (64-bit).
+- `uut.imem_rlast`: AXI4 instruction memory read last transfer indicator.
+- `uut.imem_rresp`: AXI4 instruction memory read response code.
+- `uut.dmem_awready`: AXI4 data memory write address ready.
+- `uut.dmem_wready`: AXI4 data memory write data ready.
+- `uut.dmem_bvalid`: AXI4 data memory write response valid.
+- `uut.dmem_bresp`: AXI4 data memory write response code.
+- `uut.dmem_arready`: AXI4 data memory read address ready.
+- `uut.dmem_rvalid`: AXI4 data memory read data valid.
+- `uut.dmem_rdata`: AXI4 data memory read data bus (64-bit).
+- `uut.dmem_rlast`: AXI4 data memory read last transfer indicator.
+- `uut.dmem_rresp`: AXI4 data memory read response code.
+- `uut.snoop_valid`: L2 snoop port valid signal indicating a coherence request.
+- `uut.snoop_addr`: L2 snoop port address for the coherence request.
+- `uut.snoop_type`: L2 snoop port request type (e.g., GetS, GetM, Inv).
+- `uut.halt_req`: Debug request signal to halt the hart.
+- `uut.resume_req`: Debug request signal to resume the hart.
 
 ### Outputs
-- `uut.imem_arvalid`
-- `uut.imem_araddr`
-- `uut.imem_arlen`
-- `uut.imem_arsize`
-- `uut.imem_arburst`
-- `uut.imem_rready`
-- `uut.dmem_awvalid`
-- `uut.dmem_awaddr`
-- `uut.dmem_awlen`
-- `uut.dmem_awsize`
-- `uut.dmem_awburst`
-- `uut.dmem_wvalid`
-- `uut.dmem_wdata`
-- `uut.dmem_wstrb`
-- `uut.dmem_wlast`
-- `uut.dmem_bready`
-- `uut.dmem_arvalid`
-- `uut.dmem_araddr`
-- `uut.dmem_arlen`
-- `uut.dmem_arsize`
-- `uut.dmem_arburst`
-- `uut.dmem_arlock`
-- `uut.dmem_rready`
-- `uut.snoop_ack`
-- `uut.snoop_data_valid`
-- `uut.snoop_data`
-- `uut.hart_halted`
-- `uut.hart_running`
+- `uut.imem_arvalid`: AXI4 instruction memory read address valid.
+- `uut.imem_araddr`: AXI4 instruction memory read address bus (40-bit).
+- `uut.imem_arlen`: AXI4 instruction memory read burst length.
+- `uut.imem_arsize`: AXI4 instruction memory read burst size.
+- `uut.imem_arburst`: AXI4 instruction memory read burst type.
+- `uut.imem_rready`: AXI4 instruction memory read data ready.
+- `uut.dmem_awvalid`: AXI4 data memory write address valid.
+- `uut.dmem_awaddr`: AXI4 data memory write address bus (40-bit).
+- `uut.dmem_awlen`: AXI4 data memory write burst length.
+- `uut.dmem_awsize`: AXI4 data memory write burst size.
+- `uut.dmem_awburst`: AXI4 data memory write burst type.
+- `uut.dmem_wvalid`: AXI4 data memory write data valid.
+- `uut.dmem_wdata`: AXI4 data memory write data bus (64-bit).
+- `uut.dmem_wstrb`: AXI4 data memory write byte strobe.
+- `uut.dmem_wlast`: AXI4 data memory write last transfer indicator.
+- `uut.dmem_bready`: AXI4 data memory write response ready.
+- `uut.dmem_arvalid`: AXI4 data memory read address valid.
+- `uut.dmem_araddr`: AXI4 data memory read address bus (40-bit).
+- `uut.dmem_arlen`: AXI4 data memory read burst length.
+- `uut.dmem_arsize`: AXI4 data memory read burst size.
+- `uut.dmem_arburst`: AXI4 data memory read burst type.
+- `uut.dmem_arlock`: AXI4 data memory read lock for exclusive access (LR/SC).
+- `uut.dmem_rready`: AXI4 data memory read data ready.
+- `uut.snoop_ack`: L2 snoop port acknowledge signal.
+- `uut.snoop_data_valid`: L2 snoop port response data valid.
+- `uut.snoop_data`: L2 snoop port response data bus (512-bit).
+- `uut.hart_halted`: Debug status signal indicating the hart is halted.
+- `uut.hart_running`: Debug status signal indicating the hart is running.
 
 ## 🏗 Structural Block Diagram
 The following Mermaid diagram maps the exact sub-module hierarchy instantiated within `rv_core_top`. Use this to verify that structural boundaries match the behavioral expectations.

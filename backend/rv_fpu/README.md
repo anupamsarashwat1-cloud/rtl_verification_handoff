@@ -3,6 +3,8 @@
 ## 📝 Overview
 This directory contains the Verilog source, testbench, and verification instructions for the `rv_fpu` module.
 
+The `rv_fpu` module is a fully IEEE 754-2008 compliant Floating Point Unit supporting both single (F) and double (D) precision operations. It features a 4-stage pipeline (Unpack/Align, Mantissa Operation, Normalize, Pack/Round) utilizing a shared datapath for SP and DP. It handles arithmetic (FADD/FSUB/FMUL/FDIV/FSQRT/FMA), comparisons (FCMP), conversions (FCVT), and min/max operations, while accurately managing special cases like NaNs, infinities, and all five standard rounding modes (RNE, RTZ, RDN, RUP, RMM) plus dynamic rounding via CSR.
+
 ## 🎯 What to Test
 The verification engineer should ensure that:
 1. The module resets correctly and all internal states initialize to safe values.
@@ -12,25 +14,25 @@ The verification engineer should ensure that:
 ## 🔍 GTKWave Signals to Observe
 Add the following key signals to your GTKWave trace for structural inspection:
 ### Inputs
-- `uut.clk`
-- `uut.rst_n`
-- `uut.fop`
-- `uut.fmt`
-- `uut.rm`
-- `uut.valid_in`
-- `uut.fp_src1`
-- `uut.fp_src2`
-- `uut.fp_src3`
-- `uut.int_src`
-- `uut.frm_csr`
+- `uut.clk`: The main system clock driving the sequential logic.
+- `uut.rst_n`: Active-low asynchronous reset signal.
+- `uut.fop`: Floating-point operation code from the instruction decode.
+- `uut.fmt`: Precision format selector (e.g., Single or Double).
+- `uut.rm`: Rounding mode specified in the instruction.
+- `uut.valid_in`: Valid signal indicating a new FP instruction.
+- `uut.fp_src1`: Floating-point source register 1 data.
+- `uut.fp_src2`: Floating-point source register 2 data.
+- `uut.fp_src3`: Floating-point source register 3 data (used for FMA).
+- `uut.int_src`: Integer source data for FCVT conversions.
+- `uut.frm_csr`: Dynamic rounding mode from the Floating-Point Control and Status Register.
 
 ### Outputs
-- `uut.fp_result`
-- `uut.result_valid`
-- `uut.fflags`
-- `uut.fpu_done`
-- `uut.int_result`
-- `uut.int_result_valid`
+- `uut.fp_result`: The computed floating-point result.
+- `uut.result_valid`: Valid signal indicating the FP result is ready.
+- `uut.fflags`: Floating-point exception flags (NV, DZ, OF, UF, NX).
+- `uut.fpu_done`: Handshake signal indicating the FPU pipeline has completed the instruction.
+- `uut.int_result`: Integer result for FMV.X.W/D or FCMP operations.
+- `uut.int_result_valid`: Valid signal indicating the integer result is ready.
 
 ## 🏗 Structural Block Diagram
 The following Mermaid diagram maps the exact sub-module hierarchy instantiated within `rv_fpu`. Use this to verify that structural boundaries match the behavioral expectations.

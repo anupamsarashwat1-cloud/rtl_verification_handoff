@@ -3,6 +3,8 @@
 ## 📝 Overview
 This directory contains the Verilog source, testbench, and verification instructions for the `BUFX4` module.
 
+The BUFX4 module is a basic buffer component that acts as a simple pass-through for digital signals. It takes a single input signal and assigns it directly to its output, often used in synthesis and physical design to introduce a slight delay or to increase the drive strength of a net.
+
 ## 🎯 What to Test
 The verification engineer should ensure that:
 1. The module resets correctly and all internal states initialize to safe values.
@@ -12,10 +14,10 @@ The verification engineer should ensure that:
 ## 🔍 GTKWave Signals to Observe
 Add the following key signals to your GTKWave trace for structural inspection:
 ### Inputs
-- `uut.A`
+- `uut.A`: The single-bit input signal to the buffer.
 
 ### Outputs
-- `uut.Y`
+- `uut.Y`: The single-bit output signal, directly reflecting the state of the input signal.
 
 ## 🏗 Structural Block Diagram
 The following Mermaid diagram maps the exact sub-module hierarchy instantiated within `BUFX4`. Use this to verify that structural boundaries match the behavioral expectations.

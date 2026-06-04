@@ -3,6 +3,8 @@
 ## 📝 Overview
 This directory contains the Verilog source, testbench, and verification instructions for the `plic` module.
 
+The plic (Platform-Level Interrupt Controller) module manages global asynchronous external interrupts across the SoC and routes them to multiple hart targets (e.g., machine and supervisor modes). It features a priority encoder that evaluates pending interrupts from up to 186 sources against per-target thresholds and enables. The configuration and interrupt claim/complete processes are managed via a memory-mapped APB slave interface.
+
 ## 🎯 What to Test
 The verification engineer should ensure that:
 1. The module resets correctly and all internal states initialize to safe values.
@@ -12,19 +14,19 @@ The verification engineer should ensure that:
 ## 🔍 GTKWave Signals to Observe
 Add the following key signals to your GTKWave trace for structural inspection:
 ### Inputs
-- `uut.clk`
-- `uut.rst_n`
-- `uut.interrupt_sources`
-- `uut.psel`
-- `uut.penable`
-- `uut.pwrite`
-- `uut.paddr`
-- `uut.pwdata`
+- `uut.clk`: The system clock driving the APB interface and pending interrupt registers.
+- `uut.rst_n`: The active-low reset signal initializing all priorities, enables, and thresholds.
+- `uut.interrupt_sources`: The bit-vector of raw external interrupt requests from the platform.
+- `uut.psel`: The APB select signal for configuring the PLIC registers.
+- `uut.penable`: The APB enable signal for the bus transfer phase.
+- `uut.pwrite`: The APB control signal specifying a read or write operation.
+- `uut.paddr`: The APB 24-bit address bus addressing the PLIC memory map.
+- `uut.pwdata`: The APB 32-bit write data bus for setting configurations and claiming interrupts.
 
 ### Outputs
-- `uut.prdata`
-- `uut.pready`
-- `uut.irq_targets`
+- `uut.prdata`: The APB 32-bit read data bus for retrieving configurations and identifying the highest priority pending interrupt.
+- `uut.pready`: The APB ready signal, always asserted for zero-wait access.
+- `uut.irq_targets`: The per-target (hart/privilege mode) external interrupt notification flags.
 
 ## 🏗 Structural Block Diagram
 The following Mermaid diagram maps the exact sub-module hierarchy instantiated within `plic`. Use this to verify that structural boundaries match the behavioral expectations.

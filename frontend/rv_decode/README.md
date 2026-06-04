@@ -3,6 +3,8 @@
 ## 📝 Overview
 This directory contains the Verilog source, testbench, and verification instructions for the `rv_decode` module.
 
+The rv_decode module implements the instruction decode and register file read stage for the RV64I architecture. It takes a 32-bit instruction from the fetch stage, extracts fields (opcode, registers, immediate), and combinationally decodes it into control signals (ALU operation, memory read/write, branch types) and a 64-bit immediate. The stage also houses the 32x64-bit integer register file, handling synchronous writebacks and forwarding the read data to pipeline registers for the execution stage.
+
 ## 🎯 What to Test
 The verification engineer should ensure that:
 1. The module resets correctly and all internal states initialize to safe values.
@@ -12,36 +14,36 @@ The verification engineer should ensure that:
 ## 🔍 GTKWave Signals to Observe
 Add the following key signals to your GTKWave trace for structural inspection:
 ### Inputs
-- `uut.clk`
-- `uut.rst_n`
-- `uut.stall`
-- `uut.flush`
-- `uut.pc_in`
-- `uut.instr_in`
-- `uut.valid_in`
-- `uut.wb_rd`
-- `uut.wb_data`
-- `uut.wb_we`
+- `uut.clk`: The system clock driving the pipeline registers and register file write port.
+- `uut.rst_n`: The active-low reset signal that clears pipeline registers and initializes the register file to zero.
+- `uut.stall`: A control signal from the hazard unit to freeze the pipeline state in this stage.
+- `uut.flush`: A control signal to clear the pipeline registers (inserting NOPs) when a branch misprediction occurs.
+- `uut.pc_in`: The program counter of the instruction currently being decoded, forwarded from fetch.
+- `uut.instr_in`: The raw 32-bit instruction fetched from memory to be decoded.
+- `uut.valid_in`: A flag indicating the data coming from the fetch stage is valid.
+- `uut.wb_rd`: The destination register address provided by the writeback stage.
+- `uut.wb_data`: The 64-bit data to be written into the register file during writeback.
+- `uut.wb_we`: The write enable signal from the writeback stage.
 
 ### Outputs
-- `uut.pc_out`
-- `uut.rs1_data`
-- `uut.rs2_data`
-- `uut.imm`
-- `uut.rd`
-- `uut.rs1_addr`
-- `uut.rs2_addr`
-- `uut.funct3`
-- `uut.funct7`
-- `uut.opcode`
-- `uut.alu_op`
-- `uut.mem_read`
-- `uut.mem_write`
-- `uut.reg_write`
-- `uut.branch`
-- `uut.jal`
-- `uut.jalr`
-- `uut.valid_out`
+- `uut.pc_out`: The program counter passed down the pipeline to the execute stage.
+- `uut.rs1_data`: The 64-bit value read from the register file for source register 1.
+- `uut.rs2_data`: The 64-bit value read from the register file for source register 2.
+- `uut.imm`: The 64-bit sign-extended immediate value decoded from the instruction.
+- `uut.rd`: The destination register address extracted from the instruction.
+- `uut.rs1_addr`: The source register 1 address extracted from the instruction.
+- `uut.rs2_addr`: The source register 2 address extracted from the instruction.
+- `uut.funct3`: The 3-bit function code extracted from the instruction.
+- `uut.funct7`: The 7-bit function code extracted from the instruction.
+- `uut.opcode`: The 7-bit opcode extracted from the instruction.
+- `uut.alu_op`: The decoded ALU operation code to control the execution stage.
+- `uut.mem_read`: The decoded control signal indicating a memory read operation (load).
+- `uut.mem_write`: The decoded control signal indicating a memory write operation (store).
+- `uut.reg_write`: The decoded control signal indicating the instruction will write to a register.
+- `uut.branch`: The decoded control signal indicating the instruction is a conditional branch.
+- `uut.jal`: The decoded control signal indicating a jump and link instruction.
+- `uut.jalr`: The decoded control signal indicating a jump and link register instruction.
+- `uut.valid_out`: A flag indicating the decoded instruction sent to the execute stage is valid.
 
 ## 🏗 Structural Block Diagram
 The following Mermaid diagram maps the exact sub-module hierarchy instantiated within `rv_decode`. Use this to verify that structural boundaries match the behavioral expectations.

@@ -3,6 +3,8 @@
 ## 📝 Overview
 This directory contains the Verilog source, testbench, and verification instructions for the `ahb_to_apb` module.
 
+The `ahb_to_apb` module serves as a bridge translating AHB3-Lite transactions into standard APB4 transfers. It operates using a state machine (IDLE, ENABLE) to capture AHB non-sequential or sequential accesses and initiate corresponding APB cycles. It provides a wait state (`hready_out`) to the AHB master while the slower APB transfer completes, seamlessly matching the high-performance AHB domain to lower-speed peripheral buses.
+
 ## 🎯 What to Test
 The verification engineer should ensure that:
 1. The module resets correctly and all internal states initialize to safe values.
@@ -12,25 +14,25 @@ The verification engineer should ensure that:
 ## 🔍 GTKWave Signals to Observe
 Add the following key signals to your GTKWave trace for structural inspection:
 ### Inputs
-- `uut.clk`
-- `uut.rst_n`
-- `uut.haddr`
-- `uut.hwrite`
-- `uut.htrans`
-- `uut.hwdata`
-- `uut.prdata`
-- `uut.pready`
-- `uut.pslverr`
+- `uut.clk`: The main system clock driving the bridge state machine.
+- `uut.rst_n`: Active-low asynchronous reset signal.
+- `uut.haddr`: 32-bit AHB address bus from the master.
+- `uut.hwrite`: AHB write control signal (1 for write, 0 for read).
+- `uut.htrans`: 2-bit AHB transfer type signal (e.g., NONSEQ, SEQ).
+- `uut.hwdata`: 32-bit AHB write data bus.
+- `uut.prdata`: 32-bit APB read data bus from the peripheral.
+- `uut.pready`: APB ready signal from the peripheral indicating transfer completion.
+- `uut.pslverr`: APB slave error signal indicating a transfer failure.
 
 ### Outputs
-- `uut.hrdata`
-- `uut.hready_out`
-- `uut.hresp`
-- `uut.paddr`
-- `uut.psel`
-- `uut.penable`
-- `uut.pwrite`
-- `uut.pwdata`
+- `uut.hrdata`: 32-bit AHB read data bus returned to the master.
+- `uut.hready_out`: AHB ready signal to stall the master until the APB transfer is complete.
+- `uut.hresp`: AHB response signal (hardwired to 0/OKAY in this bridge).
+- `uut.paddr`: 32-bit APB address bus driven to the peripheral.
+- `uut.psel`: APB select signal indicating a transfer is directed to a peripheral.
+- `uut.penable`: APB enable signal asserted during the second cycle of an APB transfer.
+- `uut.pwrite`: APB write control signal.
+- `uut.pwdata`: 32-bit APB write data bus.
 
 ## 🏗 Structural Block Diagram
 The following Mermaid diagram maps the exact sub-module hierarchy instantiated within `ahb_to_apb`. Use this to verify that structural boundaries match the behavioral expectations.

@@ -3,6 +3,8 @@
 ## 📝 Overview
 This directory contains the Verilog source, testbench, and verification instructions for the `mmu_arbiter` module.
 
+The `mmu_arbiter` module is a read-only AXI4 arbiter that routes up to 5 concurrent Page Table Walker (PTW) masters into a single shared L2 cache port. It utilizes a simple Round-Robin arbitration scheme, tracking the priority internally to grant fair access across the 5 incoming read streams. Once an AR valid is accepted, the arbiter locks onto that master until its corresponding R valid completes the transaction, multiplexing the address channel and properly demultiplexing the returned data and responses back to the requesting PTW.
+
 ## 🎯 What to Test
 The verification engineer should ensure that:
 1. The module resets correctly and all internal states initialize to safe values.
@@ -12,24 +14,24 @@ The verification engineer should ensure that:
 ## 🔍 GTKWave Signals to Observe
 Add the following key signals to your GTKWave trace for structural inspection:
 ### Inputs
-- `uut.clk`
-- `uut.rst_n`
-- `uut.s_arvalid`
-- `uut.s_araddr`
-- `uut.s_rready`
-- `uut.m_arready`
-- `uut.m_rvalid`
-- `uut.m_rdata`
-- `uut.m_rresp`
+- `uut.clk`: The main system clock driving the round-robin arbitration logic.
+- `uut.rst_n`: Active-low asynchronous reset signal.
+- `uut.s_arvalid`: Array of read address valid signals from the 5 PTWs.
+- `uut.s_araddr`: Array of read address buses from the 5 PTWs.
+- `uut.s_rready`: Array of read data ready signals from the 5 PTWs.
+- `uut.m_arready`: Read address ready signal from the shared L2 cache port.
+- `uut.m_rvalid`: Read data valid signal from the shared L2 cache port.
+- `uut.m_rdata`: Read data bus from the shared L2 cache port.
+- `uut.m_rresp`: Read response signal from the shared L2 cache port.
 
 ### Outputs
-- `uut.s_arready`
-- `uut.s_rvalid`
-- `uut.s_rdata`
-- `uut.s_rresp`
-- `uut.m_arvalid`
-- `uut.m_araddr`
-- `uut.m_rready`
+- `uut.s_arready`: Array of read address ready signals granted back to the PTWs.
+- `uut.s_rvalid`: Array of read data valid signals demultiplexed back to the PTWs.
+- `uut.s_rdata`: Array of read data buses demultiplexed back to the PTWs.
+- `uut.s_rresp`: Array of read response signals demultiplexed back to the PTWs.
+- `uut.m_arvalid`: Multiplexed read address valid signal forwarded to the L2 cache.
+- `uut.m_araddr`: Multiplexed read address bus forwarded to the L2 cache.
+- `uut.m_rready`: Multiplexed read data ready signal forwarded to the L2 cache.
 
 ## 🏗 Structural Block Diagram
 The following Mermaid diagram maps the exact sub-module hierarchy instantiated within `mmu_arbiter`. Use this to verify that structural boundaries match the behavioral expectations.

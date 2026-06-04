@@ -3,6 +3,8 @@
 ## 📝 Overview
 This directory contains the Verilog source, testbench, and verification instructions for the `secure_boot` module.
 
+The `secure_boot` module acts as the Hardware Root-of-Trust for the system, enforcing an ECDSA P-256 signature verification of the boot image. Initiated automatically on power-on reset, it operates a finite state machine that sequentially reads the boot image from the eNVM, computes its SHA-256 hash, reads the appended ECDSA signature, and performs verification. It subsequently dictates the boot flow by driving signals to either de-assert the core reset upon success or halt the system upon failure, while providing status visibility via an APB interface.
+
 ## 🎯 What to Test
 The verification engineer should ensure that:
 1. The module resets correctly and all internal states initialize to safe values.
@@ -12,24 +14,24 @@ The verification engineer should ensure that:
 ## 🔍 GTKWave Signals to Observe
 Add the following key signals to your GTKWave trace for structural inspection:
 ### Inputs
-- `uut.clk`
-- `uut.rst_n`
-- `uut.paddr`
-- `uut.psel`
-- `uut.penable`
-- `uut.pwrite`
-- `uut.pwdata`
-- `uut.envm_rdata`
-- `uut.envm_valid`
+- `uut.clk`: The main clock signal for the module.
+- `uut.rst_n`: Active-low asynchronous reset signal.
+- `uut.paddr`: APB slave address bus for status monitoring.
+- `uut.psel`: APB slave select signal.
+- `uut.penable`: APB slave enable signal.
+- `uut.pwrite`: APB slave write enable signal.
+- `uut.pwdata`: APB slave write data bus.
+- `uut.envm_rdata`: Data read from the eNVM controller during the boot image fetch.
+- `uut.envm_valid`: Indicates valid data is available from the eNVM controller.
 
 ### Outputs
-- `uut.prdata`
-- `uut.pready`
-- `uut.pslverr`
-- `uut.envm_addr`
-- `uut.envm_req`
-- `uut.boot_pass`
-- `uut.boot_fail`
+- `uut.prdata`: APB slave read data bus returning status information.
+- `uut.pready`: APB slave ready signal.
+- `uut.pslverr`: APB slave error signal.
+- `uut.envm_addr`: Address bus for direct reads from the eNVM controller.
+- `uut.envm_req`: Request signal asserting a read to the eNVM controller.
+- `uut.boot_pass`: Boot success signal that de-asserts core reset to start execution.
+- `uut.boot_fail`: Boot failure signal that halts the system and flags an error.
 
 ## 🏗 Structural Block Diagram
 The following Mermaid diagram maps the exact sub-module hierarchy instantiated within `secure_boot`. Use this to verify that structural boundaries match the behavioral expectations.

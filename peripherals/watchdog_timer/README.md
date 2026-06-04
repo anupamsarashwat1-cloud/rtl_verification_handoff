@@ -3,6 +3,8 @@
 ## 📝 Overview
 This directory contains the Verilog source, testbench, and verification instructions for the `watchdog_timer` module.
 
+The `watchdog_timer` module implements a robust APB-accessible system watchdog. It features a 32-bit down counter with a programmable reload value and a dedicated unlock key mechanism (0x1ACCE551) to prevent accidental control register writes. Upon the first expiry, it asserts an interrupt, and upon a subsequent expiry without being serviced, it asserts an active-low system reset.
+
 ## 🎯 What to Test
 The verification engineer should ensure that:
 1. The module resets correctly and all internal states initialize to safe values.
@@ -12,19 +14,19 @@ The verification engineer should ensure that:
 ## 🔍 GTKWave Signals to Observe
 Add the following key signals to your GTKWave trace for structural inspection:
 ### Inputs
-- `uut.clk`
-- `uut.rst_n`
-- `uut.psel`
-- `uut.penable`
-- `uut.pwrite`
-- `uut.paddr`
-- `uut.pwdata`
+- `uut.clk`: The main system clock driving the sequential logic.
+- `uut.rst_n`: Active-low asynchronous reset signal.
+- `uut.psel`: APB slave select signal.
+- `uut.penable`: APB slave enable signal.
+- `uut.pwrite`: APB slave write enable signal.
+- `uut.paddr`: APB slave address bus (4-bit) for register access.
+- `uut.pwdata`: APB slave write data bus.
 
 ### Outputs
-- `uut.prdata`
-- `uut.pready`
-- `uut.wdt_reset_n`
-- `uut.irq`
+- `uut.prdata`: APB slave read data bus.
+- `uut.pready`: APB slave ready signal indicating transfer completion.
+- `uut.wdt_reset_n`: Active-low system reset output asserted when the watchdog timer expires twice.
+- `uut.irq`: Interrupt request signal asserted upon the first watchdog timer expiry.
 
 ## 🏗 Structural Block Diagram
 The following Mermaid diagram maps the exact sub-module hierarchy instantiated within `watchdog_timer`. Use this to verify that structural boundaries match the behavioral expectations.

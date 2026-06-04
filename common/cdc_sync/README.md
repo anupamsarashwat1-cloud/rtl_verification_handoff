@@ -3,6 +3,8 @@
 ## 📝 Overview
 This directory contains the Verilog source, testbench, and verification instructions for the `cdc_sync` module.
 
+The cdc_sync module implements a multi-stage flip-flop synchronizer designed to safely transfer signals across clock domains. By passing the asynchronous input data through a parameterized number of sequential flip-flops (defaulting to 2 stages) clocked by the destination clock, it significantly mitigates the risk of metastability propagation into the destination clock domain.
+
 ## 🎯 What to Test
 The verification engineer should ensure that:
 1. The module resets correctly and all internal states initialize to safe values.
@@ -12,12 +14,12 @@ The verification engineer should ensure that:
 ## 🔍 GTKWave Signals to Observe
 Add the following key signals to your GTKWave trace for structural inspection:
 ### Inputs
-- `uut.dst_clk`
-- `uut.rst_n`
-- `uut.data_in`
+- `uut.dst_clk`: The clock signal of the destination domain used to drive the synchronizer flip-flops.
+- `uut.rst_n`: The active-low asynchronous reset signal that initializes the synchronizer's internal flip-flops to zero.
+- `uut.data_in`: The asynchronous input data arriving from a different clock domain.
 
 ### Outputs
-- `uut.data_out`
+- `uut.data_out`: The synchronized output data safely captured within the destination clock domain.
 
 ## 🏗 Structural Block Diagram
 The following Mermaid diagram maps the exact sub-module hierarchy instantiated within `cdc_sync`. Use this to verify that structural boundaries match the behavioral expectations.

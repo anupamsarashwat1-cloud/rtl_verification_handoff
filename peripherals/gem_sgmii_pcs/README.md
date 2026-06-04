@@ -3,6 +3,8 @@
 ## 📝 Overview
 This directory contains the Verilog source, testbench, and verification instructions for the `gem_sgmii_pcs` module.
 
+The `gem_sgmii_pcs` module implements the Serial Gigabit Media Independent Interface (SGMII) Physical Coding Sublayer. It acts as a bridge between the Gigabit Ethernet MAC (via the GMII interface) and the physical SerDes transceiver (via the Ten Bit Interface, TBI). The module performs 8b/10b encoding on outgoing GMII data and 10b/8b decoding on incoming TBI data to ensure DC balance and synchronization. It handles SGMII-specific features like idle character insertion/deletion (e.g., K28.5 symbols) and provides auto-negotiation status signals indicating link state, speed, and duplex modes.
+
 ## 🎯 What to Test
 The verification engineer should ensure that:
 1. The module resets correctly and all internal states initialize to safe values.
@@ -12,25 +14,25 @@ The verification engineer should ensure that:
 ## 🔍 GTKWave Signals to Observe
 Add the following key signals to your GTKWave trace for structural inspection:
 ### Inputs
-- `uut.reset_n`
-- `uut.tx_clk`
-- `uut.rx_clk`
-- `uut.gmii_txd`
-- `uut.gmii_tx_en`
-- `uut.gmii_tx_er`
-- `uut.tbi_rx_data`
-- `uut.signal_detect`
+- `uut.reset_n`: Active-low asynchronous reset signal.
+- `uut.tx_clk`: Transmit clock (125 MHz for 1G operation).
+- `uut.rx_clk`: Receive clock (125 MHz recovered clock from the PHY).
+- `uut.gmii_txd`: 8-bit GMII transmit data from the MAC.
+- `uut.gmii_tx_en`: GMII transmit enable signal from the MAC.
+- `uut.gmii_tx_er`: GMII transmit error signal from the MAC.
+- `uut.tbi_rx_data`: 10-bit receive data from the SerDes PHY (Ten Bit Interface).
+- `uut.signal_detect`: Signal from PHY indicating a valid link connection.
 
 ### Outputs
-- `uut.gmii_rxd`
-- `uut.gmii_rx_dv`
-- `uut.gmii_rx_er`
-- `uut.gmii_crs`
-- `uut.gmii_col`
-- `uut.tbi_tx_data`
-- `uut.link_up`
-- `uut.speed`
-- `uut.duplex`
+- `uut.gmii_rxd`: 8-bit GMII receive data to the MAC.
+- `uut.gmii_rx_dv`: GMII receive data valid signal to the MAC.
+- `uut.gmii_rx_er`: GMII receive error signal to the MAC.
+- `uut.gmii_crs`: GMII carrier sense signal to the MAC.
+- `uut.gmii_col`: GMII collision detect signal to the MAC.
+- `uut.tbi_tx_data`: 10-bit transmit data to the SerDes PHY (Ten Bit Interface).
+- `uut.link_up`: Auto-negotiation status indicating the link is up.
+- `uut.speed`: Auto-negotiation status indicating link speed (e.g., 10M, 100M, 1G).
+- `uut.duplex`: Auto-negotiation status indicating duplex mode (1=Full, 0=Half).
 
 ## 🏗 Structural Block Diagram
 The following Mermaid diagram maps the exact sub-module hierarchy instantiated within `gem_sgmii_pcs`. Use this to verify that structural boundaries match the behavioral expectations.

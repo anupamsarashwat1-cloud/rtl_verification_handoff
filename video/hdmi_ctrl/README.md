@@ -3,6 +3,8 @@
 ## 📝 Overview
 This directory contains the Verilog source, testbench, and verification instructions for the `hdmi_ctrl` module.
 
+The `hdmi_ctrl` module implements an HDMI 1.4 Display Controller. It accepts pixel data via an AXI4-Stream interface (typically from a Video DMA engine) and generates the necessary horizontal and vertical timing signals (HSYNC, VSYNC, VDE) based on APB-configurable display parameters. The controller also features built-in TMDS encoders to serialize the pixel and control data for the physical HDMI output over differential pairs.
+
 ## 🎯 What to Test
 The verification engineer should ensure that:
 1. The module resets correctly and all internal states initialize to safe values.
@@ -12,30 +14,30 @@ The verification engineer should ensure that:
 ## 🔍 GTKWave Signals to Observe
 Add the following key signals to your GTKWave trace for structural inspection:
 ### Inputs
-- `uut.clk_pixel`
-- `uut.clk_tmds`
-- `uut.rst_n`
-- `uut.s_axis_tdata`
-- `uut.s_axis_tvalid`
-- `uut.s_axis_tuser`
-- `uut.s_axis_tlast`
-- `uut.pclk`
-- `uut.prst_n`
-- `uut.paddr`
-- `uut.psel`
-- `uut.penable`
-- `uut.pwrite`
-- `uut.pwdata`
+- `uut.clk_pixel`: Pixel clock input (e.g., 74.25 MHz for 720p or 148.5 MHz for 1080p).
+- `uut.clk_tmds`: TMDS clock input, typically 10x the pixel clock for serialization.
+- `uut.rst_n`: Active-low asynchronous reset signal.
+- `uut.s_axis_tdata`: AXI4-Stream input data bus (RGB 8:8:8 pixel data).
+- `uut.s_axis_tvalid`: AXI4-Stream input valid signal.
+- `uut.s_axis_tuser`: AXI4-Stream user signal, typically indicating Start of Frame (SOF).
+- `uut.s_axis_tlast`: AXI4-Stream last signal, typically indicating End of Line (EOL).
+- `uut.pclk`: APB interface clock.
+- `uut.prst_n`: APB interface active-low asynchronous reset.
+- `uut.paddr`: APB slave address bus.
+- `uut.psel`: APB slave select signal.
+- `uut.penable`: APB slave enable signal.
+- `uut.pwrite`: APB slave write enable signal.
+- `uut.pwdata`: APB slave write data bus.
 
 ### Outputs
-- `uut.s_axis_tready`
-- `uut.tmds_clk_p`
-- `uut.tmds_clk_n`
-- `uut.tmds_data_p`
-- `uut.tmds_data_n`
-- `uut.prdata`
-- `uut.pready`
-- `uut.pslverr`
+- `uut.s_axis_tready`: AXI4-Stream ready signal to accept pixel data.
+- `uut.tmds_clk_p`: Differential TMDS clock output (positive).
+- `uut.tmds_clk_n`: Differential TMDS clock output (negative).
+- `uut.tmds_data_p`: Differential TMDS data output lanes (positive).
+- `uut.tmds_data_n`: Differential TMDS data output lanes (negative).
+- `uut.prdata`: APB slave read data bus.
+- `uut.pready`: APB slave ready signal.
+- `uut.pslverr`: APB slave error signal.
 
 ## 🏗 Structural Block Diagram
 The following Mermaid diagram maps the exact sub-module hierarchy instantiated within `hdmi_ctrl`. Use this to verify that structural boundaries match the behavioral expectations.

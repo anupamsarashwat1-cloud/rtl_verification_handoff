@@ -3,6 +3,8 @@
 ## 📝 Overview
 This directory contains the Verilog source, testbench, and verification instructions for the `envm_ctrl` module.
 
+The `envm_ctrl` module is the Embedded Non-Volatile Memory (eNVM) Controller designed to interface with a 128KB eNVM macro. It provides a dual-interface architecture: an AXI4-Lite slave interface dedicated to fast read access (execution) and an APB slave interface for control, programming, and erasing operations. It acts as an arbiter and translator, prioritizing AXI reads while supplying the appropriate chip enable, write enable, address, and data signals to the physical eNVM macro.
+
 ## 🎯 What to Test
 The verification engineer should ensure that:
 1. The module resets correctly and all internal states initialize to safe values.
@@ -12,32 +14,32 @@ The verification engineer should ensure that:
 ## 🔍 GTKWave Signals to Observe
 Add the following key signals to your GTKWave trace for structural inspection:
 ### Inputs
-- `uut.clk`
-- `uut.rst_n`
-- `uut.s_arvalid`
-- `uut.s_araddr`
-- `uut.s_rready`
-- `uut.paddr`
-- `uut.psel`
-- `uut.penable`
-- `uut.pwrite`
-- `uut.pwdata`
-- `uut.envm_rdata`
-- `uut.envm_ready`
+- `uut.clk`: The main clock signal for the module.
+- `uut.rst_n`: Active-low asynchronous reset signal.
+- `uut.s_arvalid`: AXI4-Lite read address valid signal.
+- `uut.s_araddr`: AXI4-Lite read address bus (17-bit mapped).
+- `uut.s_rready`: AXI4-Lite read data ready signal.
+- `uut.paddr`: APB slave address bus.
+- `uut.psel`: APB slave select signal.
+- `uut.penable`: APB slave enable signal.
+- `uut.pwrite`: APB slave write enable signal.
+- `uut.pwdata`: APB slave write data bus.
+- `uut.envm_rdata`: Read data returned from the physical eNVM macro.
+- `uut.envm_ready`: Ready signal from the physical eNVM macro indicating it can accept requests.
 
 ### Outputs
-- `uut.s_arready`
-- `uut.s_rvalid`
-- `uut.s_rdata`
-- `uut.s_rresp`
-- `uut.prdata`
-- `uut.pready`
-- `uut.pslverr`
-- `uut.envm_clk`
-- `uut.envm_ce_n`
-- `uut.envm_we_n`
-- `uut.envm_addr`
-- `uut.envm_wdata`
+- `uut.s_arready`: AXI4-Lite read address ready signal.
+- `uut.s_rvalid`: AXI4-Lite read data valid signal.
+- `uut.s_rdata`: AXI4-Lite read data bus.
+- `uut.s_rresp`: AXI4-Lite read response status.
+- `uut.prdata`: APB slave read data bus.
+- `uut.pready`: APB slave ready signal.
+- `uut.pslverr`: APB slave error signal.
+- `uut.envm_clk`: Clock signal forwarded to the eNVM macro.
+- `uut.envm_ce_n`: Active-low chip enable signal for the eNVM macro.
+- `uut.envm_we_n`: Active-low write enable signal for the eNVM macro.
+- `uut.envm_addr`: Address bus to the eNVM macro.
+- `uut.envm_wdata`: Write data bus to the eNVM macro.
 
 ## 🏗 Structural Block Diagram
 The following Mermaid diagram maps the exact sub-module hierarchy instantiated within `envm_ctrl`. Use this to verify that structural boundaries match the behavioral expectations.

@@ -3,6 +3,8 @@
 ## 📝 Overview
 This directory contains the Verilog source, testbench, and verification instructions for the `rv_pmp` module.
 
+The `rv_pmp` module implements the RISC-V Physical Memory Protection (PMP) unit. It enforces memory access permissions on translated physical addresses before they reach the L1 cache or main memory. Supporting up to 8 entries per hart, it implements TOR (Top of Range), NA4 (Naturally Aligned 4-byte), and NAPOT (Naturally Aligned Power-of-Two) addressing modes. It checks read, write, and execute permissions based on the current privilege mode and lock bits, raising a PMP fault on access violations.
+
 ## 🎯 What to Test
 The verification engineer should ensure that:
 1. The module resets correctly and all internal states initialize to safe values.
@@ -12,20 +14,20 @@ The verification engineer should ensure that:
 ## 🔍 GTKWave Signals to Observe
 Add the following key signals to your GTKWave trace for structural inspection:
 ### Inputs
-- `uut.clk`
-- `uut.rst_n`
-- `uut.paddr`
-- `uut.check_r`
-- `uut.check_w`
-- `uut.check_x`
-- `uut.priv_mode`
-- `uut.check_en`
-- `uut.pmpcfg0`
-- `uut.pmpcfg2`
-- `uut.pmpaddr_packed`
+- `uut.clk`: The main system clock driving the sequential logic.
+- `uut.rst_n`: Active-low asynchronous reset signal.
+- `uut.paddr`: 38-bit physical address to be checked.
+- `uut.check_r`: Flag indicating a read access request.
+- `uut.check_w`: Flag indicating a write access request.
+- `uut.check_x`: Flag indicating an execute access request.
+- `uut.priv_mode`: Current CPU privilege mode (M, S, U).
+- `uut.check_en`: Request active enable signal.
+- `uut.pmpcfg0`: Configuration CSR for PMP entries 0-7.
+- `uut.pmpcfg2`: Configuration CSR for PMP entries 8-15.
+- `uut.pmpaddr_packed`: Packed array of `pmpaddr` registers for all entries.
 
 ### Outputs
-- `uut.pmp_fault`
+- `uut.pmp_fault`: Fault signal indicating a PMP access violation.
 
 ## 🏗 Structural Block Diagram
 The following Mermaid diagram maps the exact sub-module hierarchy instantiated within `rv_pmp`. Use this to verify that structural boundaries match the behavioral expectations.

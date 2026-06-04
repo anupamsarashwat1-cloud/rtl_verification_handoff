@@ -3,6 +3,8 @@
 ## 📝 Overview
 This directory contains the Verilog source, testbench, and verification instructions for the `reset_sync` module.
 
+The reset_sync module is responsible for synchronizing an asynchronous active-low reset signal to a specific clock domain. It features an asynchronous assertion and synchronous deassertion mechanism using a multi-stage flip-flop chain (defaulting to 2 stages), which ensures that the release of reset happens cleanly on a clock edge without introducing metastability.
+
 ## 🎯 What to Test
 The verification engineer should ensure that:
 1. The module resets correctly and all internal states initialize to safe values.
@@ -12,11 +14,11 @@ The verification engineer should ensure that:
 ## 🔍 GTKWave Signals to Observe
 Add the following key signals to your GTKWave trace for structural inspection:
 ### Inputs
-- `uut.clk`
-- `uut.async_rst_n`
+- `uut.clk`: The destination clock domain signal used to synchronize the deassertion.
+- `uut.async_rst_n`: The incoming active-low asynchronous reset signal.
 
 ### Outputs
-- `uut.sync_rst_n`
+- `uut.sync_rst_n`: The outgoing active-low reset signal safely synchronized to the clock domain.
 
 ## 🏗 Structural Block Diagram
 The following Mermaid diagram maps the exact sub-module hierarchy instantiated within `reset_sync`. Use this to verify that structural boundaries match the behavioral expectations.

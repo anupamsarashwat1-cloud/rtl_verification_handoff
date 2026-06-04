@@ -3,6 +3,8 @@
 ## 📝 Overview
 This directory contains the Verilog source, testbench, and verification instructions for the `sha256_engine` module.
 
+The `sha256_engine` is a cryptographic hardware accelerator that implements the FIPS 180-4 compliant SHA-256 secure hash algorithm. It features a 64-round iterative architecture that processes 512-bit message blocks to compute a 256-bit cryptographic digest. Software interacts with the engine via an APB slave interface, writing 16-word message blocks into an internal buffer and triggering the hash operation. The engine sequentially executes the 64 compression rounds using built-in round constants and bitwise rotation functions, updating the intermediate hash state. Upon completion of a block, it asserts an interrupt (`irq`) and exposes the resulting 8-word hash for software retrieval.
+
 ## 🎯 What to Test
 The verification engineer should ensure that:
 1. The module resets correctly and all internal states initialize to safe values.
@@ -12,18 +14,18 @@ The verification engineer should ensure that:
 ## 🔍 GTKWave Signals to Observe
 Add the following key signals to your GTKWave trace for structural inspection:
 ### Inputs
-- `uut.clk`
-- `uut.rst_n`
-- `uut.psel`
-- `uut.penable`
-- `uut.pwrite`
-- `uut.paddr`
-- `uut.pwdata`
+- `uut.clk`: The main system clock driving the sequential logic.
+- `uut.rst_n`: Active-low asynchronous reset signal.
+- `uut.psel`: APB slave select signal.
+- `uut.penable`: APB enable signal.
+- `uut.pwrite`: APB write control signal.
+- `uut.paddr`: 8-bit APB address bus for writing message blocks and reading hashes.
+- `uut.pwdata`: 32-bit APB write data bus.
 
 ### Outputs
-- `uut.prdata`
-- `uut.pready`
-- `uut.irq`
+- `uut.prdata`: 32-bit APB read data bus for retrieving the computed hash.
+- `uut.pready`: APB ready signal for CSR accesses.
+- `uut.irq`: Interrupt request signal indicating hash completion.
 
 ## 🏗 Structural Block Diagram
 The following Mermaid diagram maps the exact sub-module hierarchy instantiated within `sha256_engine`. Use this to verify that structural boundaries match the behavioral expectations.

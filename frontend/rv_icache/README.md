@@ -3,6 +3,8 @@
 ## 📝 Overview
 This directory contains the Verilog source, testbench, and verification instructions for the `rv_icache` module.
 
+The rv_icache module implements a 32KB, 8-way set-associative Instruction Cache with Pseudo-LRU (PLRU) replacement and SECDED (Single Error Correction, Double Error Detection) ECC. Designed for high performance, it provides single-cycle access on cache hits and features an integrated AXI4-Lite master interface to autonomously orchestrate 8-beat burst refills from main memory upon cache misses, seamlessly stalling the CPU pipeline during the refill process.
+
 ## 🎯 What to Test
 The verification engineer should ensure that:
 1. The module resets correctly and all internal states initialize to safe values.
@@ -12,29 +14,29 @@ The verification engineer should ensure that:
 ## 🔍 GTKWave Signals to Observe
 Add the following key signals to your GTKWave trace for structural inspection:
 ### Inputs
-- `uut.clk`
-- `uut.rst_n`
-- `uut.cpu_addr`
-- `uut.cpu_req`
-- `uut.invalidate`
-- `uut.m_arready`
-- `uut.m_rvalid`
-- `uut.m_rdata`
-- `uut.m_rlast`
-- `uut.m_rresp`
+- `uut.clk`: The system clock driving the cache arrays, PLRU logic, and AXI FSM.
+- `uut.rst_n`: The active-low reset signal that initializes the cache state and FSMs.
+- `uut.cpu_addr`: The 40-bit physical address requested by the CPU fetch stage.
+- `uut.cpu_req`: The control signal indicating a valid instruction fetch request from the CPU.
+- `uut.invalidate`: A control signal to completely flush the cache (invalidate all lines).
+- `uut.m_arready`: The AXI4 signal indicating the main memory is ready to accept a read address.
+- `uut.m_rvalid`: The AXI4 signal indicating valid read data is arriving from main memory.
+- `uut.m_rdata`: The 64-bit data bus returning cache line data from main memory.
+- `uut.m_rlast`: The AXI4 signal indicating the final beat of the burst refill transaction.
+- `uut.m_rresp`: The AXI4 read response status from the main memory.
 
 ### Outputs
-- `uut.cpu_rdata`
-- `uut.cpu_valid`
-- `uut.cpu_stall`
-- `uut.m_arvalid`
-- `uut.m_araddr`
-- `uut.m_arlen`
-- `uut.m_arsize`
-- `uut.m_arburst`
-- `uut.m_rready`
-- `uut.ecc_1bit`
-- `uut.ecc_2bit`
+- `uut.cpu_rdata`: The 32-bit instruction data returned to the CPU upon a cache hit.
+- `uut.cpu_valid`: A flag indicating the data presented to the CPU is valid (hit).
+- `uut.cpu_stall`: A stall signal to the CPU pipeline during a cache miss/refill.
+- `uut.m_arvalid`: The AXI4 signal indicating a valid read address is being sent for a refill.
+- `uut.m_araddr`: The AXI4 40-bit block-aligned address for the cache line refill.
+- `uut.m_arlen`: The AXI4 burst length (always 7 for an 8-beat burst).
+- `uut.m_arsize`: The AXI4 burst size (always 3 for 8 bytes per beat).
+- `uut.m_arburst`: The AXI4 burst type (always INCR for sequential cache line fill).
+- `uut.m_rready`: The AXI4 signal indicating the cache is ready to receive refill data.
+- `uut.ecc_1bit`: A flag indicating a correctable single-bit ECC error was detected.
+- `uut.ecc_2bit`: A flag indicating an uncorrectable double-bit ECC error was detected (causes NMI).
 
 ## 🏗 Structural Block Diagram
 The following Mermaid diagram maps the exact sub-module hierarchy instantiated within `rv_icache`. Use this to verify that structural boundaries match the behavioral expectations.

@@ -3,6 +3,8 @@
 ## 📝 Overview
 This directory contains the Verilog source, testbench, and verification instructions for the `axi4_crossbar` module.
 
+The `axi4_crossbar` module implements a high-performance 15-master by 9-slave AXI4 crossbar interconnect utilizing flattened array ports for true parameterization. It features internal address decoding to route transactions to appropriate memory-mapped slave regions (e.g., L2 Cache, DDR4, peripherals) and employs a Weighted Round-Robin (WRR) arbitration scheme to manage concurrent access requests from multiple masters to a shared slave. The module effectively demultiplexes master requests and multiplexes slave responses, resolving multi-master contentions per slave dynamically.
+
 ## 🎯 What to Test
 The verification engineer should ensure that:
 1. The module resets correctly and all internal states initialize to safe values.
@@ -12,56 +14,56 @@ The verification engineer should ensure that:
 ## 🔍 GTKWave Signals to Observe
 Add the following key signals to your GTKWave trace for structural inspection:
 ### Inputs
-- `uut.clk`
-- `uut.rst_n`
-- `uut.m_awvalid`
-- `uut.m_awaddr`
-- `uut.m_awid`
-- `uut.m_wvalid`
-- `uut.m_wdata`
-- `uut.m_wstrb`
-- `uut.m_wlast`
-- `uut.m_bready`
-- `uut.m_arvalid`
-- `uut.m_araddr`
-- `uut.m_arid`
-- `uut.m_rready`
-- `uut.s_awready`
-- `uut.s_wready`
-- `uut.s_bvalid`
-- `uut.s_bresp`
-- `uut.s_bid`
-- `uut.s_arready`
-- `uut.s_rvalid`
-- `uut.s_rdata`
-- `uut.s_rresp`
-- `uut.s_rlast`
-- `uut.s_rid`
+- `uut.clk`: The main system clock driving the arbitration logic.
+- `uut.rst_n`: Active-low asynchronous reset signal.
+- `uut.m_awvalid`: Flattened AXI4 write address valid signals from all masters.
+- `uut.m_awaddr`: Flattened AXI4 write address buses from all masters.
+- `uut.m_awid`: Flattened AXI4 write address IDs from all masters.
+- `uut.m_wvalid`: Flattened AXI4 write data valid signals from all masters.
+- `uut.m_wdata`: Flattened AXI4 write data buses from all masters.
+- `uut.m_wstrb`: Flattened AXI4 write strobes from all masters.
+- `uut.m_wlast`: Flattened AXI4 write last signals from all masters.
+- `uut.m_bready`: Flattened AXI4 write response ready signals from all masters.
+- `uut.m_arvalid`: Flattened AXI4 read address valid signals from all masters.
+- `uut.m_araddr`: Flattened AXI4 read address buses from all masters.
+- `uut.m_arid`: Flattened AXI4 read address IDs from all masters.
+- `uut.m_rready`: Flattened AXI4 read data ready signals from all masters.
+- `uut.s_awready`: Flattened AXI4 write address ready signals from all slaves.
+- `uut.s_wready`: Flattened AXI4 write data ready signals from all slaves.
+- `uut.s_bvalid`: Flattened AXI4 write response valid signals from all slaves.
+- `uut.s_bresp`: Flattened AXI4 write response signals from all slaves.
+- `uut.s_bid`: Flattened AXI4 write response IDs from all slaves.
+- `uut.s_arready`: Flattened AXI4 read address ready signals from all slaves.
+- `uut.s_rvalid`: Flattened AXI4 read data valid signals from all slaves.
+- `uut.s_rdata`: Flattened AXI4 read data buses from all slaves.
+- `uut.s_rresp`: Flattened AXI4 read response signals from all slaves.
+- `uut.s_rlast`: Flattened AXI4 read last signals from all slaves.
+- `uut.s_rid`: Flattened AXI4 read IDs from all slaves.
 
 ### Outputs
-- `uut.m_awready`
-- `uut.m_wready`
-- `uut.m_bvalid`
-- `uut.m_bresp`
-- `uut.m_bid`
-- `uut.m_arready`
-- `uut.m_rvalid`
-- `uut.m_rdata`
-- `uut.m_rresp`
-- `uut.m_rlast`
-- `uut.m_rid`
-- `uut.s_awvalid`
-- `uut.s_awaddr`
-- `uut.s_awid`
-- `uut.s_wvalid`
-- `uut.s_wdata`
-- `uut.s_wstrb`
-- `uut.s_wlast`
-- `uut.s_bready`
-- `uut.s_arvalid`
-- `uut.s_araddr`
-- `uut.s_arid`
-- `uut.s_rready`
+- `uut.m_awready`: Flattened AXI4 write address ready signals to all masters.
+- `uut.m_wready`: Flattened AXI4 write data ready signals to all masters.
+- `uut.m_bvalid`: Flattened AXI4 write response valid signals to all masters.
+- `uut.m_bresp`: Flattened AXI4 write response signals to all masters.
+- `uut.m_bid`: Flattened AXI4 write response IDs to all masters.
+- `uut.m_arready`: Flattened AXI4 read address ready signals to all masters.
+- `uut.m_rvalid`: Flattened AXI4 read data valid signals to all masters.
+- `uut.m_rdata`: Flattened AXI4 read data buses to all masters.
+- `uut.m_rresp`: Flattened AXI4 read response signals to all masters.
+- `uut.m_rlast`: Flattened AXI4 read last signals to all masters.
+- `uut.m_rid`: Flattened AXI4 read IDs to all masters.
+- `uut.s_awvalid`: Flattened AXI4 write address valid signals to all slaves.
+- `uut.s_awaddr`: Flattened AXI4 write address buses to all slaves.
+- `uut.s_awid`: Flattened AXI4 write address IDs to all slaves.
+- `uut.s_wvalid`: Flattened AXI4 write data valid signals to all slaves.
+- `uut.s_wdata`: Flattened AXI4 write data buses to all slaves.
+- `uut.s_wstrb`: Flattened AXI4 write strobes to all slaves.
+- `uut.s_wlast`: Flattened AXI4 write last signals to all slaves.
+- `uut.s_bready`: Flattened AXI4 write response ready signals to all slaves.
+- `uut.s_arvalid`: Flattened AXI4 read address valid signals to all slaves.
+- `uut.s_araddr`: Flattened AXI4 read address buses to all slaves.
+- `uut.s_arid`: Flattened AXI4 read address IDs to all slaves.
+- `uut.s_rready`: Flattened AXI4 read data ready signals to all slaves.
 
 ## 🏗 Structural Block Diagram
 The following Mermaid diagram maps the exact sub-module hierarchy instantiated within `axi4_crossbar`. Use this to verify that structural boundaries match the behavioral expectations.

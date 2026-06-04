@@ -3,6 +3,8 @@
 ## 📝 Overview
 This directory contains the Verilog source, testbench, and verification instructions for the `ecdsa_engine` module.
 
+The `ecdsa_engine` module is a hardware accelerator for the Elliptic Curve Digital Signature Algorithm (ECDSA) supporting P-256 and P-384 curves. It performs cryptographic operations like point multiplication and modular inversion required for signature verification and generation. It integrates with the system via an APB slave interface, which manages configuration, status, and the transfer of large cryptographic operands (message hashes, keys, and signatures) stored in internal RAM arrays.
+
 ## 🎯 What to Test
 The verification engineer should ensure that:
 1. The module resets correctly and all internal states initialize to safe values.
@@ -12,19 +14,19 @@ The verification engineer should ensure that:
 ## 🔍 GTKWave Signals to Observe
 Add the following key signals to your GTKWave trace for structural inspection:
 ### Inputs
-- `uut.clk`
-- `uut.rst_n`
-- `uut.paddr`
-- `uut.psel`
-- `uut.penable`
-- `uut.pwrite`
-- `uut.pwdata`
+- `uut.clk`: The main clock signal for the module.
+- `uut.rst_n`: Active-low asynchronous reset signal.
+- `uut.paddr`: APB slave address bus.
+- `uut.psel`: APB slave select signal.
+- `uut.penable`: APB slave enable signal.
+- `uut.pwrite`: APB slave write enable signal.
+- `uut.pwdata`: APB slave write data bus.
 
 ### Outputs
-- `uut.prdata`
-- `uut.pready`
-- `uut.pslverr`
-- `uut.ecdsa_irq`
+- `uut.prdata`: APB slave read data bus.
+- `uut.pready`: APB slave ready signal.
+- `uut.pslverr`: APB slave error signal.
+- `uut.ecdsa_irq`: Interrupt request signal asserted when an ECDSA operation completes.
 
 ## 🏗 Structural Block Diagram
 The following Mermaid diagram maps the exact sub-module hierarchy instantiated within `ecdsa_engine`. Use this to verify that structural boundaries match the behavioral expectations.

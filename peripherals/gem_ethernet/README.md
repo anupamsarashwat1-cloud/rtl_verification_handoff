@@ -3,6 +3,8 @@
 ## 📝 Overview
 This directory contains the Verilog source, testbench, and verification instructions for the `gem_ethernet` module.
 
+The `gem_ethernet` is a Gigabit Ethernet Media Access Controller (MAC) equipped with a Scatter-Gather Direct Memory Access (DMA) engine. It bridges the system and the network by acting as an AXI4 Master to autonomously fetch buffer descriptors and transfer packet data to and from memory. It is configured and monitored via an APB slave interface, providing access to network control, status, and interrupt mask registers. On the network side, it interfaces with a Physical Layer (PHY) or SGMII PCS using the Gigabit Media Independent Interface (GMII) protocol, managing packet transmission, reception, and MAC-level interrupts.
+
 ## 🎯 What to Test
 The verification engineer should ensure that:
 1. The module resets correctly and all internal states initialize to safe values.
@@ -12,56 +14,56 @@ The verification engineer should ensure that:
 ## 🔍 GTKWave Signals to Observe
 Add the following key signals to your GTKWave trace for structural inspection:
 ### Inputs
-- `uut.clk`
-- `uut.rst_n`
-- `uut.m_awready`
-- `uut.m_wready`
-- `uut.m_bvalid`
-- `uut.m_bresp`
-- `uut.m_bid`
-- `uut.m_arready`
-- `uut.m_rvalid`
-- `uut.m_rdata`
-- `uut.m_rresp`
-- `uut.m_rlast`
-- `uut.m_rid`
-- `uut.paddr`
-- `uut.psel`
-- `uut.penable`
-- `uut.pwrite`
-- `uut.pwdata`
-- `uut.tx_clk`
-- `uut.rx_clk`
-- `uut.gmii_rxd`
-- `uut.gmii_rx_dv`
-- `uut.gmii_rx_er`
-- `uut.gmii_crs`
-- `uut.gmii_col`
+- `uut.clk`: The main system clock driving AXI and APB interfaces.
+- `uut.rst_n`: Active-low asynchronous reset signal.
+- `uut.m_awready`: AXI4 Master Write Address ready signal from interconnect.
+- `uut.m_wready`: AXI4 Master Write Data ready signal from interconnect.
+- `uut.m_bvalid`: AXI4 Master Write Response valid signal from interconnect.
+- `uut.m_bresp`: AXI4 Master Write Response status from interconnect.
+- `uut.m_bid`: AXI4 Master Write Response ID from interconnect.
+- `uut.m_arready`: AXI4 Master Read Address ready signal from interconnect.
+- `uut.m_rvalid`: AXI4 Master Read Data valid signal from interconnect.
+- `uut.m_rdata`: AXI4 Master Read Data from interconnect.
+- `uut.m_rresp`: AXI4 Master Read Response status from interconnect.
+- `uut.m_rlast`: AXI4 Master Read Last signal indicating end of read burst.
+- `uut.m_rid`: AXI4 Master Read ID from interconnect.
+- `uut.paddr`: 32-bit APB address bus for configuring MAC CSRs.
+- `uut.psel`: APB slave select signal.
+- `uut.penable`: APB enable signal.
+- `uut.pwrite`: APB write control signal.
+- `uut.pwdata`: 32-bit APB write data bus.
+- `uut.tx_clk`: GMII Transmit Clock from PHY.
+- `uut.rx_clk`: GMII Receive Clock from PHY.
+- `uut.gmii_rxd`: 8-bit GMII Receive Data from PHY.
+- `uut.gmii_rx_dv`: GMII Receive Data Valid signal.
+- `uut.gmii_rx_er`: GMII Receive Error signal.
+- `uut.gmii_crs`: GMII Carrier Sense signal.
+- `uut.gmii_col`: GMII Collision Detect signal.
 
 ### Outputs
-- `uut.m_awvalid`
-- `uut.m_awaddr`
-- `uut.m_awid`
-- `uut.m_awlen`
-- `uut.m_awsize`
-- `uut.m_wvalid`
-- `uut.m_wdata`
-- `uut.m_wstrb`
-- `uut.m_wlast`
-- `uut.m_bready`
-- `uut.m_arvalid`
-- `uut.m_araddr`
-- `uut.m_arid`
-- `uut.m_arlen`
-- `uut.m_arsize`
-- `uut.m_rready`
-- `uut.prdata`
-- `uut.pready`
-- `uut.pslverr`
-- `uut.mac_irq`
-- `uut.gmii_txd`
-- `uut.gmii_tx_en`
-- `uut.gmii_tx_er`
+- `uut.m_awvalid`: AXI4 Master Write Address valid signal.
+- `uut.m_awaddr`: AXI4 Master Write Address bus.
+- `uut.m_awid`: AXI4 Master Write Address ID.
+- `uut.m_awlen`: AXI4 Master Write Burst Length.
+- `uut.m_awsize`: AXI4 Master Write Burst Size.
+- `uut.m_wvalid`: AXI4 Master Write Data valid signal.
+- `uut.m_wdata`: AXI4 Master Write Data bus.
+- `uut.m_wstrb`: AXI4 Master Write Data Strobes.
+- `uut.m_wlast`: AXI4 Master Write Last signal for burst.
+- `uut.m_bready`: AXI4 Master Write Response ready signal.
+- `uut.m_arvalid`: AXI4 Master Read Address valid signal.
+- `uut.m_araddr`: AXI4 Master Read Address bus.
+- `uut.m_arid`: AXI4 Master Read Address ID.
+- `uut.m_arlen`: AXI4 Master Read Burst Length.
+- `uut.m_arsize`: AXI4 Master Read Burst Size.
+- `uut.m_rready`: AXI4 Master Read Data ready signal.
+- `uut.prdata`: 32-bit APB read data bus.
+- `uut.pready`: APB ready signal for CSR accesses.
+- `uut.pslverr`: APB slave error signal.
+- `uut.mac_irq`: MAC interrupt request signal.
+- `uut.gmii_txd`: 8-bit GMII Transmit Data to PHY.
+- `uut.gmii_tx_en`: GMII Transmit Enable signal.
+- `uut.gmii_tx_er`: GMII Transmit Error signal.
 
 ## 🏗 Structural Block Diagram
 The following Mermaid diagram maps the exact sub-module hierarchy instantiated within `gem_ethernet`. Use this to verify that structural boundaries match the behavioral expectations.

@@ -3,6 +3,8 @@
 ## 📝 Overview
 This directory contains the Verilog source, testbench, and verification instructions for the `titan_x_top` module.
 
+The `titan_x_top` module serves as the top-level integration wrapper for the SMVDU-TITAN-X System-on-Chip (SoC). It instantiates and interconnects all major subsystems via a central AXI4 crossbar, including four RV64GC processing cores, an RV64IMAC monitor core, an L2 cache and DDR4 memory controller, various high-speed interfaces (PCIe, Gigabit Ethernet, USB OTG), a complete video pipeline (MIPI CSI-2, ISP, VDMA, HDMI), a secure boot and crypto subsystem, and numerous low-speed peripherals (UART, CAN, RTC). This module ties all external I/O pins to their respective internal IP blocks.
+
 ## 🎯 What to Test
 The verification engineer should ensure that:
 1. The module resets correctly and all internal states initialize to safe values.
@@ -12,39 +14,39 @@ The verification engineer should ensure that:
 ## 🔍 GTKWave Signals to Observe
 Add the following key signals to your GTKWave trace for structural inspection:
 ### Inputs
-- `uut.clk`
-- `uut.rst_n`
-- `uut.pipe_clk`
-- `uut.eth_tx_clk`
-- `uut.eth_rx_clk`
-- `uut.ulpi_clk`
-- `uut.mipi_rxbyteclkhs`
-- `uut.hdmi_clk_pixel`
-- `uut.hdmi_clk_tmds`
-- `uut.rtc_clk`
-- `uut.uart_rx`
-- `uut.can_rx`
+- `uut.clk`: The main system clock driving the SoC.
+- `uut.rst_n`: Active-low asynchronous reset signal.
+- `uut.pipe_clk`: Clock for the PCIe PIPE interface.
+- `uut.eth_tx_clk`: Transmit clock for the Ethernet MAC.
+- `uut.eth_rx_clk`: Receive clock for the Ethernet MAC.
+- `uut.ulpi_clk`: 60 MHz clock from the external USB PHY.
+- `uut.mipi_rxbyteclkhs`: High-speed byte clock from the MIPI D-PHY.
+- `uut.hdmi_clk_pixel`: Pixel clock for the HDMI controller.
+- `uut.hdmi_clk_tmds`: TMDS clock for the HDMI controller.
+- `uut.rtc_clk`: Low-frequency clock for the Real-Time Clock module.
+- `uut.uart_rx`: 5-bit input vector for UART receive lines.
+- `uut.can_rx`: 2-bit input vector for CAN receive lines.
 
 ### Outputs
-- `uut.ddr_addr`
-- `uut.ddr_ba`
-- `uut.ddr_bg`
-- `uut.ddr_ck_p`
-- `uut.ddr_ck_n`
-- `uut.ddr_cke`
-- `uut.ddr_cs_n`
-- `uut.ddr_ras_n`
-- `uut.ddr_cas_n`
-- `uut.ddr_we_n`
-- `uut.ddr_reset_n`
-- `uut.ddr_odt`
-- `uut.ddr_act_n`
-- `uut.hdmi_tmds_clk_p`
-- `uut.hdmi_tmds_clk_n`
-- `uut.hdmi_tmds_data_p`
-- `uut.hdmi_tmds_data_n`
-- `uut.uart_tx`
-- `uut.can_tx`
+- `uut.ddr_addr`: DDR4 memory interface address bus.
+- `uut.ddr_ba`: DDR4 memory interface bank address.
+- `uut.ddr_bg`: DDR4 memory interface bank group.
+- `uut.ddr_ck_p`: DDR4 memory differential clock (positive).
+- `uut.ddr_ck_n`: DDR4 memory differential clock (negative).
+- `uut.ddr_cke`: DDR4 memory clock enable.
+- `uut.ddr_cs_n`: DDR4 memory active-low chip select.
+- `uut.ddr_ras_n`: DDR4 memory active-low row address strobe.
+- `uut.ddr_cas_n`: DDR4 memory active-low column address strobe.
+- `uut.ddr_we_n`: DDR4 memory active-low write enable.
+- `uut.ddr_reset_n`: DDR4 memory active-low reset.
+- `uut.ddr_odt`: DDR4 memory on-die termination.
+- `uut.ddr_act_n`: DDR4 memory active-low activation command.
+- `uut.hdmi_tmds_clk_p`: Differential HDMI TMDS clock (positive).
+- `uut.hdmi_tmds_clk_n`: Differential HDMI TMDS clock (negative).
+- `uut.hdmi_tmds_data_p`: Differential HDMI TMDS data lanes (positive).
+- `uut.hdmi_tmds_data_n`: Differential HDMI TMDS data lanes (negative).
+- `uut.uart_tx`: 5-bit output vector for UART transmit lines.
+- `uut.can_tx`: 2-bit output vector for CAN transmit lines.
 
 ## 🏗 Structural Block Diagram
 The following Mermaid diagram maps the exact sub-module hierarchy instantiated within `titan_x_top`. Use this to verify that structural boundaries match the behavioral expectations.

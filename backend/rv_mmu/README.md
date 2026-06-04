@@ -3,6 +3,8 @@
 ## 📝 Overview
 This directory contains the Verilog source, testbench, and verification instructions for the `rv_mmu` module.
 
+The `rv_mmu` module is the top-level Memory Management Unit supporting Sv39 virtual memory translation. It multiplexes bare mode (M-mode or translation disabled) with paged mode (Sv39). When Sv39 is active, it utilizes an internal `rv_tlb` for fast address translation and permission checking, and falls back to a hardware Page Table Walker (`rv_ptw`) via an AXI4 interface on TLB misses. It handles SATP CSR decoding, mode switching, SFENCE.VMA invalidations, and properly signals pipeline stalls and page faults.
+
 ## 🎯 What to Test
 The verification engineer should ensure that:
 1. The module resets correctly and all internal states initialize to safe values.
@@ -12,34 +14,34 @@ The verification engineer should ensure that:
 ## 🔍 GTKWave Signals to Observe
 Add the following key signals to your GTKWave trace for structural inspection:
 ### Inputs
-- `uut.clk`
-- `uut.rst_n`
-- `uut.satp`
-- `uut.priv_mode`
-- `uut.va_req`
-- `uut.req_valid`
-- `uut.req_r`
-- `uut.req_w`
-- `uut.req_x`
-- `uut.ptw_arready`
-- `uut.ptw_rvalid`
-- `uut.ptw_rdata`
-- `uut.ptw_rresp`
-- `uut.sfence_vma`
-- `uut.sfence_asid_en`
-- `uut.sfence_va_en`
-- `uut.sfence_va_val`
-- `uut.sfence_asid_val`
+- `uut.clk`: The main system clock driving the sequential logic.
+- `uut.rst_n`: Active-low asynchronous reset signal.
+- `uut.satp`: Supervisor Address Translation and Protection CSR.
+- `uut.priv_mode`: Current privilege mode (M, S, U).
+- `uut.va_req`: Virtual address requested by the pipeline.
+- `uut.req_valid`: Request valid signal.
+- `uut.req_r`: Flag indicating a read/load access.
+- `uut.req_w`: Flag indicating a write/store access.
+- `uut.req_x`: Flag indicating an instruction fetch access.
+- `uut.ptw_arready`: AXI4 PTW read address ready.
+- `uut.ptw_rvalid`: AXI4 PTW read data valid.
+- `uut.ptw_rdata`: AXI4 PTW read data bus.
+- `uut.ptw_rresp`: AXI4 PTW read response code.
+- `uut.sfence_vma`: TLB flush instruction indicator.
+- `uut.sfence_asid_en`: Flag to flush specific ASID.
+- `uut.sfence_va_en`: Flag to flush specific virtual address.
+- `uut.sfence_va_val`: Virtual address value for SFENCE.VMA.
+- `uut.sfence_asid_val`: ASID value for SFENCE.VMA.
 
 ### Outputs
-- `uut.pa_out`
-- `uut.trans_valid`
-- `uut.trans_busy`
-- `uut.page_fault`
-- `uut.fault_va`
-- `uut.ptw_arvalid`
-- `uut.ptw_araddr`
-- `uut.ptw_rready`
+- `uut.pa_out`: Translated 40-bit physical address.
+- `uut.trans_valid`: Signal indicating the translation is complete.
+- `uut.trans_busy`: Signal indicating a pipeline stall (e.g., during PTW).
+- `uut.page_fault`: Page fault exception flag.
+- `uut.fault_va`: The virtual address that caused the page fault.
+- `uut.ptw_arvalid`: AXI4 PTW read address valid.
+- `uut.ptw_araddr`: AXI4 PTW read address bus.
+- `uut.ptw_rready`: AXI4 PTW read data ready.
 
 ## 🏗 Structural Block Diagram
 The following Mermaid diagram maps the exact sub-module hierarchy instantiated within `rv_mmu`. Use this to verify that structural boundaries match the behavioral expectations.

@@ -3,6 +3,8 @@
 ## 📝 Overview
 This directory contains the Verilog source, testbench, and verification instructions for the `apb_bridge` module.
 
+The `apb_bridge` module is an AXI4-Lite to AMBA 3 APB (32-bit) bridge that converts AXI4-Lite read and write transactions into standard APB transfers. It utilizes a state machine (IDLE, SETUP, ACCESS) to handle the AXI-to-APB phase translation, latching AXI addresses and write data before initiating the APB select and enable phases. The bridge carefully manages AXI handshakes (awready, wready, arready) and responses (bvalid, rvalid), properly routing APB slave errors (`pslverr`) back into AXI responses (`bresp`, `rresp`).
+
 ## 🎯 What to Test
 The verification engineer should ensure that:
 1. The module resets correctly and all internal states initialize to safe values.
@@ -12,36 +14,36 @@ The verification engineer should ensure that:
 ## 🔍 GTKWave Signals to Observe
 Add the following key signals to your GTKWave trace for structural inspection:
 ### Inputs
-- `uut.clk`
-- `uut.rst_n`
-- `uut.s_awvalid`
-- `uut.s_awaddr`
-- `uut.s_wvalid`
-- `uut.s_wdata`
-- `uut.s_wstrb`
-- `uut.s_bready`
-- `uut.s_arvalid`
-- `uut.s_araddr`
-- `uut.s_rready`
-- `uut.prdata`
-- `uut.pready`
-- `uut.pslverr`
+- `uut.clk`: The main system clock driving the bridge state machine.
+- `uut.rst_n`: Active-low asynchronous reset signal.
+- `uut.s_awvalid`: AXI4-Lite write address valid signal.
+- `uut.s_awaddr`: AXI4-Lite write address bus.
+- `uut.s_wvalid`: AXI4-Lite write data valid signal.
+- `uut.s_wdata`: AXI4-Lite write data bus.
+- `uut.s_wstrb`: AXI4-Lite write strobe signal for byte-lane enables.
+- `uut.s_bready`: AXI4-Lite write response ready signal from the master.
+- `uut.s_arvalid`: AXI4-Lite read address valid signal.
+- `uut.s_araddr`: AXI4-Lite read address bus.
+- `uut.s_rready`: AXI4-Lite read data ready signal from the master.
+- `uut.prdata`: APB 32-bit read data bus from the slave.
+- `uut.pready`: APB ready signal from the slave indicating transfer completion.
+- `uut.pslverr`: APB slave error signal indicating a transfer failure.
 
 ### Outputs
-- `uut.s_awready`
-- `uut.s_wready`
-- `uut.s_bvalid`
-- `uut.s_bresp`
-- `uut.s_arready`
-- `uut.s_rvalid`
-- `uut.s_rdata`
-- `uut.s_rresp`
-- `uut.paddr`
-- `uut.psel`
-- `uut.penable`
-- `uut.pwrite`
-- `uut.pwdata`
-- `uut.pstrb`
+- `uut.s_awready`: AXI4-Lite write address ready signal.
+- `uut.s_wready`: AXI4-Lite write data ready signal.
+- `uut.s_bvalid`: AXI4-Lite write response valid signal.
+- `uut.s_bresp`: AXI4-Lite write response signal (indicates OKAY or SLVERR).
+- `uut.s_arready`: AXI4-Lite read address ready signal.
+- `uut.s_rvalid`: AXI4-Lite read data valid signal.
+- `uut.s_rdata`: AXI4-Lite read data bus.
+- `uut.s_rresp`: AXI4-Lite read response signal (indicates OKAY or SLVERR).
+- `uut.paddr`: APB address bus.
+- `uut.psel`: APB select signal indicating the start of a transfer.
+- `uut.penable`: APB enable signal for the access phase.
+- `uut.pwrite`: APB write control signal.
+- `uut.pwdata`: APB write data bus.
+- `uut.pstrb`: APB write strobe signal (APB4 extension).
 
 ## 🏗 Structural Block Diagram
 The following Mermaid diagram maps the exact sub-module hierarchy instantiated within `apb_bridge`. Use this to verify that structural boundaries match the behavioral expectations.

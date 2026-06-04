@@ -3,6 +3,8 @@
 ## 📝 Overview
 This directory contains the Verilog source, testbench, and verification instructions for the `l2_tag_array` module.
 
+The `l2_tag_array` module is a register-based storage array designed for the L2 Cache Tag Array. It implements 64 sets, storing a 28-bit tag and a 1-bit valid flag per set. It supports synchronous writes when chip select and write enable are active, and provides continuous combinational read output of the tag and valid bits based on the provided index.
+
 ## 🎯 What to Test
 The verification engineer should ensure that:
 1. The module resets correctly and all internal states initialize to safe values.
@@ -12,16 +14,16 @@ The verification engineer should ensure that:
 ## 🔍 GTKWave Signals to Observe
 Add the following key signals to your GTKWave trace for structural inspection:
 ### Inputs
-- `uut.clk`
-- `uut.rst_n`
-- `uut.cs`
-- `uut.we`
-- `uut.index`
-- `uut.tag_in`
+- `uut.clk`: The main system clock driving the sequential logic.
+- `uut.rst_n`: Active-low asynchronous reset signal.
+- `uut.cs`: Chip select signal to activate the tag array.
+- `uut.we`: Write enable signal to allow writing into the tag array.
+- `uut.index`: 6-bit index address bus for selecting a tag set.
+- `uut.tag_in`: 28-bit tag data input to write.
 
 ### Outputs
-- `uut.tag_out`
-- `uut.valid_out`
+- `uut.tag_out`: 28-bit read data output providing the stored tag.
+- `uut.valid_out`: Valid bit output indicating the stored tag is valid.
 
 ## 🏗 Structural Block Diagram
 The following Mermaid diagram maps the exact sub-module hierarchy instantiated within `l2_tag_array`. Use this to verify that structural boundaries match the behavioral expectations.

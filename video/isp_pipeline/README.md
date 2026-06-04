@@ -3,6 +3,8 @@
 ## 📝 Overview
 This directory contains the Verilog source, testbench, and verification instructions for the `isp_pipeline` module.
 
+The `isp_pipeline` module implements a basic Image Signal Processor (ISP) pipeline. It receives a raw video stream via an AXI4-Stream interface (typically from a MIPI CSI-2 receiver) and processes it through multiple stages, including Bayer to RGB bilinear interpolation, a 3x3 color correction matrix (CCM), and a Gamma correction lookup table (LUT). Configuration such as bypass mode and gamma parameters is controlled via an APB slave interface, and the processed pixel stream is output over another AXI4-Stream interface (typically to a VDMA).
+
 ## 🎯 What to Test
 The verification engineer should ensure that:
 1. The module resets correctly and all internal states initialize to safe values.
@@ -12,28 +14,28 @@ The verification engineer should ensure that:
 ## 🔍 GTKWave Signals to Observe
 Add the following key signals to your GTKWave trace for structural inspection:
 ### Inputs
-- `uut.clk`
-- `uut.rst_n`
-- `uut.s_axis_tdata`
-- `uut.s_axis_tvalid`
-- `uut.s_axis_tuser`
-- `uut.s_axis_tlast`
-- `uut.m_axis_tready`
-- `uut.paddr`
-- `uut.psel`
-- `uut.penable`
-- `uut.pwrite`
-- `uut.pwdata`
+- `uut.clk`: The main system clock driving the sequential logic.
+- `uut.rst_n`: Active-low asynchronous reset signal.
+- `uut.s_axis_tdata`: AXI4-Stream input data bus containing raw pixels.
+- `uut.s_axis_tvalid`: AXI4-Stream input valid signal.
+- `uut.s_axis_tuser`: AXI4-Stream input user signal (Start of Frame).
+- `uut.s_axis_tlast`: AXI4-Stream input last signal (End of Line).
+- `uut.m_axis_tready`: AXI4-Stream output ready signal from the downstream receiver.
+- `uut.paddr`: APB slave address bus.
+- `uut.psel`: APB slave select signal.
+- `uut.penable`: APB slave enable signal.
+- `uut.pwrite`: APB slave write enable signal.
+- `uut.pwdata`: APB slave write data bus.
 
 ### Outputs
-- `uut.s_axis_tready`
-- `uut.m_axis_tdata`
-- `uut.m_axis_tvalid`
-- `uut.m_axis_tuser`
-- `uut.m_axis_tlast`
-- `uut.prdata`
-- `uut.pready`
-- `uut.pslverr`
+- `uut.s_axis_tready`: AXI4-Stream input ready signal.
+- `uut.m_axis_tdata`: AXI4-Stream output data bus containing processed pixels.
+- `uut.m_axis_tvalid`: AXI4-Stream output valid signal.
+- `uut.m_axis_tuser`: AXI4-Stream output user signal (Start of Frame).
+- `uut.m_axis_tlast`: AXI4-Stream output last signal (End of Line).
+- `uut.prdata`: APB slave read data bus.
+- `uut.pready`: APB slave ready signal.
+- `uut.pslverr`: APB slave error signal.
 
 ## 🏗 Structural Block Diagram
 The following Mermaid diagram maps the exact sub-module hierarchy instantiated within `isp_pipeline`. Use this to verify that structural boundaries match the behavioral expectations.

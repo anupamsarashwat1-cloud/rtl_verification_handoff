@@ -3,6 +3,8 @@
 ## 📝 Overview
 This directory contains the Verilog source, testbench, and verification instructions for the `rtc` module.
 
+The `rtc` is a Real-Time Counter designed to provide a 64-bit free-running timebase, aligning with the RISC-V Core Local Interruptor (CLINT) timer specification (`mtime` and `mtimecmp`). Driven by a slow, always-on clock (e.g., 32.768 kHz), it increments the 64-bit `mtime` counter continuously. Through its APB slave interface, system software can read the current time and program independent 64-bit comparator registers (`mtimecmp`) for up to 5 harts (4 application cores and 1 monitor core). When the global `mtime` value reaches or exceeds a core's programmed `mtimecmp` value, the module asserts the corresponding timer interrupt (`timer_irq`), enabling precise, asynchronous event scheduling and OS tick generation.
+
 ## 🎯 What to Test
 The verification engineer should ensure that:
 1. The module resets correctly and all internal states initialize to safe values.
@@ -12,20 +14,20 @@ The verification engineer should ensure that:
 ## 🔍 GTKWave Signals to Observe
 Add the following key signals to your GTKWave trace for structural inspection:
 ### Inputs
-- `uut.clk`
-- `uut.rtc_clk`
-- `uut.rst_n`
-- `uut.paddr`
-- `uut.psel`
-- `uut.penable`
-- `uut.pwrite`
-- `uut.pwdata`
+- `uut.clk`: The main system clock or APB clock driving the APB slave interface.
+- `uut.rtc_clk`: The always-on slow clock (e.g., 32.768 kHz) driving the mtime counter.
+- `uut.rst_n`: Active-low asynchronous reset signal.
+- `uut.paddr`: 32-bit APB address bus for configuring mtimecmp registers.
+- `uut.psel`: APB slave select signal.
+- `uut.penable`: APB enable signal.
+- `uut.pwrite`: APB write control signal.
+- `uut.pwdata`: 32-bit APB write data bus.
 
 ### Outputs
-- `uut.prdata`
-- `uut.pready`
-- `uut.pslverr`
-- `uut.timer_irq`
+- `uut.prdata`: 32-bit APB read data bus for retrieving mtime or mtimecmp values.
+- `uut.pready`: APB ready signal for CSR accesses.
+- `uut.pslverr`: APB slave error signal indicating an invalid transfer.
+- `uut.timer_irq`: 5-bit interrupt request bus mapped to individual harts.
 
 ## 🏗 Structural Block Diagram
 The following Mermaid diagram maps the exact sub-module hierarchy instantiated within `rtc`. Use this to verify that structural boundaries match the behavioral expectations.

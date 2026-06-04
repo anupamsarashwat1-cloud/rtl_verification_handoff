@@ -3,6 +3,8 @@
 ## 📝 Overview
 This directory contains the Verilog source, testbench, and verification instructions for the `can_controller` module.
 
+The `can_controller` is a CAN 2.0B compliant communication module designed to support both Standard (11-bit) and Extended (29-bit) identifiers. It interfaces with the host system via an APB slave interface for configuring operational modes, timing bus parameters, managing interrupts, and accessing transmission and reception buffers. The controller handles the intricacies of the CAN protocol, including bit stuffing, CRC computation, arbitration, and error handling. It transmits and receives frames up to 8 bytes in length over the physical layer via its `can_tx` and `can_rx` pins.
+
 ## 🎯 What to Test
 The verification engineer should ensure that:
 1. The module resets correctly and all internal states initialize to safe values.
@@ -12,21 +14,21 @@ The verification engineer should ensure that:
 ## 🔍 GTKWave Signals to Observe
 Add the following key signals to your GTKWave trace for structural inspection:
 ### Inputs
-- `uut.clk`
-- `uut.rst_n`
-- `uut.paddr`
-- `uut.psel`
-- `uut.penable`
-- `uut.pwrite`
-- `uut.pwdata`
-- `uut.can_rx`
+- `uut.clk`: The main system clock driving the sequential logic.
+- `uut.rst_n`: Active-low asynchronous reset signal.
+- `uut.paddr`: 32-bit APB address bus for accessing internal control and buffer registers.
+- `uut.psel`: APB slave select signal indicating the module is targeted.
+- `uut.penable`: APB enable signal used to time transfers.
+- `uut.pwrite`: APB write control signal (1 for write, 0 for read).
+- `uut.pwdata`: 32-bit APB write data bus.
+- `uut.can_rx`: Serial input data from the CAN physical layer transceiver.
 
 ### Outputs
-- `uut.prdata`
-- `uut.pready`
-- `uut.pslverr`
-- `uut.can_irq`
-- `uut.can_tx`
+- `uut.prdata`: 32-bit APB read data bus for returning register values and received data.
+- `uut.pready`: APB ready signal indicating the completion of a transfer.
+- `uut.pslverr`: APB slave error signal indicating a transfer failure.
+- `uut.can_irq`: Interrupt request signal triggered by various CAN events or errors.
+- `uut.can_tx`: Serial output data driven to the CAN physical layer transceiver.
 
 ## 🏗 Structural Block Diagram
 The following Mermaid diagram maps the exact sub-module hierarchy instantiated within `can_controller`. Use this to verify that structural boundaries match the behavioral expectations.

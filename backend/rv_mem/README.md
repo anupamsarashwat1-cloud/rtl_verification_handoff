@@ -3,6 +3,8 @@
 ## 📝 Overview
 This directory contains the Verilog source, testbench, and verification instructions for the `rv_mem` module.
 
+The `rv_mem` module implements the Memory Access (MEM) stage of the RV64 pipeline. It acts as an AXI4-Lite master to interface with the data cache or data memory, issuing read/write requests based on control signals from the Execute stage. It properly aligns and sign-extends or zero-extends loaded data according to the instruction's size specification (`funct3`), drives byte strobes for stores, handles pipeline stalling during memory access latencies, and routes both memory load results and bypassed ALU results to the Writeback stage.
+
 ## 🎯 What to Test
 The verification engineer should ensure that:
 1. The module resets correctly and all internal states initialize to safe values.
@@ -12,44 +14,44 @@ The verification engineer should ensure that:
 ## 🔍 GTKWave Signals to Observe
 Add the following key signals to your GTKWave trace for structural inspection:
 ### Inputs
-- `uut.clk`
-- `uut.rst_n`
-- `uut.flush`
-- `uut.alu_result`
-- `uut.rs2_data`
-- `uut.rd_in`
-- `uut.funct3`
-- `uut.opcode`
-- `uut.mem_read`
-- `uut.mem_write`
-- `uut.reg_write`
-- `uut.valid_in`
-- `uut.dmem_awready`
-- `uut.dmem_wready`
-- `uut.dmem_bvalid`
-- `uut.dmem_arready`
-- `uut.dmem_rvalid`
-- `uut.dmem_rdata`
-- `uut.dmem_rresp`
+- `uut.clk`: The main system clock driving the sequential logic.
+- `uut.rst_n`: Active-low asynchronous reset signal.
+- `uut.flush`: Pipeline flush signal to clear ongoing transactions.
+- `uut.alu_result`: Computed effective address or data result from the Execute stage.
+- `uut.rs2_data`: Source register 2 data to be written to memory (for stores).
+- `uut.rd_in`: Destination register address.
+- `uut.funct3`: Instruction funct3 field specifying memory access size.
+- `uut.opcode`: Instruction opcode.
+- `uut.mem_read`: Memory read control flag.
+- `uut.mem_write`: Memory write control flag.
+- `uut.reg_write`: Register write control flag.
+- `uut.valid_in`: Valid signal for the incoming instruction.
+- `uut.dmem_awready`: AXI4 data memory write address ready.
+- `uut.dmem_wready`: AXI4 data memory write data ready.
+- `uut.dmem_bvalid`: AXI4 data memory write response valid.
+- `uut.dmem_arready`: AXI4 data memory read address ready.
+- `uut.dmem_rvalid`: AXI4 data memory read data valid.
+- `uut.dmem_rdata`: AXI4 data memory read data bus (64-bit).
+- `uut.dmem_rresp`: AXI4 data memory read response code.
 
 ### Outputs
-- `uut.dmem_awvalid`
-- `uut.dmem_awaddr`
-- `uut.dmem_wvalid`
-- `uut.dmem_wdata`
-- `uut.dmem_wstrb`
-- `uut.dmem_bready`
-- `uut.dmem_arvalid`
-- `uut.dmem_araddr`
-- `uut.dmem_rready`
-- `uut.result`
-- `uut.rd_out`
-- `uut.reg_write_out`
-- `uut.valid_out`
-- `uut.fwd_mem_data`
-- `uut.fwd_mem_rd`
-- `uut.fwd_mem_valid`
-- `uut.mem_stall`
+- `uut.dmem_awvalid`: AXI4 data memory write address valid.
+- `uut.dmem_awaddr`: AXI4 data memory write address bus (40-bit).
+- `uut.dmem_wvalid`: AXI4 data memory write data valid.
+- `uut.dmem_wdata`: AXI4 data memory write data bus (64-bit).
+- `uut.dmem_wstrb`: AXI4 data memory write byte strobe.
+- `uut.dmem_bready`: AXI4 data memory write response ready.
+- `uut.dmem_arvalid`: AXI4 data memory read address valid.
+- `uut.dmem_araddr`: AXI4 data memory read address bus (40-bit).
+- `uut.dmem_rready`: AXI4 data memory read data ready.
+- `uut.result`: Final data result (from memory load or ALU bypass) for Writeback.
+- `uut.rd_out`: Destination register address passed to Writeback stage.
+- `uut.reg_write_out`: Register write control flag passed to Writeback stage.
+- `uut.valid_out`: Valid signal indicating valid data for Writeback stage.
+- `uut.fwd_mem_data`: Forwarded data to earlier pipeline stages.
+- `uut.fwd_mem_rd`: Destination register of the forwarded data.
+- `uut.fwd_mem_valid`: Forwarded data valid signal.
+- `uut.mem_stall`: Stall request generated during memory access wait states.
 
 ## 🏗 Structural Block Diagram
 The following Mermaid diagram maps the exact sub-module hierarchy instantiated within `rv_mem`. Use this to verify that structural boundaries match the behavioral expectations.

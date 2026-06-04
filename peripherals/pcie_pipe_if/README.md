@@ -3,6 +3,8 @@
 ## 📝 Overview
 This directory contains the Verilog source, testbench, and verification instructions for the `pcie_pipe_if` module.
 
+The `pcie_pipe_if` module provides the standard Physical Interface for PCI Express (PIPE) 3.0 between the PCIe Link Layer and the physical SerDes (hard PHY). Configured here for PCIe Gen2 (5 GT/s) across 4 lanes, the module manages transmit and receive data paths, mapping link-layer signals (`tx_data`, `rx_data`, control characters like `datak`) and LTSSM (Link Training and Status State Machine) control signals (like `tx_rate`, `tx_elecidle`, and `power_down`) directly to the PHY. It serves as a structural passthrough wrapper to abstract PHY connections for simulation and integration, adapting clock speeds and lane states.
+
 ## 🎯 What to Test
 The verification engineer should ensure that:
 1. The module resets correctly and all internal states initialize to safe values.
@@ -12,35 +14,35 @@ The verification engineer should ensure that:
 ## 🔍 GTKWave Signals to Observe
 Add the following key signals to your GTKWave trace for structural inspection:
 ### Inputs
-- `uut.pclk`
-- `uut.reset_n`
-- `uut.tx_data`
-- `uut.tx_datak`
-- `uut.tx_rate`
-- `uut.power_down`
-- `uut.tx_elecidle`
-- `uut.tx_compliance`
-- `uut.rx_polarity`
-- `uut.pipe_rx_data`
-- `uut.pipe_rx_datak`
-- `uut.pipe_rx_valid`
-- `uut.pipe_rx_elecidle`
-- `uut.pipe_rx_status`
-- `uut.pipe_phy_status`
+- `uut.pclk`: PIPE Clock (e.g., 250MHz for Gen2 16-bit operation).
+- `uut.reset_n`: Active-low asynchronous reset signal.
+- `uut.tx_data`: Transmit data bus from the PCIe link layer across all lanes.
+- `uut.tx_datak`: Transmit control character indicator (K-character) from the link layer.
+- `uut.tx_rate`: Transmit rate selection (e.g., 2.5 GT/s or 5.0 GT/s).
+- `uut.power_down`: Power management state control for the PHY lanes.
+- `uut.tx_elecidle`: Transmit electrical idle control signal.
+- `uut.tx_compliance`: Transmit compliance mode control signal.
+- `uut.rx_polarity`: Receive polarity inversion control signal.
+- `uut.pipe_rx_data`: Receive data bus from the physical PIPE PHY.
+- `uut.pipe_rx_datak`: Receive control character indicator from the PIPE PHY.
+- `uut.pipe_rx_valid`: Receive data valid signal from the PIPE PHY.
+- `uut.pipe_rx_elecidle`: Receive electrical idle status from the PIPE PHY.
+- `uut.pipe_rx_status`: Receive status and error reporting from the PIPE PHY.
+- `uut.pipe_phy_status`: PHY status signal indicating completion of requested operations.
 
 ### Outputs
-- `uut.rx_data`
-- `uut.rx_datak`
-- `uut.rx_valid`
-- `uut.rx_elecidle`
-- `uut.rx_status`
-- `uut.pipe_tx_data`
-- `uut.pipe_tx_datak`
-- `uut.pipe_tx_rate`
-- `uut.pipe_tx_elecidle`
-- `uut.pipe_tx_compliance`
-- `uut.pipe_rx_polarity`
-- `uut.pipe_power_down`
+- `uut.rx_data`: Receive data bus sent to the PCIe link layer.
+- `uut.rx_datak`: Receive control character indicator sent to the link layer.
+- `uut.rx_valid`: Receive data valid signal sent to the link layer.
+- `uut.rx_elecidle`: Receive electrical idle status sent to the link layer.
+- `uut.rx_status`: Receive status sent to the link layer.
+- `uut.pipe_tx_data`: Transmit data bus to the physical PIPE PHY.
+- `uut.pipe_tx_datak`: Transmit control character indicator to the PIPE PHY.
+- `uut.pipe_tx_rate`: Transmit rate selection to the PIPE PHY.
+- `uut.pipe_tx_elecidle`: Transmit electrical idle signal to the PIPE PHY.
+- `uut.pipe_tx_compliance`: Transmit compliance mode signal to the PIPE PHY.
+- `uut.pipe_rx_polarity`: Receive polarity inversion signal to the PIPE PHY.
+- `uut.pipe_power_down`: Power management control signal to the PIPE PHY.
 
 ## 🏗 Structural Block Diagram
 The following Mermaid diagram maps the exact sub-module hierarchy instantiated within `pcie_pipe_if`. Use this to verify that structural boundaries match the behavioral expectations.
