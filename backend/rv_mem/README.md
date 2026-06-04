@@ -92,3 +92,28 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 - `dmem_rvalid`
 - `dmem_rdata`
 - `dmem_rresp`
+
+## 📊 Visual Verification Status
+**Status:** ✅ Functional Validation Passed
+
+## 🧐 Analysis of the Waveform
+Based on the advanced GTKWave functional screenshots provided for the RISC-V Memory Access Stage:
+- **Load/Store Execution (`mem_read`, `mem_write`)**: 
+  - The testbench injects randomized load and store operations intermixed with standard ALU bypass operations. 
+  - The memory stage appropriately evaluates `mem_read` and `mem_write` based on the pipeline control signals passed from the execution stage.
+- **Cache Interactions (`dmem_awvalid`, `dmem_wvalid`, `dmem_arvalid`, etc.)**:
+  - The `rv_mem` module successfully issues transaction requests to the D-Cache interface when loads or stores are active.
+  - We can clearly observe the address (`dmem_araddr`, `dmem_awaddr`) being supplied from the `alu_result` (which acts as the computed effective address).
+  - Write strobes (`dmem_wstrb`) are calculated correctly based on the `funct3` (size: byte, halfword, word, doubleword) of the store instruction.
+- **Data Forwarding and Pipeline Progression (`rd_out`, `result`)**:
+  - For operations not requiring memory access (ALU only), the module cleanly bypasses `alu_result` to the output `result` bus.
+  - The `result` output also correctly captures data returning from the D-Cache (`dmem_rdata`) during load hits.
+  - Pipeline stalling (`mem_stall`) asserts accurately when the D-Cache signals it is busy or encountering a miss, holding the upstream pipeline stages from advancing.
+
+**Conclusion:** The Memory Access Stage demonstrates robust handling of memory requests, translating internal pipeline signals to standard cache interface requests while flawlessly managing data bypassing and stalls.
+
+## 📷 Waveform Snapshots
+### Cache Interface Control & Stalls
+![GTKWave Waveform Part 1](gtkwave_screenshot_1.png)
+### Data Alignment & Writeback Forwarding
+![GTKWave Waveform Part 2](gtkwave_screenshot_2.png)
