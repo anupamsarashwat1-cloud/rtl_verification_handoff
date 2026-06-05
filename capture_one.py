@@ -1,14 +1,7 @@
 #!/usr/bin/env python3
 """
 Capture a single module's Input and Output waveform screenshots from GTKWave.
-
-Workflow:
-1. Parse the VCD to discover actual signal hierarchy paths
-2. Parse the README to get the Input/Output signal lists
-3. Map README signal names -> VCD signal paths
-4. Generate Tcl scripts that add ONLY the correct signals
-5. Set time range to 0ns - 1500ns
-6. Take screenshot, push to git
+Properly parses VCD hierarchy, maps README signals, sets 0-1500ns range.
 
 Usage: python3 capture_one.py <category> <module_name>
 """
@@ -38,8 +31,7 @@ os.chdir(module_dir)
 
 # ---- Step 1: Parse VCD to get all signal paths ----
 def parse_vcd_signals(vcd_path):
-    """Extract all signal names with their full hierarchical path from VCD."""
-    signals = {}  # basename -> full_path
+    signals = {}
     scope_stack = []
     with open(vcd_path, 'r') as f:
         for line in f:
@@ -53,19 +45,17 @@ def parse_vcd_signals(vcd_path):
                     scope_stack.pop()
             elif line.startswith('$var'):
                 parts = line.split()
-                # $var type size id name [msb:lsb] $end
                 if len(parts) >= 5:
                     sig_name = parts[4]
                     full_path = ".".join(scope_stack) + "." + sig_name
-                    # Store with the scope prefix for matching
-                    signals[sig_name] = signals.get(sig_name, [])
+                    if sig_name not in signals:
+                        signals[sig_name] = []
                     signals[sig_name].append(full_path)
             elif line.startswith('$enddefinitions'):
                 break
     return signals
 
 vcd_signals = parse_vcd_signals(vcd_file)
-print(f"Found {sum(len(v) for v in vcd_signals.values())} signals in VCD")
 
 # ---- Step 2: Parse README for Input/Output signals ----
 def parse_readme_signals(readme_path):
@@ -78,15 +68,13 @@ def parse_readme_signals(readme_path):
                 current_section = 'inputs'
             elif '### Outputs' in line or '**Outputs' in line:
                 current_section = 'outputs'
-            elif line.startswith('##') or line.startswith('**') and 'Inputs' not in line and 'Outputs' not in line:
-                if line.startswith('## ') or (line.startswith('**') and '`' not in line):
-                    current_section = None
+            elif line.startswith('## ') and 'Input' not in line and 'Output' not in line:
+                current_section = None
                     
             if line.strip().startswith('- `'):
                 match = re.search(r'`([^`]+)`', line)
                 if match:
                     sig = match.group(1)
-                    # Strip any prefix like "uut." or "tb_xxx."
                     bare_name = sig.split('.')[-1]
                     if current_section == 'inputs':
                         inputs.append(bare_name)
@@ -101,13 +89,10 @@ print(f"README Outputs: {readme_outputs}")
 
 # ---- Step 3: Map README names to VCD paths ----
 def resolve_signals(sig_names, vcd_signals, tb_name):
-    """For each bare signal name, find the best matching VCD path.
-    Prefer tb_xxx.signal (testbench level) over tb_xxx.uut.signal."""
     resolved = []
     for name in sig_names:
         if name in vcd_signals:
             paths = vcd_signals[name]
-            # Prefer the top-level testbench path (shorter path)
             tb_level = [p for p in paths if p.startswith(tb_name + ".") and p.count('.') == 1]
             if tb_level:
                 resolved.append(tb_level[0])
@@ -136,11 +121,8 @@ def capture(signals, filename):
     for s in signals:
         tcl += f'lappend sigs "{s}"\n'
     tcl += "gtkwave::addSignalsFromList $sigs\n"
-    # Zoom: timescale is 1ps. We want ~1500ns = 1,500,000ps visible.
-    # With ~1400px signal area: 1500000/1400 ≈ 1071 ps/pixel
-    # GTKWave zoom factor: 2^|factor| = ps/pixel
-    # 2^10 = 1024 ≈ 1071, so factor ≈ -10
-    tcl += "gtkwave::setZoomFactor -10\n"
+    # Zoom -18 gives ~0-1900ns range (covers the 0-1500ns requirement)
+    tcl += "gtkwave::setZoomFactor -18\n"
     tcl += "gtkwave::setWindowStartTime 0\n"
     
     tcl_path = f"run_{filename.replace('.png', '.tcl')}"
@@ -152,7 +134,7 @@ def capture(signals, filename):
         env=dict(os.environ, DISPLAY=":0"),
         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
     )
-    time.sleep(4)  # Wait for GUI to fully render
+    time.sleep(4)
     ret = os.system(f"DISPLAY=:0 scrot -u {filename}")
     os.system("killall gtkwave 2>/dev/null")
     p.wait()
@@ -165,15 +147,15 @@ def capture(signals, filename):
         return False
 
 print("\n--- Capturing Inputs ---")
-inp_ok = capture(resolved_inputs, "waveform_inputs.png")
+capture(resolved_inputs, "waveform_inputs.png")
 
 print("\n--- Capturing Outputs ---")
-out_ok = capture(resolved_outputs, "waveform_outputs.png")
+capture(resolved_outputs, "waveform_outputs.png")
 
 # ---- Step 6: Git push ----
 os.chdir(base_dir)
 os.system("git add .")
-os.system(f'git commit -m "test: {module_name} - Correct waveform screenshots (0-1500ns) with proper signal mapping"')
+os.system(f'git commit -m "test: {module_name} - Waveform screenshots (0-1500ns) with correct signal mapping"')
 os.environ.pop("GITHUB_TOKEN", None)
 os.system("git push")
 print(f"\nDone: {module_name}")
