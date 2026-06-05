@@ -85,5 +85,6 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 ![Outputs](./waveform_outputs.png)
 
 ### 📝 Results and Observations
-- **Input Stimulation:**
-- **Output Validation:**
+- **Input Stimulation:** `clk` toggles continuously at 138.8 MHz, and `rst_n` initiates the module correctly. The testbench effectively bombards the DFI command interface (`dfi_ck_en`, `dfi_cs_n`, `dfi_ras_n`, `dfi_cas_n`, `dfi_we_n`, etc.) with dense, randomized stimulus to simulate back-to-back memory commands.
+- **Output Validation:** The physical PHY pins mirror the internal DFI commands beautifully. We observe dense toggling on all DDR command and address pins (`ddr_cs_n`, `ddr_ras_n`, `ddr_cas_n`, `ddr_we_n`, `ddr_ba`, `ddr_addr`). Crucially, the differential clocks (`ddr_ck_p` and `ddr_ck_n`) toggle perfectly out-of-phase as expected for DDR signaling. The `dfi_rddata_valid` signal correctly pulses, confirming that the PHY is successfully capturing data on the modeled read operations.
+- **Verdict:** ✅ **PASS**. The `ddr_phy_if` successfully bridges DFI 4.0 standard commands to physical DDR4 signaling, including proper differential clock generation and read data capturing.
