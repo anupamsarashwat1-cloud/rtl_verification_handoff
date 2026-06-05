@@ -14,9 +14,5 @@ lappend sigs "tb_rv_ptw.ptw_rvalid"
 lappend sigs "tb_rv_ptw.ptw_rdata"
 lappend sigs "tb_rv_ptw.ptw_rresp"
 gtkwave::addSignalsFromList $sigs
-gtkwave::/Time/Zoom/Zoom_Full
-gtkwave::/Time/Zoom/Zoom_In
-gtkwave::/Time/Zoom/Zoom_In
-gtkwave::/Time/Zoom/Zoom_In
-gtkwave::/Time/Zoom/Zoom_In
+gtkwave::setZoomFactor -18
 gtkwave::setWindowStartTime 0
