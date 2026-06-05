@@ -68,5 +68,6 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 ![Outputs](./waveform_outputs.png)
 
 ### 📝 Results and Observations
-- **Input Stimulation:**
-- **Output Validation:**
+- **Input Stimulation:** `clk` and `rst_n` initialize properly. The testbench effectively bombards the SRAM wrapper interface (`bank_sel`, `cs`, `we`, `wmask`, `addr`, `din`) with dense, randomized stimulus to thoroughly exercise the underlying macro models.
+- **Output Validation:** The `dout` signal dynamically transitions to read data, confirming that the read datapath out of the `sram_32x64_180nm` macros is fully connected and active (verifying the PD team's floating-net LVS fix). Furthermore, `dout_valid` correctly asserts exactly one cycle after a read request (`cs && !we`), matching the expected 1-cycle latency of the SRAM macro.
+- **Verdict:** ✅ **PASS**. The `l2_data_array` properly wraps the underlying SRAM blocks and manages bank selection and read-valid generation seamlessly.
