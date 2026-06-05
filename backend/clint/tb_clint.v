@@ -7,12 +7,12 @@ module tb_clint();
     logic psel;
     logic penable;
     logic pwrite;
-    logic paddr;
-    logic pwdata;
-    logic prdata;
-    logic pready;
-    logic msip;
-    logic mtip;
+    logic [15:0] paddr;
+    logic [31:0] pwdata;
+    wire [31:0] prdata;
+    wire pready;
+    wire [4:0] msip;
+    wire [4:0] mtip;
 
     // DUT Instantiation
     clint uut (

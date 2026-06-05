@@ -4,24 +4,24 @@ module tb_isp_pipeline();
 
     logic clk;
     logic rst_n;
-    logic s_axis_tdata;
+    logic [31:0] s_axis_tdata;
     logic s_axis_tvalid;
-    logic s_axis_tready;
+    wire s_axis_tready;
     logic s_axis_tuser;
     logic s_axis_tlast;
-    logic m_axis_tdata;
-    logic m_axis_tvalid;
+    wire [31:0] m_axis_tdata;
+    wire m_axis_tvalid;
     logic m_axis_tready;
-    logic m_axis_tuser;
-    logic m_axis_tlast;
-    logic paddr;
+    wire m_axis_tuser;
+    wire m_axis_tlast;
+    logic [31:0] paddr;
     logic psel;
     logic penable;
     logic pwrite;
-    logic pwdata;
-    logic prdata;
-    logic pready;
-    logic pslverr;
+    logic [31:0] pwdata;
+    wire [31:0] prdata;
+    wire pready;
+    wire pslverr;
 
     // DUT Instantiation
     isp_pipeline uut (

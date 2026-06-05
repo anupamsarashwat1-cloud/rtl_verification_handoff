@@ -4,23 +4,23 @@ module tb_aes_engine();
 
     logic clk;
     logic rst_n;
-    logic paddr;
+    logic [31:0] paddr;
     logic psel;
     logic penable;
     logic pwrite;
-    logic pwdata;
-    logic prdata;
-    logic pready;
-    logic pslverr;
-    logic s_axis_tdata;
+    logic [31:0] pwdata;
+    wire [31:0] prdata;
+    wire pready;
+    wire pslverr;
+    logic [31:0] s_axis_tdata;
     logic s_axis_tvalid;
-    logic s_axis_tready;
+    wire s_axis_tready;
     logic s_axis_tlast;
-    logic m_axis_tdata;
-    logic m_axis_tvalid;
+    wire [31:0] m_axis_tdata;
+    wire m_axis_tvalid;
     logic m_axis_tready;
-    logic m_axis_tlast;
-    logic aes_irq;
+    wire m_axis_tlast;
+    wire aes_irq;
 
     // DUT Instantiation
     aes_engine uut (

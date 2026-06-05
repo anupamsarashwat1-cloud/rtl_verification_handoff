@@ -4,20 +4,20 @@ module tb_secure_boot();
 
     logic clk;
     logic rst_n;
-    logic paddr;
+    logic [31:0] paddr;
     logic psel;
     logic penable;
     logic pwrite;
-    logic pwdata;
-    logic prdata;
-    logic pready;
-    logic pslverr;
-    logic envm_addr;
-    logic envm_req;
-    logic envm_rdata;
+    logic [31:0] pwdata;
+    wire [31:0] prdata;
+    wire pready;
+    wire pslverr;
+    wire [16:0] envm_addr;
+    wire envm_req;
+    logic [31:0] envm_rdata;
     logic envm_valid;
-    logic boot_pass;
-    logic boot_fail;
+    wire boot_pass;
+    wire boot_fail;
 
     // DUT Instantiation
     secure_boot uut (

@@ -7,15 +7,15 @@ module tb_spi_master();
     logic psel;
     logic penable;
     logic pwrite;
-    logic paddr;
-    logic pwdata;
-    logic prdata;
-    logic pready;
-    logic spi_clk;
-    logic spi_mosi;
+    logic [3:0] paddr;
+    logic [31:0] pwdata;
+    wire [31:0] prdata;
+    wire pready;
+    wire spi_clk;
+    wire spi_mosi;
     logic spi_miso;
-    logic spi_csn;
-    logic irq;
+    wire [3:0] spi_csn;
+    wire irq;
 
     // DUT Instantiation
     spi_master uut (

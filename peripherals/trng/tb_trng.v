@@ -4,18 +4,18 @@ module tb_trng();
 
     logic clk;
     logic rst_n;
-    logic paddr;
+    logic [31:0] paddr;
     logic psel;
     logic penable;
     logic pwrite;
-    logic pwdata;
-    logic prdata;
-    logic pready;
-    logic pslverr;
-    logic trng_entropy;
-    logic trng_valid;
+    logic [31:0] pwdata;
+    wire [31:0] prdata;
+    wire pready;
+    wire pslverr;
+    wire [255:0] trng_entropy;
+    wire trng_valid;
     logic trng_ready;
-    logic trng_irq;
+    wire trng_irq;
 
     // DUT Instantiation
     trng uut (

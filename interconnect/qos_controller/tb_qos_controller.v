@@ -12,8 +12,8 @@ module tb_qos_controller();
     logic [14:0] m_arready;
     logic [14:0] m_awvalid;
     logic [14:0] m_awready;
-    logic [3:0] m_arqos [0:14];
-    logic [3:0] m_awqos [0:14];
+    wire [3:0] m_arqos [0:14];
+    wire [3:0] m_awqos [0:14];
 
     // DUT Instantiation
     qos_controller uut (
@@ -39,14 +39,13 @@ module tb_qos_controller();
     always #3.6 clk = ~clk;
 
     // Main Functional Stimulus Block
+    integer i;
     initial begin
         $dumpfile("tb_qos_controller.vcd");
         $dumpvars(0, tb_qos_controller);
 
         // 1. Initialize all data inputs
-        for(int i=0; i<15; i++) cfg_base_qos[i] = 0;
-        for(int i=0; i<15; i++) cfg_boost_qos[i] = 0;
-        for(int i=0; i<15; i++) cfg_bw_limit[i] = 0;
+        for (i=0; i<15; i=i+1) begin cfg_base_qos[i]=0; cfg_boost_qos[i]=0; cfg_bw_limit[i]=0; end
         cfg_time_win = 0;
         m_arvalid = 0;
         m_arready = 0;
@@ -64,10 +63,8 @@ module tb_qos_controller();
         // 4. Constrained Random Stimulus Injection
         // Generating aggressive random toggling to exercise internal logic
         repeat(500) begin
+            for (i=0; i<15; i=i+1) begin cfg_base_qos[i]=$random; cfg_boost_qos[i]=$random; cfg_bw_limit[i]=$random; end
             #10;
-            for(int i=0; i<15; i++) cfg_base_qos[i] = $random;
-            for(int i=0; i<15; i++) cfg_boost_qos[i] = $random;
-            for(int i=0; i<15; i++) cfg_bw_limit[i] = $random;
             cfg_time_win = $random;
             m_arvalid = $random;
             m_arready = $random;

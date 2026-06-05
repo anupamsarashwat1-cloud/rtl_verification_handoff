@@ -4,20 +4,20 @@ module tb_mmu_arbiter();
 
     logic clk;
     logic rst_n;
-    logic s_arvalid;
-    logic s_arready;
-    logic s_araddr;
-    logic s_rvalid;
-    logic s_rready;
-    logic s_rdata;
-    logic s_rresp;
-    logic m_arvalid;
+    logic [4:0] s_arvalid;
+    wire [4:0] s_arready;
+    logic [199:0] s_araddr;
+    wire [4:0] s_rvalid;
+    logic [4:0] s_rready;
+    wire [319:0] s_rdata;
+    wire [9:0] s_rresp;
+    wire m_arvalid;
     logic m_arready;
-    logic m_araddr;
+    wire [39:0] m_araddr;
     logic m_rvalid;
-    logic m_rready;
-    logic m_rdata;
-    logic m_rresp;
+    wire m_rready;
+    logic [63:0] m_rdata;
+    logic [1:0] m_rresp;
 
     // DUT Instantiation
     mmu_arbiter uut (

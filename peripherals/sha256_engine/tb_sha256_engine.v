@@ -7,11 +7,11 @@ module tb_sha256_engine();
     logic psel;
     logic penable;
     logic pwrite;
-    logic paddr;
-    logic pwdata;
-    logic prdata;
-    logic pready;
-    logic irq;
+    logic [7:0] paddr;
+    logic [31:0] pwdata;
+    wire [31:0] prdata;
+    wire pready;
+    wire irq;
 
     // DUT Instantiation
     sha256_engine uut (

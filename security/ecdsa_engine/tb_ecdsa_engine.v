@@ -4,15 +4,15 @@ module tb_ecdsa_engine();
 
     logic clk;
     logic rst_n;
-    logic paddr;
+    logic [31:0] paddr;
     logic psel;
     logic penable;
     logic pwrite;
-    logic pwdata;
-    logic prdata;
-    logic pready;
-    logic pslverr;
-    logic ecdsa_irq;
+    logic [31:0] pwdata;
+    wire [31:0] prdata;
+    wire pready;
+    wire pslverr;
+    wire ecdsa_irq;
 
     // DUT Instantiation
     ecdsa_engine uut (

@@ -6,11 +6,11 @@ module tb_fifo_sync();
     logic rst_n;
     logic wr_en;
     logic rd_en;
-    logic wr_data;
-    logic rd_data;
-    logic full;
-    logic empty;
-    logic count;
+    logic [7:0] wr_data;
+    wire [7:0] rd_data;
+    wire full;
+    wire empty;
+    wire [4:0] count;
 
     // DUT Instantiation
     fifo_sync uut (

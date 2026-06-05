@@ -4,7 +4,7 @@ module tb_reset_sync();
 
     logic clk;
     logic async_rst_n;
-    logic sync_rst_n;
+    wire sync_rst_n;
 
     // DUT Instantiation
     reset_sync uut (

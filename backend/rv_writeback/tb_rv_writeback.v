@@ -4,16 +4,16 @@ module tb_rv_writeback();
 
     logic clk;
     logic rst_n;
-    logic result;
-    logic rd_in;
+    logic [63:0] result;
+    logic [4:0] rd_in;
     logic reg_write;
     logic valid_in;
-    logic wb_data;
-    logic wb_rd;
-    logic wb_we;
-    logic fwd_wb_data;
-    logic fwd_wb_rd;
-    logic fwd_wb_valid;
+    wire [63:0] wb_data;
+    wire [4:0] wb_rd;
+    wire wb_we;
+    wire [63:0] fwd_wb_data;
+    wire [4:0] fwd_wb_rd;
+    wire fwd_wb_valid;
 
     // DUT Instantiation
     rv_writeback uut (

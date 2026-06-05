@@ -4,21 +4,21 @@ module tb_rv_fpu();
 
     logic clk;
     logic rst_n;
-    logic fop;
-    logic fmt;
-    logic rm;
+    logic [4:0] fop;
+    logic [1:0] fmt;
+    logic [2:0] rm;
     logic valid_in;
-    logic fp_src1;
-    logic fp_src2;
-    logic fp_src3;
-    logic int_src;
-    logic frm_csr;
-    logic fp_result;
-    logic result_valid;
-    logic fflags;
-    logic fpu_done;
-    logic int_result;
-    logic int_result_valid;
+    logic [63:0] fp_src1;
+    logic [63:0] fp_src2;
+    logic [63:0] fp_src3;
+    logic [63:0] int_src;
+    logic [2:0] frm_csr;
+    wire [63:0] fp_result;
+    wire result_valid;
+    wire [4:0] fflags;
+    wire fpu_done;
+    wire [63:0] int_result;
+    wire int_result_valid;
 
     // DUT Instantiation
     rv_fpu uut (

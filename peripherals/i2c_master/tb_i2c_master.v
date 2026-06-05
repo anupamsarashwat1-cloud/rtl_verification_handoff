@@ -7,13 +7,13 @@ module tb_i2c_master();
     logic psel;
     logic penable;
     logic pwrite;
-    logic paddr;
-    logic pwdata;
-    logic prdata;
-    logic pready;
-    logic scl_pad;
-    logic sda_pad;
-    logic irq;
+    logic [3:0] paddr;
+    logic [31:0] pwdata;
+    wire [31:0] prdata;
+    wire pready;
+    wire scl_pad;
+    wire sda_pad;
+    wire irq;
 
     // DUT Instantiation
     i2c_master uut (

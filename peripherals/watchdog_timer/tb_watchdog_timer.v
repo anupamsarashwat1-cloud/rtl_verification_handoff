@@ -7,12 +7,12 @@ module tb_watchdog_timer();
     logic psel;
     logic penable;
     logic pwrite;
-    logic paddr;
-    logic pwdata;
-    logic prdata;
-    logic pready;
-    logic wdt_reset_n;
-    logic irq;
+    logic [3:0] paddr;
+    logic [31:0] pwdata;
+    wire [31:0] prdata;
+    wire pready;
+    wire wdt_reset_n;
+    wire irq;
 
     // DUT Instantiation
     watchdog_timer uut (

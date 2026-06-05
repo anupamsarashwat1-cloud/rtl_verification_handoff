@@ -4,16 +4,16 @@ module tb_can_controller();
 
     logic clk;
     logic rst_n;
-    logic paddr;
+    logic [31:0] paddr;
     logic psel;
     logic penable;
     logic pwrite;
-    logic pwdata;
-    logic prdata;
-    logic pready;
-    logic pslverr;
-    logic can_irq;
-    logic can_tx;
+    logic [31:0] pwdata;
+    wire [31:0] prdata;
+    wire pready;
+    wire pslverr;
+    wire can_irq;
+    wire can_tx;
     logic can_rx;
 
     // DUT Instantiation

@@ -4,16 +4,16 @@ module tb_rv_pmp();
 
     logic clk;
     logic rst_n;
-    logic paddr;
+    logic [37:0] paddr;
     logic check_r;
     logic check_w;
     logic check_x;
-    logic priv_mode;
+    logic [1:0] priv_mode;
     logic check_en;
-    logic pmpcfg0;
-    logic pmpcfg2;
-    logic pmpaddr_packed;
-    logic pmp_fault;
+    logic [63:0] pmpcfg0;
+    logic [63:0] pmpcfg2;
+    logic [303:0] pmpaddr_packed;
+    wire pmp_fault;
 
     // DUT Instantiation
     rv_pmp uut (

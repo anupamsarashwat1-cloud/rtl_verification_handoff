@@ -5,13 +5,13 @@ module tb_fifo_async();
     logic wr_clk;
     logic wr_rst_n;
     logic wr_en;
-    logic wr_data;
-    logic full;
+    logic [7:0] wr_data;
+    wire full;
     logic rd_clk;
     logic rd_rst_n;
     logic rd_en;
-    logic rd_data;
-    logic empty;
+    wire [7:0] rd_data;
+    wire empty;
 
     // DUT Instantiation
     fifo_async uut (

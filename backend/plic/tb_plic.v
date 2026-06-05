@@ -4,15 +4,15 @@ module tb_plic();
 
     logic clk;
     logic rst_n;
-    logic interrupt_sources;
+    logic [185:0] interrupt_sources;
     logic psel;
     logic penable;
     logic pwrite;
-    logic paddr;
-    logic pwdata;
-    logic prdata;
-    logic pready;
-    logic irq_targets;
+    logic [23:0] paddr;
+    logic [31:0] pwdata;
+    wire [31:0] prdata;
+    wire pready;
+    wire [9:0] irq_targets;
 
     // DUT Instantiation
     plic uut (

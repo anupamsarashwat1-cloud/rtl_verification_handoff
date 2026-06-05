@@ -5,25 +5,25 @@ module tb_hdmi_ctrl();
     logic clk_pixel;
     logic clk_tmds;
     logic rst_n;
-    logic s_axis_tdata;
+    logic [31:0] s_axis_tdata;
     logic s_axis_tvalid;
-    logic s_axis_tready;
+    wire s_axis_tready;
     logic s_axis_tuser;
     logic s_axis_tlast;
-    logic tmds_clk_p;
-    logic tmds_clk_n;
-    logic tmds_data_p;
-    logic tmds_data_n;
+    wire tmds_clk_p;
+    wire tmds_clk_n;
+    wire [2:0] tmds_data_p;
+    wire [2:0] tmds_data_n;
     logic pclk;
     logic prst_n;
-    logic paddr;
+    logic [31:0] paddr;
     logic psel;
     logic penable;
     logic pwrite;
-    logic pwdata;
-    logic prdata;
-    logic pready;
-    logic pslverr;
+    logic [31:0] pwdata;
+    wire [31:0] prdata;
+    wire pready;
+    wire pslverr;
 
     // DUT Instantiation
     hdmi_ctrl uut (

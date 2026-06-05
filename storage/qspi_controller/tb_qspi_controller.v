@@ -5,23 +5,23 @@ module tb_qspi_controller();
     logic clk;
     logic rst_n;
     logic s_arvalid;
-    logic s_arready;
-    logic s_araddr;
-    logic s_rvalid;
+    wire s_arready;
+    logic [31:0] s_araddr;
+    wire s_rvalid;
     logic s_rready;
-    logic s_rdata;
-    logic s_rresp;
-    logic paddr;
+    wire [31:0] s_rdata;
+    wire [1:0] s_rresp;
+    logic [31:0] paddr;
     logic psel;
     logic penable;
     logic pwrite;
-    logic pwdata;
-    logic prdata;
-    logic pready;
-    logic pslverr;
-    logic qspi_sclk;
-    logic qspi_cs_n;
-    logic qspi_io;
+    logic [31:0] pwdata;
+    wire [31:0] prdata;
+    wire pready;
+    wire pslverr;
+    wire qspi_sclk;
+    wire qspi_cs_n;
+    wire [3:0] qspi_io;
 
     // DUT Instantiation
     qspi_controller uut (

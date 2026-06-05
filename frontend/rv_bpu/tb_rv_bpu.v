@@ -4,16 +4,16 @@ module tb_rv_bpu();
 
     logic clk;
     logic rst_n;
-    logic fetch_pc;
+    logic [63:0] fetch_pc;
     logic fetch_valid;
-    logic pred_taken;
-    logic pred_target;
-    logic pred_valid;
-    logic ex_pc;
+    wire pred_taken;
+    wire [63:0] pred_target;
+    wire pred_valid;
+    logic [63:0] ex_pc;
     logic ex_is_branch;
     logic ex_is_jal;
     logic ex_taken;
-    logic ex_target;
+    logic [63:0] ex_target;
     logic ex_valid;
 
     // DUT Instantiation

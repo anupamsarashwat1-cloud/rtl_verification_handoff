@@ -4,26 +4,26 @@ module tb_mipi_csi2_rx();
 
     logic rst_n;
     logic rxbyteclkhs;
-    logic rxdatahs;
-    logic rxvalidhs;
-    logic rxactivehs;
-    logic rxsyncbhs;
-    logic rxdata_lp;
-    logic m_axis_tdata;
-    logic m_axis_tvalid;
+    logic [31:0] rxdatahs;
+    logic [3:0] rxvalidhs;
+    logic [3:0] rxactivehs;
+    logic [3:0] rxsyncbhs;
+    logic [7:0] rxdata_lp;
+    wire [31:0] m_axis_tdata;
+    wire m_axis_tvalid;
     logic m_axis_tready;
-    logic m_axis_tuser;
-    logic m_axis_tlast;
+    wire m_axis_tuser;
+    wire m_axis_tlast;
     logic pclk;
     logic prst_n;
-    logic paddr;
+    logic [31:0] paddr;
     logic psel;
     logic penable;
     logic pwrite;
-    logic pwdata;
-    logic prdata;
-    logic pready;
-    logic pslverr;
+    logic [31:0] pwdata;
+    wire [31:0] prdata;
+    wire pready;
+    wire pslverr;
 
     // DUT Instantiation
     mipi_csi2_rx uut (

@@ -4,20 +4,20 @@ module tb_uart_16550();
 
     logic clk;
     logic rst_n;
-    logic paddr;
+    logic [31:0] paddr;
     logic psel;
     logic penable;
     logic pwrite;
-    logic pwdata;
-    logic prdata;
-    logic pready;
-    logic pslverr;
-    logic uart_irq;
+    logic [31:0] pwdata;
+    wire [31:0] prdata;
+    wire pready;
+    wire pslverr;
+    wire uart_irq;
     logic rxd;
-    logic txd;
-    logic irda_tx;
+    wire txd;
+    wire irda_tx;
     logic irda_rx;
-    logic lin_tx;
+    wire lin_tx;
     logic lin_rx;
 
     // DUT Instantiation

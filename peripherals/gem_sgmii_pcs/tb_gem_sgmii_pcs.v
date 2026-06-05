@@ -5,20 +5,20 @@ module tb_gem_sgmii_pcs();
     logic reset_n;
     logic tx_clk;
     logic rx_clk;
-    logic gmii_txd;
+    logic [7:0] gmii_txd;
     logic gmii_tx_en;
     logic gmii_tx_er;
-    logic gmii_rxd;
-    logic gmii_rx_dv;
-    logic gmii_rx_er;
-    logic gmii_crs;
-    logic gmii_col;
-    logic tbi_tx_data;
-    logic tbi_rx_data;
+    wire [7:0] gmii_rxd;
+    wire gmii_rx_dv;
+    wire gmii_rx_er;
+    wire gmii_crs;
+    wire gmii_col;
+    wire [9:0] tbi_tx_data;
+    logic [9:0] tbi_rx_data;
     logic signal_detect;
-    logic link_up;
-    logic speed;
-    logic duplex;
+    wire link_up;
+    wire [1:0] speed;
+    wire duplex;
 
     // DUT Instantiation
     gem_sgmii_pcs uut (

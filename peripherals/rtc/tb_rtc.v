@@ -5,15 +5,15 @@ module tb_rtc();
     logic clk;
     logic rtc_clk;
     logic rst_n;
-    logic paddr;
+    logic [31:0] paddr;
     logic psel;
     logic penable;
     logic pwrite;
-    logic pwdata;
-    logic prdata;
-    logic pready;
-    logic pslverr;
-    logic timer_irq;
+    logic [31:0] pwdata;
+    wire [31:0] prdata;
+    wire pready;
+    wire pslverr;
+    wire [4:0] timer_irq;
 
     // DUT Instantiation
     rtc uut (

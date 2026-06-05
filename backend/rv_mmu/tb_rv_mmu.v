@@ -4,30 +4,30 @@ module tb_rv_mmu();
 
     logic clk;
     logic rst_n;
-    logic satp;
-    logic priv_mode;
-    logic va_req;
+    logic [63:0] satp;
+    logic [1:0] priv_mode;
+    logic [63:0] va_req;
     logic req_valid;
     logic req_r;
     logic req_w;
     logic req_x;
-    logic pa_out;
-    logic trans_valid;
-    logic trans_busy;
-    logic page_fault;
-    logic fault_va;
-    logic ptw_arvalid;
+    wire [39:0] pa_out;
+    wire trans_valid;
+    wire trans_busy;
+    wire page_fault;
+    wire [63:0] fault_va;
+    wire ptw_arvalid;
     logic ptw_arready;
-    logic ptw_araddr;
+    wire [39:0] ptw_araddr;
     logic ptw_rvalid;
-    logic ptw_rready;
-    logic ptw_rdata;
-    logic ptw_rresp;
+    wire ptw_rready;
+    logic [63:0] ptw_rdata;
+    logic [1:0] ptw_rresp;
     logic sfence_vma;
     logic sfence_asid_en;
     logic sfence_va_en;
-    logic sfence_va_val;
-    logic sfence_asid_val;
+    logic [63:0] sfence_va_val;
+    logic [63:0] sfence_asid_val;
 
     // DUT Instantiation
     rv_mmu uut (

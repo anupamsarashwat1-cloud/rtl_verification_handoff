@@ -7,16 +7,16 @@ module tb_rv_fetch();
     logic stall;
     logic flush;
     logic branch_taken;
-    logic branch_target;
-    logic imem_addr;
-    logic imem_arvalid;
+    logic [63:0] branch_target;
+    wire [63:0] imem_addr;
+    wire imem_arvalid;
     logic imem_arready;
-    logic imem_rdata;
+    logic [31:0] imem_rdata;
     logic imem_rvalid;
-    logic imem_rresp;
-    logic pc_out;
-    logic instr_out;
-    logic valid_out;
+    logic [1:0] imem_rresp;
+    wire [63:0] pc_out;
+    wire [31:0] instr_out;
+    wire valid_out;
 
     // DUT Instantiation
     rv_fetch uut (

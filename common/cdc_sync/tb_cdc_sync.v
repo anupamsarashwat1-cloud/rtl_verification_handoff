@@ -4,8 +4,8 @@ module tb_cdc_sync();
 
     logic dst_clk;
     logic rst_n;
-    logic data_in;
-    logic data_out;
+    logic [0:0] data_in;
+    wire [0:0] data_out;
 
     // DUT Instantiation
     cdc_sync uut (

@@ -7,12 +7,12 @@ module tb_gpio_ctrl();
     logic psel;
     logic penable;
     logic pwrite;
-    logic paddr;
-    logic pwdata;
-    logic prdata;
-    logic pready;
-    logic gpio_pad;
-    logic irq;
+    logic [3:0] paddr;
+    logic [31:0] pwdata;
+    wire [31:0] prdata;
+    wire pready;
+    wire [31:0] gpio_pad;
+    wire irq;
 
     // DUT Instantiation
     gpio_ctrl uut (

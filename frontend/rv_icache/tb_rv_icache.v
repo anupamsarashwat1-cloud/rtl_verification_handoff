@@ -4,25 +4,25 @@ module tb_rv_icache();
 
     logic clk;
     logic rst_n;
-    logic cpu_addr;
+    logic [39:0] cpu_addr;
     logic cpu_req;
-    logic cpu_rdata;
-    logic cpu_valid;
-    logic cpu_stall;
+    wire [31:0] cpu_rdata;
+    wire cpu_valid;
+    wire cpu_stall;
     logic invalidate;
-    logic m_arvalid;
+    wire m_arvalid;
     logic m_arready;
-    logic m_araddr;
-    logic m_arlen;
-    logic m_arsize;
-    logic m_arburst;
+    wire [39:0] m_araddr;
+    wire [7:0] m_arlen;
+    wire [2:0] m_arsize;
+    wire [1:0] m_arburst;
     logic m_rvalid;
-    logic m_rready;
-    logic m_rdata;
+    wire m_rready;
+    logic [63:0] m_rdata;
     logic m_rlast;
-    logic m_rresp;
-    logic ecc_1bit;
-    logic ecc_2bit;
+    logic [1:0] m_rresp;
+    wire ecc_1bit;
+    wire ecc_2bit;
 
     // DUT Instantiation
     rv_icache uut (
