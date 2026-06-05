@@ -20,9 +20,5 @@ lappend sigs "tb_rv_tlb.access_w"
 lappend sigs "tb_rv_tlb.access_x"
 lappend sigs "tb_rv_tlb.priv_s"
 gtkwave::addSignalsFromList $sigs
-gtkwave::/Time/Zoom/Zoom_Full
-gtkwave::/Time/Zoom/Zoom_In
-gtkwave::/Time/Zoom/Zoom_In
-gtkwave::/Time/Zoom/Zoom_In
-gtkwave::/Time/Zoom/Zoom_In
+gtkwave::setZoomFactor -18
 gtkwave::setWindowStartTime 0
