@@ -1,0 +1,26 @@
+set sigs [list]
+lappend sigs "tb_ddr_ctrl_top.s_awready"
+lappend sigs "tb_ddr_ctrl_top.s_wready"
+lappend sigs "tb_ddr_ctrl_top.s_bvalid"
+lappend sigs "tb_ddr_ctrl_top.s_bresp"
+lappend sigs "tb_ddr_ctrl_top.s_bid"
+lappend sigs "tb_ddr_ctrl_top.s_arready"
+lappend sigs "tb_ddr_ctrl_top.s_rvalid"
+lappend sigs "tb_ddr_ctrl_top.s_rdata"
+lappend sigs "tb_ddr_ctrl_top.s_rresp"
+lappend sigs "tb_ddr_ctrl_top.s_rlast"
+lappend sigs "tb_ddr_ctrl_top.s_rid"
+lappend sigs "tb_ddr_ctrl_top.ddr_ck_p"
+lappend sigs "tb_ddr_ctrl_top.ddr_ck_n"
+lappend sigs "tb_ddr_ctrl_top.ddr_cke"
+lappend sigs "tb_ddr_ctrl_top.ddr_cs_n"
+lappend sigs "tb_ddr_ctrl_top.ddr_ras_n"
+lappend sigs "tb_ddr_ctrl_top.ddr_cas_n"
+lappend sigs "tb_ddr_ctrl_top.ddr_we_n"
+lappend sigs "tb_ddr_ctrl_top.ddr_ba"
+lappend sigs "tb_ddr_ctrl_top.ddr_bg"
+lappend sigs "tb_ddr_ctrl_top.ddr_addr"
+lappend sigs "tb_ddr_ctrl_top.ddr_dm"
+gtkwave::addSignalsFromList $sigs
+gtkwave::setZoomFactor -18
+gtkwave::setWindowStartTime 0
