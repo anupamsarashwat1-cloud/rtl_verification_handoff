@@ -107,14 +107,14 @@ flowchart TD
             PMP["rv_pmp\n16 PMP Regions"]
         end
 
-        FETCH -- "Inst[31:0], PC[63:0]" --> DECODE
+        FETCH -->|"Inst[31:0], PC[63:0]"| DECODE
         FETCH <.-> BPU
-        DECODE -- "Micro-ops" --> EXEC
+        DECODE -->|"Micro-ops"| EXEC
         EXEC <--> FPU
-        EXEC -- "ALU Result" --> MEM_S
-        MEM_S -- "Load Data" --> WB
-        FETCH <== "I-Fetch 64b" ==> L1I
-        MEM_S <== "L/S 64b" ==> L1D
+        EXEC -->|"ALU Result"| MEM_S
+        MEM_S -->|"Load Data"| WB
+        FETCH <==>|"I-Fetch 64b"| L1I
+        MEM_S <==>|"L/S 64b"| L1D
         L1I -.-> TLB
         L1D -.-> TLB
         TLB <--> MMU
@@ -179,19 +179,19 @@ flowchart TD
     end
 
     %% === AXI MASTER CONNECTIONS ===
-    L1I <== "M[0–3]: I-Cache Refill (AR/R)" ==> AXI
-    L1D <== "M[4–7]: D-Cache + PTW (Full AXI)" ==> AXI
-    MONITOR <== "M[8–9]: Mon I+D" ==> AXI
-    GEM <== "M[10]: GEM DMA" ==> AXI
-    PCIE <== "M[11]: PCIe DMA" ==> AXI
-    USB <== "M[12]: USB DMA" ==> AXI
+    L1I <==>|"M[0–3]: I-Cache Refill (AR/R)"| AXI
+    L1D <==>|"M[4–7]: D-Cache + PTW (Full AXI)"| AXI
+    MONITOR <==>|"M[8–9]: Mon I+D"| AXI
+    GEM <==>|"M[10]: GEM DMA"| AXI
+    PCIE <==>|"M[11]: PCIe DMA"| AXI
+    USB <==>|"M[12]: USB DMA"| AXI
 
     %% === AXI SLAVE CONNECTIONS ===
-    AXI <== "S[0]: DDR" ==> L2
-    L2 <== "MESI Coherent" ==> DDR
-    AXI <== "S[1]: APB Decode" ==> AXI2AHB
-    AXI2AHB <== "AHB" ==> AHB2APB
-    AHB2APB <== "APB3" ==> LS_PERIPH
+    AXI <==>|"S[0]: DDR"| L2
+    L2 <==>|"MESI Coherent"| DDR
+    AXI <==>|"S[1]: APB Decode"| AXI2AHB
+    AXI2AHB <==>|"AHB"| AHB2APB
+    AHB2APB <==>|"APB3"| LS_PERIPH
 
     %% === Interrupts ===
     PLIC -. "ext_irq[0–4]" .-> CPU_CLUSTER & MON_CORE
@@ -203,9 +203,9 @@ flowchart TD
     SBOOT -. "boot_pass" .-> CPU_CLUSTER
 
     %% === Video Pipeline ===
-    CSI2 -- "AXI-Stream" --> ISP
-    ISP -- "AXI-Stream" --> VDMA
-    VDMA <== "M[?]: VDMA" ==> AXI
+    CSI2 -->|"AXI-Stream"| ISP
+    ISP -->|"AXI-Stream"| VDMA
+    VDMA <==>|"M[?]: VDMA"| AXI
 
     %% === Classes ===
     class CPU_CLUSTER core;
@@ -362,6 +362,134 @@ flowchart TD
 
 ---
 
+## 📌 SoC Top-Level I/O Pin Table (`titan_x_top`)
+
+These are the physical pins exposed at the chip boundary.
+
+### Clock & Reset
+
+| Pin | Direction | Width | Description |
+|---|---|---|---|
+| `clk` | Input | 1 | System clock (138.8 MHz) |
+| `rst_n` | Input | 1 | Active-low system reset |
+
+### DDR4 Memory Interface
+
+| Pin | Direction | Width | Description |
+|---|---|---|---|
+| `ddr_addr` | Output | 16 | DDR row/column address |
+| `ddr_ba` | Output | 3 | Bank address |
+| `ddr_bg` | Output | 2 | Bank group |
+| `ddr_ck_p / ddr_ck_n` | Output | 1+1 | Differential DDR clock |
+| `ddr_cke` | Output | 1 | Clock enable |
+| `ddr_cs_n` | Output | 1 | Chip select (active low) |
+| `ddr_ras_n / cas_n / we_n` | Output | 3 | Command pins |
+| `ddr_reset_n` | Output | 1 | DDR reset |
+| `ddr_odt` | Output | 1 | On-die termination |
+| `ddr_act_n` | Output | 1 | Activate command |
+| `ddr_dq` | Bidir | 64 | Data bus |
+| `ddr_dqs_p / ddr_dqs_n` | Bidir | 8+8 | Differential data strobe |
+
+### High-Speed Peripheral Clocks
+
+| Pin | Direction | Width | Description |
+|---|---|---|---|
+| `pipe_clk` | Input | 1 | PCIe PIPE interface clock |
+| `eth_tx_clk` | Input | 1 | Ethernet transmit clock |
+| `eth_rx_clk` | Input | 1 | Ethernet receive clock |
+| `ulpi_clk` | Input | 1 | USB ULPI PHY clock |
+
+### Video / Imaging Interface
+
+| Pin | Direction | Width | Description |
+|---|---|---|---|
+| `mipi_rxbyteclkhs` | Input | 1 | MIPI CSI-2 byte clock |
+| `hdmi_clk_pixel` | Input | 1 | HDMI pixel clock |
+| `hdmi_clk_tmds` | Input | 1 | HDMI TMDS serializer clock |
+| `hdmi_tmds_clk_p/n` | Output | 1+1 | Differential TMDS clock output |
+| `hdmi_tmds_data_p/n` | Output | 3+3 | Differential TMDS data lanes |
+
+### Low-Speed Peripherals
+
+| Pin | Direction | Width | Description |
+|---|---|---|---|
+| `rtc_clk` | Input | 1 | 32.768 kHz RTC crystal clock |
+| `uart_tx[4:0]` | Output | 5 | UART transmit (5 channels) |
+| `uart_rx[4:0]` | Input | 5 | UART receive (5 channels) |
+| `can_tx[1:0]` | Output | 2 | CAN bus transmit (2 channels) |
+| `can_rx[1:0]` | Input | 2 | CAN bus receive (2 channels) |
+
+---
+
+## 🗺️ AXI Crossbar Port Map
+
+### Masters (15 Ports)
+
+| Port | Module | Description |
+|---|---|---|
+| M[0–3] | `rv_core_top` × 4 | I-Cache refill (AR/R only) |
+| M[4–7] | `rv_core_top` × 4 | D-Cache + PTW (Full AXI) |
+| M[8] | `rv_monitor_core` | Monitor I-Fetch |
+| M[9] | `rv_monitor_core` | Monitor D-Access |
+| M[10] | `gem_ethernet` | Gigabit Ethernet DMA |
+| M[11] | `pcie_top` | PCIe DMA |
+| M[12] | `usb_otg` | USB OTG DMA |
+| M[13–14] | — | Reserved (tied off) |
+
+### Slaves (9 Ports)
+
+| Port | Module | Description |
+|---|---|---|
+| S[0] | `ddr_ctrl_top` | DDR Memory Controller |
+| S[1] | `axi4_to_ahb` | AHB → APB Peripheral Bridge |
+| S[2–8] | — | Reserved (tied off, future expansion) |
+
+---
+
+## 🗂️ APB Address Map
+
+| Base Address | Peripheral | PLIC IRQ |
+|---|---|---|
+| `0x1000_0000` | UART 0 | 20 |
+| `0x1000_1000` | UART 1 | 21 |
+| `0x1000_2000` | UART 2 | 22 |
+| `0x1000_3000` | UART 3 | 23 |
+| `0x1000_4000` | UART 4 | 24 |
+| `0x1001_0000` | RTC | timer_irq[4:0] |
+| `0x1002_0000` | Gigabit Ethernet (APB Cfg) | 27 |
+| `0x1003_0000` | USB OTG (APB Cfg) | 28 |
+| `0x1004_0000` | MIPI CSI-2 RX | — |
+| `0x1005_0000` | ISP Pipeline | — |
+| `0x1006_0000` | HDMI Controller | — |
+| `0x2000_0000` | DRBG | 10 |
+| `0x2001_0000` | AES Engine | 11 |
+| `0x2002_0000` | eNVM Controller | — |
+| `0x2003_0000` | Secure Boot ROM | — |
+| `0x3000_0000` | CAN 0 | 25 |
+| `0x3000_1000` | CAN 1 | 26 |
+
+---
+
+## 📁 Repository Structure
+
+```text
+rtl_verification_handoff/
+├── README.md                    # This file
+├── build_functional.py          # Auto-generates testbenches and cmds.f
+├── common/                      # Shared RTL utilities & sync primitives
+├── frontend/                    # CPU frontend pipeline
+├── backend/                     # CPU backend pipeline
+├── interconnect/                # Bus fabric (AXI4/AHB/APB)
+├── memory/                      # Memory subsystem (L2, DDR, SRAM)
+├── peripherals/                 # I/O peripherals (UART, CAN, I2C, SPI)
+├── security/                    # Hardware security enclave
+├── storage/                     # Storage interfaces (eMMC, USB, QSPI)
+├── video/                       # Video & multimedia (HDMI, CSI2, ISP)
+└── top/                         # SoC top-level integration
+```
+
+---
+
 ## ✅ Synthesis & Timing Closure Status
 
 | Metric | Result |
@@ -378,3 +506,4 @@ flowchart TD
 ---
 
 *SMVDU TITAN-X SoC — Designed for SCL 180nm ASIC Tapeout*
+
