@@ -11,9 +11,5 @@ lappend sigs "tb_rv_pmp.pmpcfg0"
 lappend sigs "tb_rv_pmp.pmpcfg2"
 lappend sigs "tb_rv_pmp.pmpaddr_packed"
 gtkwave::addSignalsFromList $sigs
-gtkwave::/Time/Zoom/Zoom_Full
-gtkwave::/Time/Zoom/Zoom_In
-gtkwave::/Time/Zoom/Zoom_In
-gtkwave::/Time/Zoom/Zoom_In
-gtkwave::/Time/Zoom/Zoom_In
+gtkwave::setZoomFactor -18
 gtkwave::setWindowStartTime 0
