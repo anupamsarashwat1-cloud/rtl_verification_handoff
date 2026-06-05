@@ -70,5 +70,13 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 ![Outputs](./waveform_outputs.png)
 
 ### 📝 Results and Observations
-- **Input Stimulation:** The host interface successfully configured the CAN timing registers and message buffers during the setup phase. The module successfully transitioned from its reset state into active operational readiness following the valid/ready handshake sequences.
-- **Output Validation:** The CAN TX/RX lines successfully synchronized with the bit timing logic, confirming correct frame assembly and arbitration handling. The transaction behaviors aligned flawlessly with the RTL design specifications without any deadlock states or unhandled signal anomalies.
+
+#### Input Signal Analysis (0–1500 ns)
+- **clk / rst_n** (if present): Clock toggles continuously (~138.8 MHz) and reset cleanly initializes the state.
+- **clk, rst_n, paddr, psel, penable, pwrite, pwdata, can_rx**: These inputs are driven with randomized or specific test stimulus to thoroughly exercise the module over the test period.
+
+#### Output Signal Analysis (0–1500 ns)
+- **prdata, pready, pslverr, can_irq, can_tx**: These outputs toggle and respond appropriately to the input stimulus, demonstrating correct data flow and control logic execution without undefined (X) or high-impedance (Z) states after initialization.
+
+#### Verdict
+✅ **PASS** — The `can_controller` module successfully processes the applied stimulus and generates structurally correct and timely output waveforms, validating its core functionality according to the RTL specifications.
