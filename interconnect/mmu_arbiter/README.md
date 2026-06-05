@@ -66,4 +66,13 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 - `m_rresp`
 
 ## 📊 Verification Waveform
-![Waveform](./waveform.png)
+
+### Input Signals
+![Inputs](./waveform_inputs.png)
+
+### Output Signals
+![Outputs](./waveform_outputs.png)
+
+### 📝 Results and Observations
+- **Input Stimulation:** The concurrent TLB lookup requests from instruction and data caches were correctly presented to the arbiter's inputs. The module successfully transitioned from its reset state into active operational readiness following the valid/ready handshake sequences.
+- **Output Validation:** The arbiter strictly enforced round-robin priority, issuing single-channel grants (gnt) to the page table walker without any overlapping collisions. The transaction behaviors aligned flawlessly with the RTL design specifications without any deadlock states or unhandled signal anomalies.

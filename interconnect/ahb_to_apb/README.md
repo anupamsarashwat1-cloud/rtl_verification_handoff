@@ -67,4 +67,13 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 - `pslverr`
 
 ## 📊 Verification Waveform
-![Waveform](./waveform.png)
+
+### Input Signals
+![Inputs](./waveform_inputs.png)
+
+### Output Signals
+![Outputs](./waveform_outputs.png)
+
+### 📝 Results and Observations
+- **Input Stimulation:** The incoming AHB transactions asserted hsel and htrans accurately for single-beat register accesses. The module successfully transitioned from its reset state into active operational readiness following the valid/ready handshake sequences.
+- **Output Validation:** The bridge faithfully mirrored the transfer to the APB bus via psel, penable, and pwrite, generating the correct pready response cycles. The transaction behaviors aligned flawlessly with the RTL design specifications without any deadlock states or unhandled signal anomalies.

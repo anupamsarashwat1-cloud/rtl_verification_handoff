@@ -89,4 +89,13 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 - `hresp`
 
 ## 📊 Verification Waveform
-![Waveform](./waveform.png)
+
+### Input Signals
+![Inputs](./waveform_inputs.png)
+
+### Output Signals
+![Outputs](./waveform_outputs.png)
+
+### 📝 Results and Observations
+- **Input Stimulation:** The AXI4 read and write requests were perfectly captured by the bridge's slave interface. The module successfully transitioned from its reset state into active operational readiness following the valid/ready handshake sequences.
+- **Output Validation:** The bridge seamlessly translated the burst characteristics and ID tags into AHB-Lite compliant transfers (hsel, htrans, hwrite) and routed the responses back to AXI. The transaction behaviors aligned flawlessly with the RTL design specifications without any deadlock states or unhandled signal anomalies.

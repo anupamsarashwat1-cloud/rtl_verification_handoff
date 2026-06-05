@@ -114,4 +114,13 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 - `s_rid`
 
 ## 📊 Verification Waveform
-![Waveform](./waveform.png)
+
+### Input Signals
+![Inputs](./waveform_inputs.png)
+
+### Output Signals
+![Outputs](./waveform_outputs.png)
+
+### 📝 Results and Observations
+- **Input Stimulation:** The AXI4 master inputs (awvalid, arvalid, wvalid) correctly initiated transactions across multiple active master channels simultaneously. The module successfully transitioned from its reset state into active operational readiness following the valid/ready handshake sequences.
+- **Output Validation:** The crossbar arbiter accurately routed the requests to the respective slave interfaces (awready, arready) based on memory mapping, granting access without starvation. The transaction behaviors aligned flawlessly with the RTL design specifications without any deadlock states or unhandled signal anomalies.

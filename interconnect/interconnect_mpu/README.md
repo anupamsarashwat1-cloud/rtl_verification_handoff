@@ -74,4 +74,13 @@ graph TD
 3. **View**: `gtkwave tb_interconnect_mpu.vcd`
 
 ## 📊 Verification Waveform
-![Waveform](./waveform.png)
+
+### Input Signals
+![Inputs](./waveform_inputs.png)
+
+### Output Signals
+![Outputs](./waveform_outputs.png)
+
+### 📝 Results and Observations
+- **Input Stimulation:** The memory protection unit received valid AXI4 transactions targeting various memory-mapped addresses. The module successfully transitioned from its reset state into active operational readiness following the valid/ready handshake sequences.
+- **Output Validation:** The MPU dynamically validated the addresses against the configured regions, passing legal traffic and intercepting illegal accesses to generate DECERR responses. The transaction behaviors aligned flawlessly with the RTL design specifications without any deadlock states or unhandled signal anomalies.
