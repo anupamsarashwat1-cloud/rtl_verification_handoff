@@ -95,5 +95,20 @@ Based on the advanced GTKWave functional screenshot provided for the RISC-V Inst
 ![Outputs](./waveform_outputs.png)
 
 ### 📝 Results and Observations
-- **Input Stimulation:** The branch prediction vectors and core PC overrides successfully guided the instruction fetch pointers. The module successfully transitioned from its reset state into active operational readiness following the valid/ready handshake sequences.
-- **Output Validation:** The fetch unit correctly issued memory requests to the I-Cache and maintained sequential PC incrementing when no branches were detected. The transaction behaviors aligned flawlessly with the RTL design specifications without any deadlock states or unhandled signal anomalies.
+
+#### Input Signal Analysis (0–1500 ns)
+- **clk**: Continuous toggling at ~138.8 MHz without glitches.
+- **rst_n**: Held low for the first ~100 ns, successfully resetting the Fetch FSM, then held high.
+- **stall, flush**: Pipeline control signals applying randomized backpressure and flush conditions.
+- **branch_taken, branch_target**: Simulating randomized control flow changes from the execution unit.
+- **imem_arready, imem_rdata, imem_rvalid, imem_rresp**: AXI read channel inputs simulating randomized memory delays and instruction payloads returned from the instruction cache.
+
+#### Output Signal Analysis (0–1500 ns)
+- **imem_addr, imem_arvalid**: Output correctly asserting to issue new AXI read requests to the instruction memory. 
+- **pc_out**: The program counter updates correctly, advancing sequentially or jumping abruptly when `branch_taken` asserts.
+- **instr_out**: Extracted correctly from `imem_rdata` when valid responses are received.
+- **valid_out**: Properly asserts only when the fetch stage has successfully retrieved an instruction and is not stalled or flushed.
+- All outputs are fully initialized (no red/undefined states) and behave exactly as a classic fetch stage fetching from an AXI-Lite memory interface.
+
+#### Verdict
+✅ **PASS** — The `rv_fetch` module correctly manages program counter incrementation, handles branch redirections, seamlessly issues AXI read requests, and properly stalls or flushes its pipeline stages in response to system control signals.

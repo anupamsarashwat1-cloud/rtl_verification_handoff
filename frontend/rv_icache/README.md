@@ -103,5 +103,20 @@ Based on the advanced GTKWave functional screenshot provided for the RISC-V Inst
 ![Outputs](./waveform_outputs.png)
 
 ### 📝 Results and Observations
-- **Input Stimulation:** The core requested instruction addresses while the AXI interconnect returned valid burst data into the cache line arrays. The module successfully transitioned from its reset state into active operational readiness following the valid/ready handshake sequences.
-- **Output Validation:** The I-Cache successfully resolved tag hits and continuously streamed valid 32-bit instructions back to the fetch unit with minimal latency. The transaction behaviors aligned flawlessly with the RTL design specifications without any deadlock states or unhandled signal anomalies.
+
+#### Input Signal Analysis (0–1500 ns)
+- **clk**: Stable ~138.8 MHz clock.
+- **rst_n**: Held low during the initial ~100 ns reset period, correctly clearing cache state.
+- **cpu_addr, cpu_req**: CPU-side read requests toggling to simulate instruction fetch behavior.
+- **invalidate**: Randomized invalidation requests simulating cache flush commands.
+- **m_arready, m_rvalid, m_rdata, m_rlast, m_rresp**: AXI interface inputs simulating the memory controller responding to cache line fills.
+
+#### Output Signal Analysis (0–1500 ns)
+- **cpu_rdata, cpu_valid**: Successfully assert when returning requested data to the CPU, correctly synchronizing with AXI responses or cache hits.
+- **cpu_stall**: Asserts correctly to stall the CPU while the cache is busy processing a miss or an invalidation.
+- **m_arvalid, m_rready**: Handshake signals correctly mediating AXI read bursts.
+- **m_araddr, m_arlen, m_arsize, m_arburst**: AXI address and control signals initialize and hold correct burst parameters after the reset period (note the brief undefined/red state during initial reset).
+- **ecc_1bit, ecc_2bit**: Error correction flags remain zero as expected since no ECC errors are injected in this random stimulus.
+
+#### Verdict
+✅ **PASS** — The `rv_icache` correctly arbitrates between CPU read requests, cache hits, cache misses (via AXI burst reads), and invalidation commands. Signal timings and states accurately reflect expected cache controller operation.
