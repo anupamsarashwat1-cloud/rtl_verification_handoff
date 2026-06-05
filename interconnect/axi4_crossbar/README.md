@@ -122,5 +122,6 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 ![Outputs](./waveform_outputs.png)
 
 ### 📝 Results and Observations
-- **Input Stimulation:**
-- **Output Validation:**
+- **Input Stimulation:** `clk` toggles continuously at 138.8 MHz, and `rst_n` properly asserts low and releases to high at 100ns. All flattened AXI4 master inputs (e.g., `m_awvalid`, `m_awaddr`, `m_wvalid`) and slave inputs (e.g., `s_awready`, `s_rvalid`) are driven with highly dense, randomized toggling.
+- **Output Validation:** Despite the aggressive input stimulation, all master outputs (e.g., `m_awready`, `m_wready`) and slave outputs (e.g., `s_awvalid`, `s_awaddr`, `s_wvalid`) remain completely flat at logic 0 or logic 1 (inactive). The crossbar is failing to route any transactions from the masters to the slaves. This typically happens when the testbench relies on purely randomized $random stimuli for a complex protocol like AXI4, which requires a specific coordinated sequence of valid/ready handshakes and valid address ranges to pass through the crossbar's internal address decoders.
+- **Verdict:** ⚠️ **INCONCLUSIVE**. The module simulates without crashing, but the purely randomized testbench fails to stimulate any valid routed traffic through the crossbar. A protocol-aware directed test is necessary to verify the routing logic.
