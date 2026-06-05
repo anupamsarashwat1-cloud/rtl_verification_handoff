@@ -213,6 +213,6 @@ capture(resolved_outputs, "waveform_outputs.png")
 os.chdir(base_dir)
 os.system("git add .")
 os.system(f'git commit -m "test: {module_name} - Waveform screenshots (0-1500ns) with correct signal mapping"')
-os.environ.pop("GITHUB_TOKEN", None)
-os.system("git push")
+# Must unset GITHUB_TOKEN so gh CLI uses keyring auth
+os.system('bash -c "unset GITHUB_TOKEN && git push"')
 print(f"\nDone: {module_name}")
