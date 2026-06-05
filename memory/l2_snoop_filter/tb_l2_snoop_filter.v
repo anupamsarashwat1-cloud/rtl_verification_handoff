@@ -5,18 +5,18 @@ module tb_l2_snoop_filter();
     logic clk;
     logic rst_n;
     logic req_valid;
-    logic req_addr;
-    logic req_type;
-    logic req_core;
-    logic snoop_valid;
-    logic snoop_addr;
-    logic snoop_type;
-    logic snoop_ack;
-    logic snoop_data_valid;
-    logic resp_valid;
-    logic resp_hit;
-    logic resp_dirty;
-    logic resp_owner;
+    logic [39:0] req_addr;
+    logic [1:0] req_type;
+    logic [1:0] req_core;
+    wire [3:0] snoop_valid;
+    wire [39:0] snoop_addr;
+    wire [1:0] snoop_type;
+    logic [3:0] snoop_ack;
+    logic [3:0] snoop_data_valid;
+    wire resp_valid;
+    wire resp_hit;
+    wire resp_dirty;
+    wire [1:0] resp_owner;
 
     // DUT Instantiation
     l2_snoop_filter uut (

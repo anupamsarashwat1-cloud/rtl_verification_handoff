@@ -5,10 +5,10 @@ module tb_sram_32x64_180nm();
     logic clk0;
     logic csb0;
     logic web0;
-    logic wmask0;
-    logic addr0;
-    logic din0;
-    logic dout0;
+    logic [3:0] wmask0;
+    logic [5:0] addr0;
+    logic [31:0] din0;
+    wire [31:0] dout0;
 
     // DUT Instantiation
     sram_32x64_180nm uut (

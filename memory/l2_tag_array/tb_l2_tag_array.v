@@ -6,10 +6,10 @@ module tb_l2_tag_array();
     logic rst_n;
     logic cs;
     logic we;
-    logic index;
-    logic tag_in;
-    logic tag_out;
-    logic valid_out;
+    logic [5:0] index;
+    logic [27:0] tag_in;
+    wire [27:0] tag_out;
+    wire tag_valid_out;
 
     // DUT Instantiation
     l2_tag_array uut (
@@ -20,7 +20,7 @@ module tb_l2_tag_array();
         .index(index),
         .tag_in(tag_in),
         .tag_out(tag_out),
-        .valid_out(valid_out)
+        .valid_out(tag_valid_out)
     );
 
     // Advanced Clock Generation (138.8 MHz -> ~7.2ns period)

@@ -5,9 +5,9 @@ module tb_sram_512kx8_180nm();
     logic CLK;
     logic CEN;
     logic WEN;
-    logic A;
-    logic D;
-    logic Q;
+    logic [18:0] A;
+    logic [7:0] D;
+    wire [7:0] Q;
 
     // DUT Instantiation
     sram_512kx8_180nm uut (
