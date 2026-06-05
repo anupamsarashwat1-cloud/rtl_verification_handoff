@@ -7,9 +7,5 @@ lappend sigs "tb_clint.pwrite"
 lappend sigs "tb_clint.paddr"
 lappend sigs "tb_clint.pwdata"
 gtkwave::addSignalsFromList $sigs
-gtkwave::/Time/Zoom/Zoom_Full
-gtkwave::/Time/Zoom/Zoom_In
-gtkwave::/Time/Zoom/Zoom_In
-gtkwave::/Time/Zoom/Zoom_In
-gtkwave::/Time/Zoom/Zoom_In
+gtkwave::setZoomFactor -3.0
 gtkwave::setWindowStartTime 0
