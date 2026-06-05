@@ -1,0 +1,43 @@
+set sigs [list]
+lappend sigs "tb_rv_debug.tdo"
+lappend sigs "tb_rv_debug.halt_req"
+lappend sigs "tb_rv_debug.resume_req"
+lappend sigs "tb_rv_debug.reg_sel"
+lappend sigs "tb_rv_debug.reg_wr"
+lappend sigs "tb_rv_debug.reg_wdata"
+lappend sigs "tb_rv_debug.cmd_exec"
+lappend sigs "tb_rv_debug.sb_arvalid"
+lappend sigs "tb_rv_debug.sb_araddr"
+lappend sigs "tb_rv_debug.sb_rready"
+lappend sigs "tb_rv_debug.sb_awvalid"
+lappend sigs "tb_rv_debug.sb_awaddr"
+lappend sigs "tb_rv_debug.sb_wvalid"
+lappend sigs "tb_rv_debug.sb_wdata"
+lappend sigs "tb_rv_debug.sb_wstrb"
+lappend sigs "tb_rv_debug.sb_wlast"
+lappend sigs "tb_rv_debug.sb_bready"
+lappend sigs "tb_rv_debug.clk"
+lappend sigs "tb_rv_debug.rst_n"
+lappend sigs "tb_rv_debug.tck"
+lappend sigs "tb_rv_debug.tms"
+lappend sigs "tb_rv_debug.tdi"
+lappend sigs "tb_rv_debug.hart_halted"
+lappend sigs "tb_rv_debug.hart_running"
+lappend sigs "tb_rv_debug.hart_unavail"
+lappend sigs "tb_rv_debug.reg_rdata"
+lappend sigs "tb_rv_debug.cmd_done"
+lappend sigs "tb_rv_debug.cmd_err"
+lappend sigs "tb_rv_debug.sb_arready"
+lappend sigs "tb_rv_debug.sb_rvalid"
+lappend sigs "tb_rv_debug.sb_rdata"
+lappend sigs "tb_rv_debug.sb_rresp"
+lappend sigs "tb_rv_debug.sb_awready"
+lappend sigs "tb_rv_debug.sb_wready"
+lappend sigs "tb_rv_debug.sb_bvalid"
+gtkwave::addSignalsFromList $sigs
+gtkwave::/Time/Zoom/Zoom_Full
+gtkwave::/Time/Zoom/Zoom_In
+gtkwave::/Time/Zoom/Zoom_In
+gtkwave::/Time/Zoom/Zoom_In
+gtkwave::/Time/Zoom/Zoom_In
+gtkwave::setWindowStartTime 0

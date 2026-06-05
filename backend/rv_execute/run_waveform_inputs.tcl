@@ -1,0 +1,41 @@
+set sigs [list]
+lappend sigs "tb_rv_execute.clk"
+lappend sigs "tb_rv_execute.rst_n"
+lappend sigs "tb_rv_execute.stall"
+lappend sigs "tb_rv_execute.flush"
+lappend sigs "tb_rv_execute.pc_in"
+lappend sigs "tb_rv_execute.rs1_data"
+lappend sigs "tb_rv_execute.rs2_data"
+lappend sigs "tb_rv_execute.imm"
+lappend sigs "tb_rv_execute.rd_in"
+lappend sigs "tb_rv_execute.rs1_addr"
+lappend sigs "tb_rv_execute.rs2_addr"
+lappend sigs "tb_rv_execute.funct3"
+lappend sigs "tb_rv_execute.funct7"
+lappend sigs "tb_rv_execute.opcode"
+lappend sigs "tb_rv_execute.alu_op"
+lappend sigs "tb_rv_execute.mem_read"
+lappend sigs "tb_rv_execute.mem_write"
+lappend sigs "tb_rv_execute.reg_write"
+lappend sigs "tb_rv_execute.branch"
+lappend sigs "tb_rv_execute.jal"
+lappend sigs "tb_rv_execute.jalr"
+lappend sigs "tb_rv_execute.is_amo"
+lappend sigs "tb_rv_execute.amo_funct5"
+lappend sigs "tb_rv_execute.valid_in"
+lappend sigs "tb_rv_execute.fwd_mem_data"
+lappend sigs "tb_rv_execute.fwd_mem_valid"
+lappend sigs "tb_rv_execute.fwd_mem_rd"
+lappend sigs "tb_rv_execute.fwd_wb_data"
+lappend sigs "tb_rv_execute.fwd_wb_valid"
+lappend sigs "tb_rv_execute.fwd_wb_rd"
+lappend sigs "tb_rv_execute.fpu_result"
+lappend sigs "tb_rv_execute.fpu_valid"
+lappend sigs "tb_rv_execute.fpu_done"
+gtkwave::addSignalsFromList $sigs
+gtkwave::/Time/Zoom/Zoom_Full
+gtkwave::/Time/Zoom/Zoom_In
+gtkwave::/Time/Zoom/Zoom_In
+gtkwave::/Time/Zoom/Zoom_In
+gtkwave::/Time/Zoom/Zoom_In
+gtkwave::setWindowStartTime 0
