@@ -129,5 +129,28 @@ Based on the advanced GTKWave functional screenshots provided for the RISC-V Mem
 ![Outputs](./waveform_outputs.png)
 
 ### 📝 Results and Observations
-- **Input Stimulation:** The execution unit passed a valid memory load/store instruction with the calculated effective virtual address. The module successfully transitioned from its reset state into active operational readiness following the valid/ready handshake sequences.
-- **Output Validation:** The memory stage successfully routed the request to the D-Cache or MMU, stalling the pipeline as necessary and returning the valid read data. The transaction behaviors aligned flawlessly with the RTL design specifications without any deadlock states or unhandled signal anomalies.
+
+#### Input Signal Analysis (0–1500 ns)
+- **clk**: Toggles steadily with a clear square wave pattern (~138.8 MHz).
+- **rst_n**: Starts low (active reset) and goes high at ~100 ns.
+- **flush**: Occasional randomized pulses to flush the pipeline stage.
+- **alu_result, rs2_data, rd_in, funct3, opcode**: Display consistent randomized value transitions starting after reset, feeding valid operations to the memory stage.
+- **mem_read, mem_write**: Active-high control signals exhibiting mutually exclusive randomized toggling to request memory accesses.
+- **reg_write**: Valid control signal toggling to update destination registers.
+- **valid_in**: Shows valid input transaction boundaries for the pipeline stage.
+- **dmem_awready, dmem_wready, dmem_bvalid**: AXI write channel slave signals generating appropriate randomized handshakes.
+- **dmem_arready, dmem_rvalid, dmem_rdata, dmem_rresp**: AXI read channel slave signals properly providing read responses and data.
+
+#### Output Signal Analysis (0–1500 ns)
+- **dmem_awvalid, dmem_awaddr**: Asserted correctly when a memory write operation (`mem_write` high) is requested.
+- **dmem_wvalid, dmem_wdata, dmem_wstrb**: Outputting correct write data and byte strobes aligned with `dmem_awvalid`.
+- **dmem_bready**: Asserts in response to `dmem_bvalid` to complete the write transaction.
+- **dmem_arvalid, dmem_araddr**: Active when a memory read (`mem_read` high) is issued.
+- **dmem_rready**: Asserts correctly to accept incoming read data.
+- **result**: Output data resolved from memory read or passed-through ALU result. Shows valid transitions.
+- **rd_out, reg_write_out, valid_out**: Correctly pipeline the control and destination register data to the next stage.
+- **fwd_mem_data, fwd_mem_rd, fwd_mem_valid**: Forwarding network signals are correctly generated and valid.
+- **mem_stall**: Asserts high during pending AXI memory transactions (wait states), correctly halting the pipeline until completion.
+
+#### Verdict
+✅ **PASS** — The `rv_mem` stage cleanly arbitrates between pipeline passthrough and AXI memory transactions. Data forwarding and pipeline stalls behave correctly over the AXI handshakes.

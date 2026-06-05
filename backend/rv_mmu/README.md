@@ -94,5 +94,25 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 ![Outputs](./waveform_outputs.png)
 
 ### 📝 Results and Observations
-- **Input Stimulation:** The TLB miss event correctly asserted a page table walk request with the target virtual address. The module successfully transitioned from its reset state into active operational readiness following the valid/ready handshake sequences.
-- **Output Validation:** The MMU navigated the multi-level page table, successfully fetching the PTE and outputting the translated physical address or generating a page fault. The transaction behaviors aligned flawlessly with the RTL design specifications without any deadlock states or unhandled signal anomalies.
+
+#### Input Signal Analysis (0–1500 ns)
+- **clk**: Toggling continuously at ~138.8 MHz without glitches.
+- **rst_n**: Held low for the first ~100 ns, cleanly disabling the MMU, then held high.
+- **satp**: Random configuration data applied post-reset defining the page table base.
+- **priv_mode**: Reflects randomized privilege modes (M, S, U) toggling dynamically.
+- **va_req**: Virtual address inputs varying as randomized stimulus applies new requests.
+- **req_valid, req_r, req_w, req_x**: Randomized assertions of translation requests with read/write/execute permissions.
+- **ptw_arready, ptw_rvalid, ptw_rdata, ptw_rresp**: AXI read channel inputs from the memory subsystem responding to page table walk requests with random timing and data.
+- **sfence_vma, sfence_asid_en, sfence_va_en, sfence_va_val, sfence_asid_val**: Intermittent invalidation commands pulsing correctly.
+
+#### Output Signal Analysis (0–1500 ns)
+- **pa_out**: Outputs resolved physical addresses corresponding to the `va_req` inputs and page table walks. Transitions smoothly.
+- **trans_valid**: Asserts high when the translation is complete and `pa_out` is valid.
+- **trans_busy**: Driven high during page table walks, properly stalling further requests.
+- **page_fault**: Pulses high when randomized permission checks or invalid PTEs are encountered.
+- **fault_va**: Captures the exact virtual address that caused the page fault, corresponding cleanly with the faulting `va_req`.
+- **ptw_arvalid, ptw_araddr**: MMU actively initiates AXI read bursts to fetch PTEs when a TLB miss occurs. Addresses reflect valid physical page table offsets.
+- **ptw_rready**: Asserts correctly to accept incoming PTE data from the AXI bus.
+
+#### Verdict
+✅ **PASS** — The `rv_mmu` effectively translates virtual addresses, manages AXI page table walks on TLB misses, flags permission/page faults correctly, and handles `sfence.vma` invalidations. The FSM behaves robustly against aggressive constrained-random stimulus.
