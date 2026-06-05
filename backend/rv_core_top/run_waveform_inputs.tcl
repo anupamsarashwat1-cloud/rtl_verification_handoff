@@ -1,0 +1,28 @@
+set sigs [list]
+lappend sigs "tb_rv_core_top.clk"
+lappend sigs "tb_rv_core_top.rst_n"
+lappend sigs "tb_rv_core_top.irq_m_ext"
+lappend sigs "tb_rv_core_top.irq_m_timer"
+lappend sigs "tb_rv_core_top.irq_m_soft"
+lappend sigs "tb_rv_core_top.imem_arready"
+lappend sigs "tb_rv_core_top.imem_rvalid"
+lappend sigs "tb_rv_core_top.imem_rdata"
+lappend sigs "tb_rv_core_top.imem_rlast"
+lappend sigs "tb_rv_core_top.imem_rresp"
+lappend sigs "tb_rv_core_top.dmem_awready"
+lappend sigs "tb_rv_core_top.dmem_wready"
+lappend sigs "tb_rv_core_top.dmem_bvalid"
+lappend sigs "tb_rv_core_top.dmem_bresp"
+lappend sigs "tb_rv_core_top.dmem_arready"
+lappend sigs "tb_rv_core_top.dmem_rvalid"
+lappend sigs "tb_rv_core_top.dmem_rdata"
+lappend sigs "tb_rv_core_top.dmem_rlast"
+lappend sigs "tb_rv_core_top.dmem_rresp"
+lappend sigs "tb_rv_core_top.snoop_valid"
+lappend sigs "tb_rv_core_top.snoop_addr"
+lappend sigs "tb_rv_core_top.snoop_type"
+lappend sigs "tb_rv_core_top.halt_req"
+lappend sigs "tb_rv_core_top.resume_req"
+gtkwave::addSignalsFromList $sigs
+gtkwave::setZoomFactor -18
+gtkwave::setWindowStartTime 0
