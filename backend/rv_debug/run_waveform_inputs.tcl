@@ -18,9 +18,5 @@ lappend sigs "tb_rv_debug.sb_awready"
 lappend sigs "tb_rv_debug.sb_wready"
 lappend sigs "tb_rv_debug.sb_bvalid"
 gtkwave::addSignalsFromList $sigs
-gtkwave::/Time/Zoom/Zoom_Full
-gtkwave::/Time/Zoom/Zoom_In
-gtkwave::/Time/Zoom/Zoom_In
-gtkwave::/Time/Zoom/Zoom_In
-gtkwave::/Time/Zoom/Zoom_In
+gtkwave::setZoomFactor -18
 gtkwave::setWindowStartTime 0
