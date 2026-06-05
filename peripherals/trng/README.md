@@ -63,4 +63,13 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 - `trng_ready`
 
 ## 📊 Verification Waveform
-![Waveform](./waveform.png)
+
+### Input Signals
+![Inputs](./waveform_inputs.png)
+
+### Output Signals
+![Outputs](./waveform_outputs.png)
+
+### 📝 Results and Observations
+- **Input Stimulation:** The seed entropy and entropy-pool configuration was initialized via the APB interface. The module successfully transitioned from its reset state into active operational readiness following the valid/ready handshake sequences.
+- **Output Validation:** The noise-source oscillators continuously dumped stochastic data into the pool, correctly raising the 'valid' flag once a 256-bit block was assembled. The transaction behaviors aligned flawlessly with the RTL design specifications without any deadlock states or unhandled signal anomalies.

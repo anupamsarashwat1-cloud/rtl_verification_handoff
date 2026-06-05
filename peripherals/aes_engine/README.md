@@ -69,3 +69,15 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 - `s_axis_tvalid`
 - `s_axis_tlast`
 - `m_axis_tready`
+
+## 📊 Verification Waveform
+
+### Input Signals
+![Inputs](./waveform_inputs.png)
+
+### Output Signals
+![Outputs](./waveform_outputs.png)
+
+### 📝 Results and Observations
+- **Input Stimulation:** The 128/256-bit cipher keys and the raw plaintext blocks were successfully streamed into the engine via valid/ready handshakes. The module successfully transitioned from its reset state into active operational readiness following the valid/ready handshake sequences.
+- **Output Validation:** The internal state machine progressed through all required substitution and permutation rounds, correctly asserting the output valid signal with the ciphertext. The transaction behaviors aligned flawlessly with the RTL design specifications without any deadlock states or unhandled signal anomalies.

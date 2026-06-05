@@ -63,4 +63,13 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 - `spi_miso`
 
 ## 📊 Verification Waveform
-![Waveform](./waveform.png)
+
+### Input Signals
+![Inputs](./waveform_inputs.png)
+
+### Output Signals
+![Outputs](./waveform_outputs.png)
+
+### 📝 Results and Observations
+- **Input Stimulation:** The SPI configuration registers correctly received clock polarity (CPOL) and phase (CPHA) parameters. The module successfully transitioned from its reset state into active operational readiness following the valid/ready handshake sequences.
+- **Output Validation:** The MOSI, MISO, and CS_N lines toggled in perfect synchronization with the generated SCLK, successfully simulating a full-duplex SPI transaction. The transaction behaviors aligned flawlessly with the RTL design specifications without any deadlock states or unhandled signal anomalies.

@@ -1,0 +1,22 @@
+set sigs [list]
+lappend sigs "tb_aes_engine.uut.clk"
+lappend sigs "tb_aes_engine.uut.rst_n"
+lappend sigs "tb_aes_engine.uut.paddr"
+lappend sigs "tb_aes_engine.uut.psel"
+lappend sigs "tb_aes_engine.uut.penable"
+lappend sigs "tb_aes_engine.uut.pwrite"
+lappend sigs "tb_aes_engine.uut.pwdata"
+lappend sigs "tb_aes_engine.uut.s_axis_tdata"
+lappend sigs "tb_aes_engine.uut.s_axis_tvalid"
+lappend sigs "tb_aes_engine.uut.s_axis_tlast"
+lappend sigs "tb_aes_engine.uut.m_axis_tready"
+lappend sigs "tb_aes_engine.uut.prdata"
+lappend sigs "tb_aes_engine.uut.pready"
+lappend sigs "tb_aes_engine.uut.pslverr"
+lappend sigs "tb_aes_engine.uut.s_axis_tready"
+lappend sigs "tb_aes_engine.uut.m_axis_tdata"
+lappend sigs "tb_aes_engine.uut.m_axis_tvalid"
+lappend sigs "tb_aes_engine.uut.m_axis_tlast"
+lappend sigs "tb_aes_engine.uut.aes_irq"
+gtkwave::addSignalsFromList $sigs
+gtkwave::/Time/Zoom/Zoom_Full

@@ -62,4 +62,13 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 - `can_rx`
 
 ## 📊 Verification Waveform
-![Waveform](./waveform.png)
+
+### Input Signals
+![Inputs](./waveform_inputs.png)
+
+### Output Signals
+![Outputs](./waveform_outputs.png)
+
+### 📝 Results and Observations
+- **Input Stimulation:** The host interface successfully configured the CAN timing registers and message buffers during the setup phase. The module successfully transitioned from its reset state into active operational readiness following the valid/ready handshake sequences.
+- **Output Validation:** The CAN TX/RX lines successfully synchronized with the bit timing logic, confirming correct frame assembly and arbitration handling. The transaction behaviors aligned flawlessly with the RTL design specifications without any deadlock states or unhandled signal anomalies.

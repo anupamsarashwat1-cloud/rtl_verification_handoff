@@ -1,0 +1,20 @@
+set sigs [list]
+lappend sigs "tb_gem_sgmii_pcs.uut.reset_n"
+lappend sigs "tb_gem_sgmii_pcs.uut.tx_clk"
+lappend sigs "tb_gem_sgmii_pcs.uut.rx_clk"
+lappend sigs "tb_gem_sgmii_pcs.uut.gmii_txd"
+lappend sigs "tb_gem_sgmii_pcs.uut.gmii_tx_en"
+lappend sigs "tb_gem_sgmii_pcs.uut.gmii_tx_er"
+lappend sigs "tb_gem_sgmii_pcs.uut.tbi_rx_data"
+lappend sigs "tb_gem_sgmii_pcs.uut.signal_detect"
+lappend sigs "tb_gem_sgmii_pcs.uut.gmii_rxd"
+lappend sigs "tb_gem_sgmii_pcs.uut.gmii_rx_dv"
+lappend sigs "tb_gem_sgmii_pcs.uut.gmii_rx_er"
+lappend sigs "tb_gem_sgmii_pcs.uut.gmii_crs"
+lappend sigs "tb_gem_sgmii_pcs.uut.gmii_col"
+lappend sigs "tb_gem_sgmii_pcs.uut.tbi_tx_data"
+lappend sigs "tb_gem_sgmii_pcs.uut.link_up"
+lappend sigs "tb_gem_sgmii_pcs.uut.speed"
+lappend sigs "tb_gem_sgmii_pcs.uut.duplex"
+gtkwave::addSignalsFromList $sigs
+gtkwave::/Time/Zoom/Zoom_Full

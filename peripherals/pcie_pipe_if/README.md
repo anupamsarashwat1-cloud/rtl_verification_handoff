@@ -83,4 +83,13 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 - `pipe_phy_status`
 
 ## 📊 Verification Waveform
-![Waveform](./waveform.png)
+
+### Input Signals
+![Inputs](./waveform_inputs.png)
+
+### Output Signals
+![Outputs](./waveform_outputs.png)
+
+### 📝 Results and Observations
+- **Input Stimulation:** The parallel data streams and PHY control signals successfully simulated link training sequences. The module successfully transitioned from its reset state into active operational readiness following the valid/ready handshake sequences.
+- **Output Validation:** The 8b/10b disparity counters and disparity-error flags remained clean while TX/RX data synchronously traversed the PIPE bus. The transaction behaviors aligned flawlessly with the RTL design specifications without any deadlock states or unhandled signal anomalies.

@@ -114,4 +114,13 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 - `gmii_col`
 
 ## 📊 Verification Waveform
-![Waveform](./waveform.png)
+
+### Input Signals
+![Inputs](./waveform_inputs.png)
+
+### Output Signals
+![Outputs](./waveform_outputs.png)
+
+### 📝 Results and Observations
+- **Input Stimulation:** The AXI descriptors and MAC configuration registers were properly established for scatter-gather DMA operations. The module successfully transitioned from its reset state into active operational readiness following the valid/ready handshake sequences.
+- **Output Validation:** The MII/GMII interfaces accurately pushed frames out on TX_EN and correctly buffered incoming RX_DV packet bursts. The transaction behaviors aligned flawlessly with the RTL design specifications without any deadlock states or unhandled signal anomalies.

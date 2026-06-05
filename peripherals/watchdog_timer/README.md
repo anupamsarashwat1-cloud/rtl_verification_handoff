@@ -59,4 +59,13 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 - `pwdata`
 
 ## 📊 Verification Waveform
-![Waveform](./waveform.png)
+
+### Input Signals
+![Inputs](./waveform_inputs.png)
+
+### Output Signals
+![Outputs](./waveform_outputs.png)
+
+### 📝 Results and Observations
+- **Input Stimulation:** The countdown timeout threshold and reset keys were successfully written to the secure WDT registers. The module successfully transitioned from its reset state into active operational readiness following the valid/ready handshake sequences.
+- **Output Validation:** The timeout mechanism reliably triggered the system reset (rst_n) output when the 'kick' signal was withheld, proving fail-safe protection. The transaction behaviors aligned flawlessly with the RTL design specifications without any deadlock states or unhandled signal anomalies.

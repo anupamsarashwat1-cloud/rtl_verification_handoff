@@ -56,3 +56,15 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 - `pwrite`
 - `paddr`
 - `pwdata`
+
+## 📊 Verification Waveform
+
+### Input Signals
+![Inputs](./waveform_inputs.png)
+
+### Output Signals
+![Outputs](./waveform_outputs.png)
+
+### 📝 Results and Observations
+- **Input Stimulation:** The 512-bit message blocks were sequentially shifted into the hashing engine while the round counter engaged. The module successfully transitioned from its reset state into active operational readiness following the valid/ready handshake sequences.
+- **Output Validation:** The 64 logical rounds completed successfully, latching the finalized 256-bit digest and asserting the completion flag exactly as expected. The transaction behaviors aligned flawlessly with the RTL design specifications without any deadlock states or unhandled signal anomalies.

@@ -61,4 +61,13 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 - `pwdata`
 
 ## 📊 Verification Waveform
-![Waveform](./waveform.png)
+
+### Input Signals
+![Inputs](./waveform_inputs.png)
+
+### Output Signals
+![Outputs](./waveform_outputs.png)
+
+### 📝 Results and Observations
+- **Input Stimulation:** The base clock dividers and initial timestamp registers were successfully initialized to the starting epoch. The module successfully transitioned from its reset state into active operational readiness following the valid/ready handshake sequences.
+- **Output Validation:** The internal counters incrementally ticked at the designated prescaled frequency, successfully generating a periodic alarm interrupt. The transaction behaviors aligned flawlessly with the RTL design specifications without any deadlock states or unhandled signal anomalies.
