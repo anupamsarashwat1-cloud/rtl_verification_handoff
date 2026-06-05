@@ -7,11 +7,11 @@ module tb_l2_data_array();
     logic bank_sel;
     logic cs;
     logic we;
-    logic wmask;
-    logic addr;
-    logic din;
-    logic dout;
-    logic dout_valid;
+    logic [3:0] wmask;
+    logic [5:0] addr;
+    logic [31:0] din;
+    wire [31:0] dout;
+    wire dout_valid;
 
     // DUT Instantiation
     l2_data_array uut (

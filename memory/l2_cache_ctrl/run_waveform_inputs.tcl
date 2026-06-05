@@ -1,0 +1,26 @@
+set sigs [list]
+lappend sigs "tb_l2_cache_ctrl.clk"
+lappend sigs "tb_l2_cache_ctrl.rst_n"
+lappend sigs "tb_l2_cache_ctrl.s_arvalid"
+lappend sigs "tb_l2_cache_ctrl.s_araddr"
+lappend sigs "tb_l2_cache_ctrl.s_rready"
+lappend sigs "tb_l2_cache_ctrl.s_awvalid"
+lappend sigs "tb_l2_cache_ctrl.s_awaddr"
+lappend sigs "tb_l2_cache_ctrl.s_wvalid"
+lappend sigs "tb_l2_cache_ctrl.s_wdata"
+lappend sigs "tb_l2_cache_ctrl.s_wstrb"
+lappend sigs "tb_l2_cache_ctrl.s_bready"
+lappend sigs "tb_l2_cache_ctrl.m_arready"
+lappend sigs "tb_l2_cache_ctrl.m_rvalid"
+lappend sigs "tb_l2_cache_ctrl.m_rdata"
+lappend sigs "tb_l2_cache_ctrl.m_rresp"
+lappend sigs "tb_l2_cache_ctrl.m_awready"
+lappend sigs "tb_l2_cache_ctrl.m_wready"
+lappend sigs "tb_l2_cache_ctrl.m_bvalid"
+lappend sigs "tb_l2_cache_ctrl.tag_out"
+lappend sigs "tb_l2_cache_ctrl.tag_valid_out"
+lappend sigs "tb_l2_cache_ctrl.dat_dout"
+lappend sigs "tb_l2_cache_ctrl.dat_dout_valid"
+gtkwave::addSignalsFromList $sigs
+gtkwave::setZoomFactor -18
+gtkwave::setWindowStartTime 0
