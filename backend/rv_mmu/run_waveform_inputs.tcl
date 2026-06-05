@@ -18,9 +18,5 @@ lappend sigs "tb_rv_mmu.sfence_va_en"
 lappend sigs "tb_rv_mmu.sfence_va_val"
 lappend sigs "tb_rv_mmu.sfence_asid_val"
 gtkwave::addSignalsFromList $sigs
-gtkwave::/Time/Zoom/Zoom_Full
-gtkwave::/Time/Zoom/Zoom_In
-gtkwave::/Time/Zoom/Zoom_In
-gtkwave::/Time/Zoom/Zoom_In
-gtkwave::/Time/Zoom/Zoom_In
+gtkwave::setZoomFactor -18
 gtkwave::setWindowStartTime 0
