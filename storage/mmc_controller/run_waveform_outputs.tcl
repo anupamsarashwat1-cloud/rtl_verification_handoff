@@ -1,0 +1,26 @@
+set sigs [list]
+lappend sigs "tb_mmc_controller.m_awvalid"
+lappend sigs "tb_mmc_controller.m_awaddr"
+lappend sigs "tb_mmc_controller.m_awid"
+lappend sigs "tb_mmc_controller.m_awlen"
+lappend sigs "tb_mmc_controller.m_awsize"
+lappend sigs "tb_mmc_controller.m_wvalid"
+lappend sigs "tb_mmc_controller.m_wdata"
+lappend sigs "tb_mmc_controller.m_wstrb"
+lappend sigs "tb_mmc_controller.m_wlast"
+lappend sigs "tb_mmc_controller.m_bready"
+lappend sigs "tb_mmc_controller.m_arvalid"
+lappend sigs "tb_mmc_controller.m_araddr"
+lappend sigs "tb_mmc_controller.m_arid"
+lappend sigs "tb_mmc_controller.m_arlen"
+lappend sigs "tb_mmc_controller.m_arsize"
+lappend sigs "tb_mmc_controller.m_rready"
+lappend sigs "tb_mmc_controller.prdata"
+lappend sigs "tb_mmc_controller.pready"
+lappend sigs "tb_mmc_controller.pslverr"
+lappend sigs "tb_mmc_controller.mmc_irq"
+lappend sigs "tb_mmc_controller.sd_clk"
+lappend sigs "tb_mmc_controller.sd_reset_n"
+gtkwave::addSignalsFromList $sigs
+gtkwave::setZoomFactor -18
+gtkwave::setWindowStartTime 0
