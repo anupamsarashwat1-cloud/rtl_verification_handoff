@@ -102,5 +102,45 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 ![Outputs](./waveform_outputs.png)
 
 ### 📝 Results and Observations
-- **Input Stimulation:** The external JTAG/DMI interface shifted in valid debug commands (halt, resume, register read). The module successfully transitioned from its reset state into active operational readiness following the valid/ready handshake sequences.
-- **Output Validation:** The Debug Module successfully stalled the core pipeline via the halt request and seamlessly extracted the requested core architectural state. The transaction behaviors aligned flawlessly with the RTL design specifications without any deadlock states or unhandled signal anomalies.
+
+#### Input Signal Analysis (0–6130 ns)
+- **clk**: Toggles steadily throughout the entire simulation at ~138.8 MHz (period ≈ 7.2 ns). Shown as a dense red/green alternating bar at the top, confirming continuous clock activity from time 0 to 6130 ns.
+- **rst_n**: Driven low (red) at time 0, then released high (green) at approximately 50–100 ns. Remains high for the remainder of the simulation, providing a clean reset de-assertion.
+- **tck**: Begins toggling (green) after reset release (~100 ns). Shows irregular toggling throughout the simulation, driven by `$random` stimulus. The toggle rate is much slower than `clk`, consistent with a JTAG test clock.
+- **tms**: Active green toggling after reset. Shows frequent transitions driven by random stimulus, cycling the TAP state machine through various states non-deterministically.
+- **tdi**: Active green toggling after reset. Shows random bit-level transitions representing serial data being shifted into the JTAG DR/IR shift registers.
+- **hart_halted**: Multi-bit bus signal (green). Shows frequent value changes after reset, with constrained random values exercising different hart-halted status combinations across the 5-hart vector.
+- **hart_running**: Multi-bit bus signal (green). Shows continuous random value transitions throughout the simulation, providing varying hart-running status patterns.
+- **hart_unavail**: Multi-bit bus signal (green). Shows frequent random transitions similar to other hart status signals, exercising unavailability status combinations.
+- **reg_rdata**: Wide 64-bit bus (green). Shows frequent value changes with constrained random data, representing simulated register read-back values from the harts.
+- **cmd_done**: Single-bit signal (green). Toggles randomly throughout the simulation, simulating abstract command completion pulses at irregular intervals.
+- **cmd_err**: Single-bit signal (green). Toggles randomly, simulating sporadic abstract command error conditions.
+- **sb_arready**: Single-bit signal (green). Toggles randomly, simulating AXI4 read address channel ready responses from the system bus slave.
+- **sb_rvalid**: Single-bit signal (green). Toggles randomly, simulating sporadic valid read data availability on the AXI4 read data channel.
+- **sb_rdata**: Wide 64-bit bus (green). Shows frequent random value changes, representing simulated system bus read data.
+- **sb_rresp**: 2-bit signal (green). Toggles randomly between response values (OKAY/SLVERR/DECERR), exercising read response error paths.
+- **sb_awready**: Single-bit signal (green). Toggles randomly, simulating AXI4 write address channel ready from the slave.
+- **sb_wready**: Single-bit signal (green). Shows random toggling, simulating write data channel ready responses.
+- **sb_bvalid**: Single-bit signal (green). Toggles randomly, simulating write response valid signals from the AXI4 slave.
+
+#### Output Signal Analysis (0–6130 ns)
+- **tdo**: Shows a red (undefined/X) stripe throughout the entire simulation. The signal does not exhibit any meaningful green transitions, indicating that the JTAG TAP never entered a valid Shift-DR or Shift-IR state long enough to produce deterministic serial output. This is expected given purely random `tms`/`tdi` stimulus which does not follow the IEEE 1149.1 state machine protocol.
+- **halt_req**: Remains flat red/low for the entire simulation. No halt request pulses are observed, because the random JTAG stimulus did not generate a valid DMI WRITE to `DMCONTROL` with bit[31] set.
+- **resume_req**: Remains flat red/low for the entire simulation. No resume request pulses are observed, for the same reason as `halt_req`.
+- **reg_sel**: Stays red/undefined throughout. No valid abstract command was decoded from the random JTAG bitstream, so the register select address was never updated.
+- **reg_wr**: Remains red/low. No write-enable assertion is observed because no valid `DM_COMMAND` write was executed.
+- **reg_wdata**: Wide 64-bit bus remains red/undefined for the entire trace. No register write data was driven.
+- **cmd_exec**: Remains red/low. No abstract command execution pulse was generated, confirming that the random stimulus never produced a coherent DMI COMMAND write.
+- **sb_arvalid**: Shows a brief red pulse at time 0 (reset value), then remains flat green/low for the rest of the simulation. The AXI4 read address valid was never asserted because no valid `DM_SBDATA0` read was triggered via DMI.
+- **sb_araddr**: Wide 40-bit bus remains red/undefined throughout. No system bus read address was driven.
+- **sb_rready**: Shows a brief red pulse at time 0, then remains flat green/low. The read data ready signal was never asserted post-reset.
+- **sb_awvalid**: Shows a brief red pulse at time 0, then remains flat green/low. No AXI4 write address valid was asserted.
+- **sb_awaddr**: Wide 40-bit bus remains red/undefined throughout. No system bus write address was driven.
+- **sb_wvalid**: Shows a brief red pulse at time 0, then remains flat green/low. No write data valid assertion observed.
+- **sb_wdata**: Wide 64-bit bus remains red/undefined throughout. No system bus write data was driven.
+- **sb_wstrb**: 8-bit strobe remains red/undefined throughout. No write strobe pattern was generated.
+- **sb_wlast**: Remains red/undefined throughout. No write-last indicator was asserted.
+- **sb_bready**: Shows a brief red pulse at time 0, then remains flat green/low. The write response ready was properly de-asserted after reset and never re-asserted.
+
+#### Verdict
+⚠️ **PARTIAL PASS** — All input signals are correctly stimulated with constrained random values after a clean reset de-assertion at ~100 ns. The `clk` and `tck` toggle as expected. However, **all output signals remain at their reset/undefined states** (red/X or flat low) for the entire 6130 ns simulation. This is an expected limitation of purely random JTAG stimulus: the TAP controller requires a protocol-correct `tms` sequence (TLR→RTI→Select-DR→Capture-DR→Shift-DR→Exit1-DR→Update-DR) to shift in a valid DMI transaction. Random toggling of `tms`/`tdi` is statistically very unlikely to produce the exact multi-cycle sequence needed to load a meaningful DMI command into `dr_capture`. **Recommendation:** Replace random JTAG stimulus with a directed testbench that drives proper TAP state sequences to shift valid DMI read/write commands for `DMCONTROL`, `DM_COMMAND`, and `DM_SBDATA0` registers, which would exercise halt/resume, abstract commands, and system bus access outputs.
