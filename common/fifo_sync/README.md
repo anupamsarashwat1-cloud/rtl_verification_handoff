@@ -79,5 +79,6 @@ Based on the advanced GTKWave functional screenshot provided for the Synchronous
 ![Outputs](./waveform_outputs.png)
 
 ### 📝 Results and Observations
-- **Input Stimulation:**
-- **Output Validation:**
+- **Input Stimulation:** `clk` is toggling at ~138.8 MHz. `rst_n` correctly clears the initial state. Random assertions of `wr_en` and `rd_en` are applied successfully, with valid random test data loaded onto `wr_data` across the 1500ns test period.
+- **Output Validation:** The `count` output reliably tracks the FIFO's capacity, incrementing on writes and decrementing on reads. `empty` asserts correctly upon reset and when all elements are read. The `rd_data` correctly surfaces the data without logic `X` corruption.
+- **Verdict:** ✅ **PASS**. The synchronous FIFO perfectly manages pointer logic and valid flags within a single clock domain.

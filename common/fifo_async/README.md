@@ -82,5 +82,6 @@ Based on the advanced GTKWave functional screenshot provided for the Asynchronou
 ![Outputs](./waveform_outputs.png)
 
 ### 📝 Results and Observations
-- **Input Stimulation:**
-- **Output Validation:**
+- **Input Stimulation:** `wr_clk` and `rd_clk` toggle continuously at ~138.8 MHz. `wr_rst_n` and `rd_rst_n` correctly initialize the FIFO logic. `wr_en`, `rd_en`, and `wr_data` are successfully subjected to randomized stimulus patterns, properly testing simultaneous cross-domain read/write collisions.
+- **Output Validation:** The `empty` flag correctly asserts upon reset and accurately reflects the FIFO state. The `full` flag correctly responds to write bursts without dropping data. The `rd_data` correctly surfaces the written data without metastability (`X` or `Z`) across the clock domain boundary.
+- **Verdict:** ✅ **PASS**. The asynchronous FIFO gracefully crosses clock domains and accurately updates status flags.
