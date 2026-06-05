@@ -104,14 +104,14 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 - `pwrite`
 - `pwdata`
 
+## 📊 Verification Waveform
+
+### Input Signals
+![Inputs](./waveform_inputs.png)
+
+### Output Signals
+![Outputs](./waveform_outputs.png)
+
 ### 📝 Results and Observations
-
-#### Input Signal Analysis (0–1500 ns)
-- **clk / rst_n** (if present): Clock toggles continuously (~138.8 MHz) and reset cleanly initializes the state.
-- **clk, rst_n, ulpi_clk, ulpi_dir, ulpi_nxt, m_awready, m_wready, m_bvalid, m_bresp, m_bid, m_arready, m_rvalid, m_rdata, m_rresp, m_rlast, m_rid, paddr, psel, penable, pwrite, pwdata**: These inputs are driven with randomized or specific test stimulus to thoroughly exercise the module over the test period.
-
-#### Output Signal Analysis (0–1500 ns)
-- **ulpi_stp, ulpi_reset, m_awvalid, m_awaddr, m_awid, m_awlen, m_awsize, m_wvalid, m_wdata, m_wstrb, m_wlast, m_bready, m_arvalid, m_araddr, m_arid, m_arlen, m_arsize, m_rready, prdata, pready, pslverr, usb_irq**: These outputs toggle and respond appropriately to the input stimulus, demonstrating correct data flow and control logic execution without undefined (X) or high-impedance (Z) states after initialization.
-
-#### Verdict
-✅ **PASS** — The `usb_otg` module successfully processes the applied stimulus and generates structurally correct and timely output waveforms, validating its core functionality according to the RTL specifications.
+- **Input Stimulation:**
+- **Output Validation:**

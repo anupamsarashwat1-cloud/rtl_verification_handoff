@@ -75,13 +75,5 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 ![Outputs](./waveform_outputs.png)
 
 ### 📝 Results and Observations
-
-#### Input Signal Analysis (0–1500 ns)
-- **clk / rst_n** (if present): Clock toggles continuously (~138.8 MHz) and reset cleanly initializes the state.
-- **clk, rst_n, haddr, hwrite, htrans, hwdata, prdata, pready, pslverr**: These inputs are driven with randomized or specific test stimulus to thoroughly exercise the module over the test period.
-
-#### Output Signal Analysis (0–1500 ns)
-- **hrdata, hready_out, hresp, paddr, psel, penable, pwrite, pwdata**: These outputs toggle and respond appropriately to the input stimulus, demonstrating correct data flow and control logic execution without undefined (X) or high-impedance (Z) states after initialization.
-
-#### Verdict
-✅ **PASS** — The `ahb_to_apb` module successfully processes the applied stimulus and generates structurally correct and timely output waveforms, validating its core functionality according to the RTL specifications.
+- **Input Stimulation:**
+- **Output Validation:**

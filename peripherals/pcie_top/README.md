@@ -155,13 +155,5 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 ![Outputs](./waveform_outputs.png)
 
 ### 📝 Results and Observations
-
-#### Input Signal Analysis (0–1500 ns)
-- **clk / rst_n** (if present): Clock toggles continuously (~138.8 MHz) and reset cleanly initializes the state.
-- **pcie_clk, pcie_rst_n, pipe_clk, m_awready, m_wready, m_bvalid, m_bresp, m_bid, m_arready, m_rvalid, m_rdata, m_rresp, m_rlast, m_rid, s_awvalid, s_awaddr, s_awid, s_awlen, s_awsize, s_wvalid, s_wdata, s_wstrb, s_wlast, s_bready, s_arvalid, s_araddr, s_arid, s_arlen, s_arsize, s_rready, pipe_rx_data, pipe_rx_datak, pipe_rx_valid, pipe_rx_elecidle, pipe_rx_status, pipe_phy_status**: These inputs are driven with randomized or specific test stimulus to thoroughly exercise the module over the test period.
-
-#### Output Signal Analysis (0–1500 ns)
-- **m_awvalid, m_awaddr, m_awid, m_awlen, m_awsize, m_wvalid, m_wdata, m_wstrb, m_wlast, m_bready, m_arvalid, m_araddr, m_arid, m_arlen, m_arsize, m_rready, s_awready, s_wready, s_bvalid, s_bresp, s_bid, s_arready, s_rvalid, s_rdata, s_rresp, s_rlast, s_rid, pipe_tx_data, pipe_tx_datak, pipe_tx_rate, pipe_tx_elecidle, pipe_tx_compliance, pipe_rx_polarity, pipe_power_down**: These outputs toggle and respond appropriately to the input stimulus, demonstrating correct data flow and control logic execution without undefined (X) or high-impedance (Z) states after initialization.
-
-#### Verdict
-✅ **PASS** — The `pcie_top` module successfully processes the applied stimulus and generates structurally correct and timely output waveforms, validating its core functionality according to the RTL specifications.
+- **Input Stimulation:**
+- **Output Validation:**

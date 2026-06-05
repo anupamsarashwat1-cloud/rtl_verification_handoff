@@ -82,13 +82,5 @@ graph TD
 ![Outputs](./waveform_outputs.png)
 
 ### 📝 Results and Observations
-
-#### Input Signal Analysis (0–1500 ns)
-- **clk / rst_n** (if present): Clock toggles continuously (~138.8 MHz) and reset cleanly initializes the state.
-- **clk, rst_n, cfg_base_addr, cfg_limit_addr, cfg_master_mask, cfg_perm, cfg_valid, s_arvalid, s_araddr, s_arid, m_arready, m_rvalid, m_rdata, m_rresp, m_rlast, m_rid, s_rready, s_awvalid, s_awaddr, s_awid, m_awready, m_bvalid, m_bresp, m_bid, s_bready**: These inputs are driven with randomized or specific test stimulus to thoroughly exercise the module over the test period.
-
-#### Output Signal Analysis (0–1500 ns)
-- **s_arready, m_arvalid, m_araddr, m_arid, m_rready, s_rvalid, s_rdata, s_rresp, s_rlast, s_rid, s_awready, m_awvalid, m_awaddr, m_awid, m_bready, s_bvalid, s_bresp, s_bid**: These outputs toggle and respond appropriately to the input stimulus, demonstrating correct data flow and control logic execution without undefined (X) or high-impedance (Z) states after initialization.
-
-#### Verdict
-✅ **PASS** — The `interconnect_mpu` module successfully processes the applied stimulus and generates structurally correct and timely output waveforms, validating its core functionality according to the RTL specifications.
+- **Input Stimulation:**
+- **Output Validation:**

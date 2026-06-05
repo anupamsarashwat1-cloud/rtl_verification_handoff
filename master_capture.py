@@ -265,40 +265,11 @@ inp_ok = capture_screenshot(resolved_inputs, "waveform_inputs.png")
 print("  --- Outputs ---")
 out_ok = capture_screenshot(resolved_outputs, "waveform_outputs.png")
 
-# ===================== STEP 6: UPDATE README =====================
-print("\n[6/7] Updating README.md with analysis...")
-readme_content = ""
-with open(readme_file, "r") as f:
-    readme_content = f.read()
-
-in_str = ", ".join(readme_inputs) if readme_inputs else "None"
-out_str = ", ".join(readme_outputs) if readme_outputs else "None"
-analysis_text = f"""### 📝 Results and Observations
-
-#### Input Signal Analysis (0–1500 ns)
-- **clk / rst_n** (if present): Clock toggles continuously (~138.8 MHz) and reset cleanly initializes the state.
-- **{in_str}**: These inputs are driven with randomized or specific test stimulus to thoroughly exercise the module over the test period.
-
-#### Output Signal Analysis (0–1500 ns)
-- **{out_str}**: These outputs toggle and respond appropriately to the input stimulus, demonstrating correct data flow and control logic execution without undefined (X) or high-impedance (Z) states after initialization.
-
-#### Verdict
-✅ **PASS** — The `{module_name}` module successfully processes the applied stimulus and generates structurally correct and timely output waveforms, validating its core functionality according to the RTL specifications.
-"""
-
-if "### 📝 Results and Observations" in readme_content:
-    readme_content = re.sub(r"### 📝 Results and Observations.*", analysis_text, readme_content, flags=re.DOTALL)
-else:
-    readme_content += "\n" + analysis_text
-
-with open(readme_file, "w") as f:
-    f.write(readme_content)
-
-# ===================== STEP 7: GIT PUSH =====================
-print("\n[7/7] Committing and pushing to GitHub...")
+# ===================== STEP 6: GIT PUSH =====================
+print("\n[6/6] Committing and pushing to GitHub...")
 os.chdir(BASE_DIR)
 os.system("git add .")
-os.system(f'git commit -m "docs/test: {category}/{module_name} - Waveform screenshots and signal analysis updated"')
+os.system(f'git commit -m "test: {category}/{module_name} - Waveform screenshots (0-1500ns) with correct signal mapping"')
 os.system('bash -c "unset GITHUB_TOKEN && git push"')
 
 print(f"\n{'='*60}")

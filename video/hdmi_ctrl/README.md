@@ -76,14 +76,14 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 - `pwrite`
 - `pwdata`
 
+## 📊 Verification Waveform
+
+### Input Signals
+![Inputs](./waveform_inputs.png)
+
+### Output Signals
+![Outputs](./waveform_outputs.png)
+
 ### 📝 Results and Observations
-
-#### Input Signal Analysis (0–1500 ns)
-- **clk / rst_n** (if present): Clock toggles continuously (~138.8 MHz) and reset cleanly initializes the state.
-- **clk_pixel, clk_tmds, rst_n, s_axis_tdata, s_axis_tvalid, s_axis_tuser, s_axis_tlast, pclk, prst_n, paddr, psel, penable, pwrite, pwdata**: These inputs are driven with randomized or specific test stimulus to thoroughly exercise the module over the test period.
-
-#### Output Signal Analysis (0–1500 ns)
-- **s_axis_tready, tmds_clk_p, tmds_clk_n, tmds_data_p, tmds_data_n, prdata, pready, pslverr**: These outputs toggle and respond appropriately to the input stimulus, demonstrating correct data flow and control logic execution without undefined (X) or high-impedance (Z) states after initialization.
-
-#### Verdict
-✅ **PASS** — The `hdmi_ctrl` module successfully processes the applied stimulus and generates structurally correct and timely output waveforms, validating its core functionality according to the RTL specifications.
+- **Input Stimulation:**
+- **Output Validation:**

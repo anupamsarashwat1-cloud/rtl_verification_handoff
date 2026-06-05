@@ -51,3 +51,15 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 - `WEN`
 - `A`
 - `D`
+
+## 📊 Verification Waveform
+
+### Input Signals
+![Inputs](./waveform_inputs.png)
+
+### Output Signals
+![Outputs](./waveform_outputs.png)
+
+### 📝 Results and Observations
+- **Input Stimulation:**
+- **Output Validation:**

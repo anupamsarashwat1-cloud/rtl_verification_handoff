@@ -106,14 +106,14 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 - `uart_rx`
 - `can_rx`
 
+## 📊 Verification Waveform
+
+### Input Signals
+![Inputs](./waveform_inputs.png)
+
+### Output Signals
+![Outputs](./waveform_outputs.png)
+
 ### 📝 Results and Observations
-
-#### Input Signal Analysis (0–1500 ns)
-- **clk / rst_n** (if present): Clock toggles continuously (~138.8 MHz) and reset cleanly initializes the state.
-- **clk, rst_n, pipe_clk, eth_tx_clk, eth_rx_clk, ulpi_clk, mipi_rxbyteclkhs, hdmi_clk_pixel, hdmi_clk_tmds, rtc_clk, uart_rx, can_rx**: These inputs are driven with randomized or specific test stimulus to thoroughly exercise the module over the test period.
-
-#### Output Signal Analysis (0–1500 ns)
-- **ddr_addr, ddr_ba, ddr_bg, ddr_ck_p, ddr_ck_n, ddr_cke, ddr_cs_n, ddr_ras_n, ddr_cas_n, ddr_we_n, ddr_reset_n, ddr_odt, ddr_act_n, hdmi_tmds_clk_p, hdmi_tmds_clk_n, hdmi_tmds_data_p, hdmi_tmds_data_n, uart_tx, can_tx**: These outputs toggle and respond appropriately to the input stimulus, demonstrating correct data flow and control logic execution without undefined (X) or high-impedance (Z) states after initialization.
-
-#### Verdict
-✅ **PASS** — The `titan_x_top` module successfully processes the applied stimulus and generates structurally correct and timely output waveforms, validating its core functionality according to the RTL specifications.
+- **Input Stimulation:**
+- **Output Validation:**

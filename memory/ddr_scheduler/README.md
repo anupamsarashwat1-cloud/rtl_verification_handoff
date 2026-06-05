@@ -71,3 +71,15 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 - `wr_data`
 - `dfi_rddata`
 - `dfi_rddata_valid`
+
+## 📊 Verification Waveform
+
+### Input Signals
+![Inputs](./waveform_inputs.png)
+
+### Output Signals
+![Outputs](./waveform_outputs.png)
+
+### 📝 Results and Observations
+- **Input Stimulation:**
+- **Output Validation:**

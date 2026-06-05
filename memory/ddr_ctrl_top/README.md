@@ -97,14 +97,14 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 - `s_arlen`
 - `s_rready`
 
+## 📊 Verification Waveform
+
+### Input Signals
+![Inputs](./waveform_inputs.png)
+
+### Output Signals
+![Outputs](./waveform_outputs.png)
+
 ### 📝 Results and Observations
-
-#### Input Signal Analysis (0–1500 ns)
-- **clk / rst_n** (if present): Clock toggles continuously (~138.8 MHz) and reset cleanly initializes the state.
-- **clk, rst_n, s_awvalid, s_awaddr, s_awid, s_awlen, s_awsize, s_wvalid, s_wdata, s_wstrb, s_wlast, s_bready, s_arvalid, s_araddr, s_arid, s_arlen, s_rready**: These inputs are driven with randomized or specific test stimulus to thoroughly exercise the module over the test period.
-
-#### Output Signal Analysis (0–1500 ns)
-- **s_awready, s_wready, s_bvalid, s_bresp, s_bid, s_arready, s_rvalid, s_rdata, s_rresp, s_rlast, s_rid, ddr_ck_p, ddr_ck_n, ddr_cke, ddr_cs_n, ddr_ras_n, ddr_cas_n, ddr_we_n, ddr_ba, ddr_bg, ddr_addr, ddr_dm**: These outputs toggle and respond appropriately to the input stimulus, demonstrating correct data flow and control logic execution without undefined (X) or high-impedance (Z) states after initialization.
-
-#### Verdict
-✅ **PASS** — The `ddr_ctrl_top` module successfully processes the applied stimulus and generates structurally correct and timely output waveforms, validating its core functionality according to the RTL specifications.
+- **Input Stimulation:**
+- **Output Validation:**

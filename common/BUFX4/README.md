@@ -31,3 +31,15 @@ graph TD
 1. **Compile**: `iverilog -o sim.vvp BUFX4.v tb_BUFX4.v` (Include dependencies using ` -I ../../includes -I` if necessary)
 2. **Simulate**: `vvp sim.vvp`
 3. **View**: `gtkwave tb_BUFX4.vcd`
+
+## 📊 Verification Waveform
+
+### Input Signals
+![Inputs](./waveform_inputs.png)
+
+### Output Signals
+![Outputs](./waveform_outputs.png)
+
+### 📝 Results and Observations
+- **Input Stimulation:**
+- **Output Validation:**
