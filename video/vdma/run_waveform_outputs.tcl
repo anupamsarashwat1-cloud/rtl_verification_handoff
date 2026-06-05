@@ -1,0 +1,27 @@
+set sigs [list]
+lappend sigs "tb_vdma.s_axis_s2mm_tready"
+lappend sigs "tb_vdma.m_axis_mm2s_tdata"
+lappend sigs "tb_vdma.m_axis_mm2s_tvalid"
+lappend sigs "tb_vdma.m_axis_mm2s_tuser"
+lappend sigs "tb_vdma.m_axis_mm2s_tlast"
+lappend sigs "tb_vdma.m_axi_awvalid"
+lappend sigs "tb_vdma.m_axi_awaddr"
+lappend sigs "tb_vdma.m_axi_awlen"
+lappend sigs "tb_vdma.m_axi_awsize"
+lappend sigs "tb_vdma.m_axi_wvalid"
+lappend sigs "tb_vdma.m_axi_wdata"
+lappend sigs "tb_vdma.m_axi_wstrb"
+lappend sigs "tb_vdma.m_axi_wlast"
+lappend sigs "tb_vdma.m_axi_bready"
+lappend sigs "tb_vdma.m_axi_arvalid"
+lappend sigs "tb_vdma.m_axi_araddr"
+lappend sigs "tb_vdma.m_axi_arlen"
+lappend sigs "tb_vdma.m_axi_arsize"
+lappend sigs "tb_vdma.m_axi_rready"
+lappend sigs "tb_vdma.prdata"
+lappend sigs "tb_vdma.pready"
+lappend sigs "tb_vdma.pslverr"
+lappend sigs "tb_vdma.vdma_irq"
+gtkwave::addSignalsFromList $sigs
+gtkwave::setZoomFactor -18
+gtkwave::setWindowStartTime 0
