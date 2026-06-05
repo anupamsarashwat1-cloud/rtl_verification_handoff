@@ -6,9 +6,5 @@ lappend sigs "tb_rv_writeback.rd_in"
 lappend sigs "tb_rv_writeback.reg_write"
 lappend sigs "tb_rv_writeback.valid_in"
 gtkwave::addSignalsFromList $sigs
-gtkwave::/Time/Zoom/Zoom_Full
-gtkwave::/Time/Zoom/Zoom_In
-gtkwave::/Time/Zoom/Zoom_In
-gtkwave::/Time/Zoom/Zoom_In
-gtkwave::/Time/Zoom/Zoom_In
+gtkwave::setZoomFactor -18
 gtkwave::setWindowStartTime 0

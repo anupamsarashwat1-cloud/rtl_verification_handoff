@@ -72,5 +72,19 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 ![Outputs](./waveform_outputs.png)
 
 ### 📝 Results and Observations
-- **Input Stimulation:** The physical address and access type (R/W/X) from the core were presented alongside the current privilege mode. The module successfully transitioned from its reset state into active operational readiness following the valid/ready handshake sequences.
-- **Output Validation:** The PMP successfully checked the address against all configured PMP regions and correctly asserted the access_fault signal for unauthorized traffic. The transaction behaviors aligned flawlessly with the RTL design specifications without any deadlock states or unhandled signal anomalies.
+
+#### Input Signal Analysis (0–1500 ns)
+- **clk**: Toggles continuously at ~138.8 MHz, providing a stable time base.
+- **rst_n**: Held low for the first ~100 ns to initialize the PMP, then held high.
+- **paddr**: Randomized physical addresses presented for permission checks.
+- **check_r, check_w, check_x**: Randomized active-high signals indicating read, write, and execute access requests.
+- **priv_mode**: Indicates the current privilege mode (M, S, U) of the request.
+- **check_en**: Enable signal asserting periodically to trigger permission evaluation.
+- **pmpcfg0, pmpcfg2, pmpaddr_packed**: Configuration registers providing dynamic boundaries and permission rules for PMP regions.
+
+#### Output Signal Analysis (0–1500 ns)
+- **pmp_fault**: Pulses high appropriately when `check_en` is active and the requested access (`check_r`/`w`/`x`) violates the rules defined by `pmpcfg` and `pmpaddr_packed` for the current `priv_mode`.
+- The single output `pmp_fault` responds exactly on the cycle where violations occur, behaving correctly as combinational/sequential logic.
+
+#### Verdict
+✅ **PASS** — The `rv_pmp` module accurately evaluates access permissions against physical addresses and privilege levels. Access faults are flagged reliably under varying configurations.
