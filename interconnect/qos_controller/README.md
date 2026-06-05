@@ -71,5 +71,6 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 ![Outputs](./waveform_outputs.png)
 
 ### 📝 Results and Observations
-- **Input Stimulation:**
-- **Output Validation:**
+- **Input Stimulation:** `clk` toggles continuously at 138.8 MHz, and `rst_n` drops to 0 before rising at 100ns. However, the AXI valid/ready monitoring arrays (`m_arvalid`, `m_arready`, `m_awvalid`, `m_awready`) and configuration input (`cfg_time_win`) remain completely flatline at 0. Furthermore, critical QoS threshold configurations (`cfg_base_qos`, `cfg_boost_qos`, `cfg_bw_limit`) are missing entirely from the VCD trace.
+- **Output Validation:** The output signals (`m_arqos`, `m_awqos`) are completely absent from the simulation VCD file. The testbench fails to observe or capture these outputs, making it impossible to validate the QoS logic or bandwidth throttling behavior.
+- **Verdict:** ⚠️ **INCONCLUSIVE**. The testbench is structurally flawed. It fails to inject the randomized configuration/AXI signals into the module and completely omits capturing the calculated QoS outputs. A testbench redesign is required to properly stimulate and observe the QoS state machine.
