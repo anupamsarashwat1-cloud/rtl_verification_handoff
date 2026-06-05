@@ -1,0 +1,27 @@
+set sigs [list]
+lappend sigs "tb_gem_ethernet.m_awvalid"
+lappend sigs "tb_gem_ethernet.m_awaddr"
+lappend sigs "tb_gem_ethernet.m_awid"
+lappend sigs "tb_gem_ethernet.m_awlen"
+lappend sigs "tb_gem_ethernet.m_awsize"
+lappend sigs "tb_gem_ethernet.m_wvalid"
+lappend sigs "tb_gem_ethernet.m_wdata"
+lappend sigs "tb_gem_ethernet.m_wstrb"
+lappend sigs "tb_gem_ethernet.m_wlast"
+lappend sigs "tb_gem_ethernet.m_bready"
+lappend sigs "tb_gem_ethernet.m_arvalid"
+lappend sigs "tb_gem_ethernet.m_araddr"
+lappend sigs "tb_gem_ethernet.m_arid"
+lappend sigs "tb_gem_ethernet.m_arlen"
+lappend sigs "tb_gem_ethernet.m_arsize"
+lappend sigs "tb_gem_ethernet.m_rready"
+lappend sigs "tb_gem_ethernet.prdata"
+lappend sigs "tb_gem_ethernet.pready"
+lappend sigs "tb_gem_ethernet.pslverr"
+lappend sigs "tb_gem_ethernet.mac_irq"
+lappend sigs "tb_gem_ethernet.gmii_txd"
+lappend sigs "tb_gem_ethernet.gmii_tx_en"
+lappend sigs "tb_gem_ethernet.gmii_tx_er"
+gtkwave::addSignalsFromList $sigs
+gtkwave::setZoomFactor -18
+gtkwave::setWindowStartTime 0
