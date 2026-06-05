@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """
 Capture a single module's Input and Output waveform screenshots from GTKWave.
+
 Properly parses VCD hierarchy, maps README signals, sets 0-1500ns range.
+Takes full desktop screenshot and crops to GTKWave window bounds.
 
 Usage: python3 capture_one.py <category> <module_name>
 """
@@ -111,7 +113,39 @@ print(f"Resolved Outputs: {resolved_outputs}")
 for f in glob.glob("waveform_inputs*.png") + glob.glob("waveform_outputs*.png"):
     os.remove(f)
 
-# ---- Step 5: Generate Tcl and capture ----
+# ---- Step 5: Capture function ----
+def get_gtkwave_window_geometry():
+    """Find GTKWave window bounds using xwininfo."""
+    try:
+        result = subprocess.run(
+            ['xwininfo', '-root', '-tree'],
+            capture_output=True, text=True,
+            env=dict(os.environ, DISPLAY=':0')
+        )
+        for line in result.stdout.split('\n'):
+            if 'GTKWave' in line:
+                wid = line.strip().split()[0]
+                # Get geometry of that specific window
+                geo = subprocess.run(
+                    ['xwininfo', '-id', wid],
+                    capture_output=True, text=True,
+                    env=dict(os.environ, DISPLAY=':0')
+                )
+                x = y = w = h = 0
+                for gline in geo.stdout.split('\n'):
+                    if 'Absolute upper-left X:' in gline:
+                        x = int(gline.split(':')[-1].strip())
+                    elif 'Absolute upper-left Y:' in gline:
+                        y = int(gline.split(':')[-1].strip())
+                    elif 'Width:' in gline:
+                        w = int(gline.split(':')[-1].strip())
+                    elif 'Height:' in gline:
+                        h = int(gline.split(':')[-1].strip())
+                return x, y, w, h
+    except Exception as e:
+        print(f"  xwininfo failed: {e}")
+    return None
+
 def capture(signals, filename):
     if not signals:
         print(f"  No signals for {filename}, skipping")
@@ -121,7 +155,7 @@ def capture(signals, filename):
     for s in signals:
         tcl += f'lappend sigs "{s}"\n'
     tcl += "gtkwave::addSignalsFromList $sigs\n"
-    # Zoom -18 gives ~0-1900ns range (covers the 0-1500ns requirement)
+    # Zoom -18 gives ~0-1900ns (covers 0-1500ns requirement)
     tcl += "gtkwave::setZoomFactor -18\n"
     tcl += "gtkwave::setWindowStartTime 0\n"
     
@@ -134,13 +168,36 @@ def capture(signals, filename):
         env=dict(os.environ, DISPLAY=":0"),
         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
     )
-    time.sleep(4)
-    ret = os.system(f"DISPLAY=:0 scrot -u {filename}")
+    time.sleep(4)  # Wait for GUI to render
+    
+    # Get GTKWave window geometry for cropping
+    geo = get_gtkwave_window_geometry()
+    
+    # Take full desktop screenshot
+    tmp_full = f"_tmp_fullscreen_{filename}"
+    os.system(f"DISPLAY=:0 scrot {tmp_full}")
+    
     os.system("killall gtkwave 2>/dev/null")
     p.wait()
     
-    if os.path.exists(filename):
-        print(f"  Captured {filename} ({os.path.getsize(filename)} bytes)")
+    # Crop to GTKWave window bounds
+    if os.path.exists(tmp_full) and geo:
+        x, y, w, h = geo
+        try:
+            from PIL import Image
+            img = Image.open(tmp_full)
+            cropped = img.crop((x, y, x + w, y + h))
+            cropped.save(filename)
+            os.remove(tmp_full)
+            print(f"  Captured & cropped {filename} ({os.path.getsize(filename)} bytes) [window: {x},{y} {w}x{h}]")
+            return True
+        except Exception as e:
+            print(f"  Crop failed ({e}), using full screenshot")
+            os.rename(tmp_full, filename)
+            return True
+    elif os.path.exists(tmp_full):
+        os.rename(tmp_full, filename)
+        print(f"  Captured {filename} (full desktop, no crop) ({os.path.getsize(filename)} bytes)")
         return True
     else:
         print(f"  FAILED to capture {filename}")
