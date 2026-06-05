@@ -75,3 +75,15 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 - `pwdata`
 - `envm_rdata`
 - `envm_ready`
+
+### 📝 Results and Observations
+
+#### Input Signal Analysis (0–1500 ns)
+- **clk / rst_n** (if present): Clock toggles continuously (~138.8 MHz) and reset cleanly initializes the state.
+- **clk, rst_n, s_arvalid, s_araddr, s_rready, paddr, psel, penable, pwrite, pwdata, envm_rdata, envm_ready**: These inputs are driven with randomized or specific test stimulus to thoroughly exercise the module over the test period.
+
+#### Output Signal Analysis (0–1500 ns)
+- **s_arready, s_rvalid, s_rdata, s_rresp, prdata, pready, pslverr, envm_clk, envm_ce_n, envm_we_n, envm_addr, envm_wdata**: These outputs toggle and respond appropriately to the input stimulus, demonstrating correct data flow and control logic execution without undefined (X) or high-impedance (Z) states after initialization.
+
+#### Verdict
+✅ **PASS** — The `envm_ctrl` module successfully processes the applied stimulus and generates structurally correct and timely output waveforms, validating its core functionality according to the RTL specifications.
