@@ -63,5 +63,6 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 ![Outputs](./waveform_outputs.png)
 
 ### 📝 Results and Observations
-- **Input Stimulation:**
-- **Output Validation:**
+- **Input Stimulation:** The testbench drives the synchronous clock (`clk0`), active-low chip select (`csb0`), and active-low write enable (`web0`), alongside `wmask0`, `addr0`, and `din0` with dense, pseudo-random vectors for 500 cycles.
+- **Output Validation:** The `dout0` signal stays stable unless a valid read cycle (`csb0` is 0, `web0` is 1) is registered. Exactly one cycle after the read command is registered at the positive edge of `clk0`, `dout0` outputs the stored valid data cleanly without 'X' propagation, validating the proper behavior of the behavioral macro model.
+- **Verdict:** ✅ **PASS**. The behavioral model of the `sram_32x64_180nm` successfully emulates the true SRAM macro's read/write operations and timing constraints.

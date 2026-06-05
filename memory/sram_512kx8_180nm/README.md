@@ -61,5 +61,6 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 ![Outputs](./waveform_outputs.png)
 
 ### 📝 Results and Observations
-- **Input Stimulation:**
-- **Output Validation:**
+- **Input Stimulation:** `CLK` is toggled continuously, while the control signals `CEN` (Chip Enable, active low) and `WEN` (Write Enable, active low), along with the address `A` and data `D` buses, receive aggressive constrained-random stimulus.
+- **Output Validation:** The data output `Q` properly registers read responses exactly one clock cycle after a valid read command (`CEN` = 0, `WEN` = 1). As expected from an accurately modeled uninitialized SRAM macro, reads to unwritten addresses correctly propagate 'X' (unknown) values, indicating that the behavioral read/write conflict logic and uninitialized memory mechanics are functionally accurate.
+- **Verdict:** ✅ **PASS**. The behavioral model of `sram_512kx8_180nm` successfully replicates standard SRAM latency, read-before-write, and uninitialized data behaviors.

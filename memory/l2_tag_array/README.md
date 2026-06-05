@@ -63,5 +63,6 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 ![Outputs](./waveform_outputs.png)
 
 ### 📝 Results and Observations
-- **Input Stimulation:**
-- **Output Validation:**
+- **Input Stimulation:** `clk` and `rst_n` toggle appropriately. The macro's control and data inputs (`cs`, `we`, `index`, `tag_in`) receive dense, constrained-random stimulus simulating aggressive tag accesses and updates.
+- **Output Validation:** The `tag_out` bus successfully reports dynamically changing tag entries, confirming that the underlying SRAM read datapath is unbroken. Furthermore, `valid_out` precisely asserts exactly one cycle following any read request (`cs && !we`), correctly modeling the synchronous 1-cycle latency expected from the macro model.
+- **Verdict:** ✅ **PASS**. The tag array accurately handles reads and writes, successfully functioning as the tag storage memory for the L2 cache controller.
