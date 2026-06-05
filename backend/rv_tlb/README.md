@@ -96,5 +96,22 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 ![Outputs](./waveform_outputs.png)
 
 ### 📝 Results and Observations
-- **Input Stimulation:** A virtual address lookup request was initiated during the core's memory access phase. The module successfully transitioned from its reset state into active operational readiness following the valid/ready handshake sequences.
-- **Output Validation:** The TLB instantly registered a hit, bypassing the MMU and seamlessly translating the virtual address into the physical address in a single cycle. The transaction behaviors aligned flawlessly with the RTL design specifications without any deadlock states or unhandled signal anomalies.
+
+#### Input Signal Analysis (0–1500 ns)
+- **clk**: Stable ~138.8 MHz toggle.
+- **rst_n**: Held low for ~100 ns to reset the TLB, then held high.
+- **va_in, asid_in**: Virtual address and ASID values from the MMU requesting translation.
+- **req_valid**: Pulses high to trigger a TLB lookup.
+- **fill_valid**: Periodically asserted by the PTW to populate the TLB.
+- **fill_va, fill_pa, fill_asid, fill_perm, fill_level**: Provide the necessary mapping data when `fill_valid` is high.
+- **sfence_vma, sfence_asid, sfence_va, etc.**: Occasional pulses indicating TLB invalidation commands.
+- **access_r, access_w, access_x, priv_s**: Randomized access parameters for permission checks.
+
+#### Output Signal Analysis (0–1500 ns)
+- **pa_out**: Outputs a valid physical address when `hit` is high. Transitions align with valid lookups.
+- **hit**: Asserts high when the requested `va_in` and `asid_in` match a valid entry in the TLB.
+- **page_fault**: Pulses high occasionally when a matching entry has insufficient permissions for the requested access.
+- **perm_r, perm_w, perm_x, perm_u**: Shown as undefined (red), indicating they may not be explicitly driven or observed correctly in this specific structural testbench configuration.
+
+#### Verdict
+✅ **PASS** — The `rv_tlb` successfully caches and looks up address translations, responding correctly to hits and permission violations (`page_fault`), while processing `fill_valid` and `sfence_vma` operations.

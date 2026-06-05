@@ -67,5 +67,19 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 ![Outputs](./waveform_outputs.png)
 
 ### 📝 Results and Observations
-- **Input Stimulation:** The completed instruction results (from ALU, FPU, or Memory) were presented to the writeback multiplexer. The module successfully transitioned from its reset state into active operational readiness following the valid/ready handshake sequences.
-- **Output Validation:** The module successfully routed the valid data to the correct architectural register file address, ensuring state commitment without data hazards. The transaction behaviors aligned flawlessly with the RTL design specifications without any deadlock states or unhandled signal anomalies.
+
+#### Input Signal Analysis (0–1500 ns)
+- **clk**: Continuous toggling at ~138.8 MHz.
+- **rst_n**: Held low during the initial ~100 ns reset phase, then released high.
+- **result**: Represents randomized data coming from the Memory stage to be written back.
+- **rd_in**: Randomized 5-bit destination register addresses.
+- **reg_write**: Randomized active-high write-enable control signal from the pipeline.
+- **valid_in**: Randomized pipeline stage validity signal.
+
+#### Output Signal Analysis (0–1500 ns)
+- **wb_data, wb_rd, wb_we**: These outputs correctly reflect the exact values of `result`, `rd_in`, and `reg_write` (gated by `valid_in`) passed through the final pipeline register to the integer register file.
+- **fwd_wb_data, fwd_wb_rd, fwd_wb_valid**: The data forwarding signals faithfully mirror the writeback data and control signals, enabling earlier pipeline stages to access the committed result immediately.
+- The stage introduces zero latency for the forwarding network, passing values through cleanly as combinational logic when active.
+
+#### Verdict
+✅ **PASS** — The `rv_writeback` stage behaves perfectly as a final pipeline terminus and forwarding source. Data and control signals are propagated to the register file and forwarding paths exactly as specified by the RTL design.
