@@ -7,5 +7,5 @@ lappend sigs "tb_clint.pwrite"
 lappend sigs "tb_clint.paddr"
 lappend sigs "tb_clint.pwdata"
 gtkwave::addSignalsFromList $sigs
-gtkwave::setZoomFactor -3.0
+gtkwave::setZoomFactor -10
 gtkwave::setWindowStartTime 0
