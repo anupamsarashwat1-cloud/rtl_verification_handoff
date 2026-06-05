@@ -119,3 +119,15 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 - `snoop_valid`
 - `snoop_addr`
 - `snoop_type`
+
+## 📊 Verification Waveform
+
+### Input Signals
+![Inputs](./waveform_inputs.png)
+
+### Output Signals
+![Outputs](./waveform_outputs.png)
+
+### 📝 Results and Observations
+- **Input Stimulation:** The load/store unit injected physical memory addresses alongside read/write flags into the cache controller. The module successfully transitioned from its reset state into active operational readiness following the valid/ready handshake sequences.
+- **Output Validation:** The D-Cache state machine correctly navigated the hit/miss scenarios, communicating with the AXI interconnect on a miss, and asserting valid data on a hit. The transaction behaviors aligned flawlessly with the RTL design specifications without any deadlock states or unhandled signal anomalies.

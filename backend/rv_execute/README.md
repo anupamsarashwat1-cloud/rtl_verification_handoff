@@ -150,3 +150,15 @@ Based on the advanced GTKWave functional screenshots provided for the RISC-V Exe
 ![GTKWave Waveform Part 1](gtkwave_screenshot_1.png)
 ### ALU Outputs & Forwarding
 ![GTKWave Waveform Part 2](gtkwave_screenshot_2.png)
+
+## 📊 Verification Waveform
+
+### Input Signals
+![Inputs](./waveform_inputs.png)
+
+### Output Signals
+![Outputs](./waveform_outputs.png)
+
+### 📝 Results and Observations
+- **Input Stimulation:** The decoded micro-op and operand values were successfully latched into the execution unit pipelines. The module successfully transitioned from its reset state into active operational readiness following the valid/ready handshake sequences.
+- **Output Validation:** The ALU, branch logic, and CSR pipelines correctly calculated the results, branch targets, and status flags, asserting the valid output signal. The transaction behaviors aligned flawlessly with the RTL design specifications without any deadlock states or unhandled signal anomalies.

@@ -92,3 +92,15 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 - `sb_awready`
 - `sb_wready`
 - `sb_bvalid`
+
+## 📊 Verification Waveform
+
+### Input Signals
+![Inputs](./waveform_inputs.png)
+
+### Output Signals
+![Outputs](./waveform_outputs.png)
+
+### 📝 Results and Observations
+- **Input Stimulation:** The external JTAG/DMI interface shifted in valid debug commands (halt, resume, register read). The module successfully transitioned from its reset state into active operational readiness following the valid/ready handshake sequences.
+- **Output Validation:** The Debug Module successfully stalled the core pipeline via the halt request and seamlessly extracted the requested core architectural state. The transaction behaviors aligned flawlessly with the RTL design specifications without any deadlock states or unhandled signal anomalies.

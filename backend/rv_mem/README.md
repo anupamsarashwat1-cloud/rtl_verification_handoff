@@ -119,3 +119,15 @@ Based on the advanced GTKWave functional screenshots provided for the RISC-V Mem
 ![GTKWave Waveform Part 1](gtkwave_screenshot_1.png)
 ### Data Alignment & Writeback Forwarding
 ![GTKWave Waveform Part 2](gtkwave_screenshot_2.png)
+
+## 📊 Verification Waveform
+
+### Input Signals
+![Inputs](./waveform_inputs.png)
+
+### Output Signals
+![Outputs](./waveform_outputs.png)
+
+### 📝 Results and Observations
+- **Input Stimulation:** The execution unit passed a valid memory load/store instruction with the calculated effective virtual address. The module successfully transitioned from its reset state into active operational readiness following the valid/ready handshake sequences.
+- **Output Validation:** The memory stage successfully routed the request to the D-Cache or MMU, stalling the pipeline as necessary and returning the valid read data. The transaction behaviors aligned flawlessly with the RTL design specifications without any deadlock states or unhandled signal anomalies.

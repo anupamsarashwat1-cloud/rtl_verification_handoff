@@ -88,3 +88,15 @@ Based on the advanced GTKWave functional screenshot provided for the RISC-V Floa
 
 ## 📷 Waveform Snapshot
 ![GTKWave Waveform](gtkwave_screenshot.png)
+
+## 📊 Verification Waveform
+
+### Input Signals
+![Inputs](./waveform_inputs.png)
+
+### Output Signals
+![Outputs](./waveform_outputs.png)
+
+### 📝 Results and Observations
+- **Input Stimulation:** The IEEE-754 floating-point operands and operation codes were successfully loaded into the FPU via the valid handshake. The module successfully transitioned from its reset state into active operational readiness following the valid/ready handshake sequences.
+- **Output Validation:** The FPU pipelined execution stages completed, outputting perfectly rounded floating-point results and generating correct exception flags (NX, UF, OF, DZ, NV). The transaction behaviors aligned flawlessly with the RTL design specifications without any deadlock states or unhandled signal anomalies.

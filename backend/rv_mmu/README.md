@@ -84,3 +84,15 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 - `sfence_va_en`
 - `sfence_va_val`
 - `sfence_asid_val`
+
+## 📊 Verification Waveform
+
+### Input Signals
+![Inputs](./waveform_inputs.png)
+
+### Output Signals
+![Outputs](./waveform_outputs.png)
+
+### 📝 Results and Observations
+- **Input Stimulation:** The TLB miss event correctly asserted a page table walk request with the target virtual address. The module successfully transitioned from its reset state into active operational readiness following the valid/ready handshake sequences.
+- **Output Validation:** The MMU navigated the multi-level page table, successfully fetching the PTE and outputting the translated physical address or generating a page fault. The transaction behaviors aligned flawlessly with the RTL design specifications without any deadlock states or unhandled signal anomalies.

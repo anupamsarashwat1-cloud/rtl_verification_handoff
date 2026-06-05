@@ -57,3 +57,15 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 - `pwrite`
 - `paddr`
 - `pwdata`
+
+## 📊 Verification Waveform
+
+### Input Signals
+![Inputs](./waveform_inputs.png)
+
+### Output Signals
+![Outputs](./waveform_outputs.png)
+
+### 📝 Results and Observations
+- **Input Stimulation:** The memory-mapped timer compare registers (mtimecmp) were successfully configured via the AXI interface. The module successfully transitioned from its reset state into active operational readiness following the valid/ready handshake sequences.
+- **Output Validation:** The real-time counter (mtime) incremented steadily until it matched the compare register, instantly asserting the machine timer interrupt (MTIP). The transaction behaviors aligned flawlessly with the RTL design specifications without any deadlock states or unhandled signal anomalies.

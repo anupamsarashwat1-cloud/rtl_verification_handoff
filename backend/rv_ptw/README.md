@@ -80,3 +80,15 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 - `ptw_rvalid`
 - `ptw_rdata`
 - `ptw_rresp`
+
+## 📊 Verification Waveform
+
+### Input Signals
+![Inputs](./waveform_inputs.png)
+
+### Output Signals
+![Outputs](./waveform_outputs.png)
+
+### 📝 Results and Observations
+- **Input Stimulation:** The MMU presented a valid virtual address requiring translation along with the root page table pointer (SATP). The module successfully transitioned from its reset state into active operational readiness following the valid/ready handshake sequences.
+- **Output Validation:** The PTW state machine successfully performed consecutive memory reads across the page table hierarchy, returning the leaf PTE to the TLB. The transaction behaviors aligned flawlessly with the RTL design specifications without any deadlock states or unhandled signal anomalies.

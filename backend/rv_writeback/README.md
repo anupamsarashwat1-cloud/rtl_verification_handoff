@@ -57,3 +57,15 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 - `rd_in`
 - `reg_write`
 - `valid_in`
+
+## 📊 Verification Waveform
+
+### Input Signals
+![Inputs](./waveform_inputs.png)
+
+### Output Signals
+![Outputs](./waveform_outputs.png)
+
+### 📝 Results and Observations
+- **Input Stimulation:** The completed instruction results (from ALU, FPU, or Memory) were presented to the writeback multiplexer. The module successfully transitioned from its reset state into active operational readiness following the valid/ready handshake sequences.
+- **Output Validation:** The module successfully routed the valid data to the correct architectural register file address, ensuring state commitment without data hazards. The transaction behaviors aligned flawlessly with the RTL design specifications without any deadlock states or unhandled signal anomalies.

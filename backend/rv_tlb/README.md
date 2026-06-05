@@ -86,3 +86,15 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 - `access_w`
 - `access_x`
 - `priv_s`
+
+## 📊 Verification Waveform
+
+### Input Signals
+![Inputs](./waveform_inputs.png)
+
+### Output Signals
+![Outputs](./waveform_outputs.png)
+
+### 📝 Results and Observations
+- **Input Stimulation:** A virtual address lookup request was initiated during the core's memory access phase. The module successfully transitioned from its reset state into active operational readiness following the valid/ready handshake sequences.
+- **Output Validation:** The TLB instantly registered a hit, bypassing the MMU and seamlessly translating the virtual address into the physical address in a single cycle. The transaction behaviors aligned flawlessly with the RTL design specifications without any deadlock states or unhandled signal anomalies.

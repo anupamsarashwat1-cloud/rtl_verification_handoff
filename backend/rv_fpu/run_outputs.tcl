@@ -1,0 +1,20 @@
+set sigs [list]
+lappend sigs "tb_rv_fpu.uut.clk"
+lappend sigs "tb_rv_fpu.uut.rst_n"
+lappend sigs "tb_rv_fpu.uut.fop"
+lappend sigs "tb_rv_fpu.uut.fmt"
+lappend sigs "tb_rv_fpu.uut.rm"
+lappend sigs "tb_rv_fpu.uut.valid_in"
+lappend sigs "tb_rv_fpu.uut.fp_src1"
+lappend sigs "tb_rv_fpu.uut.fp_src2"
+lappend sigs "tb_rv_fpu.uut.fp_src3"
+lappend sigs "tb_rv_fpu.uut.int_src"
+lappend sigs "tb_rv_fpu.uut.frm_csr"
+lappend sigs "tb_rv_fpu.uut.fp_result"
+lappend sigs "tb_rv_fpu.uut.result_valid"
+lappend sigs "tb_rv_fpu.uut.fflags"
+lappend sigs "tb_rv_fpu.uut.fpu_done"
+lappend sigs "tb_rv_fpu.uut.int_result"
+lappend sigs "tb_rv_fpu.uut.int_result_valid"
+gtkwave::addSignalsFromList $sigs
+gtkwave::/Time/Zoom/Zoom_Full
