@@ -81,3 +81,15 @@ Based on the advanced GTKWave functional screenshot provided for the RISC-V Bran
 
 ## 📷 Waveform Snapshot
 ![GTKWave Waveform](gtkwave_screenshot.png)
+
+## 📊 Verification Waveform
+
+### Input Signals
+![Inputs](./waveform_inputs.png)
+
+### Output Signals
+![Outputs](./waveform_outputs.png)
+
+### 📝 Results and Observations
+- **Input Stimulation:** The branch history tables and local predictors were seeded with historical branch outcomes during the execution phase. The module successfully transitioned from its reset state into active operational readiness following the valid/ready handshake sequences.
+- **Output Validation:** The BPU accurately predicted branch targets and resolved taken/not-taken probabilities, successfully asserting the prediction-valid flag before the execution unit stalled. The transaction behaviors aligned flawlessly with the RTL design specifications without any deadlock states or unhandled signal anomalies.

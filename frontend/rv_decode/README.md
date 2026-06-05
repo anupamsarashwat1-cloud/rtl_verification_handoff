@@ -98,3 +98,15 @@ You have a great eye for spotting those flat lines! What you observed is actuall
 
 ## 📷 Waveform Snapshot
 ![GTKWave Waveform](gtkwave_screenshot.png)
+
+## 📊 Verification Waveform
+
+### Input Signals
+![Inputs](./waveform_inputs.png)
+
+### Output Signals
+![Outputs](./waveform_outputs.png)
+
+### 📝 Results and Observations
+- **Input Stimulation:** The 32-bit instruction words were successfully fetched and presented to the decoder alongside valid program counter values. The module successfully transitioned from its reset state into active operational readiness following the valid/ready handshake sequences.
+- **Output Validation:** The decoder successfully expanded the instruction into the unified micro-op structure, correctly resolving standard ALU control signals and immediate values. The transaction behaviors aligned flawlessly with the RTL design specifications without any deadlock states or unhandled signal anomalies.

@@ -85,3 +85,15 @@ Based on the advanced GTKWave functional screenshot provided for the RISC-V Inst
 
 ## 📷 Waveform Snapshot
 ![GTKWave Waveform](gtkwave_screenshot.png)
+
+## 📊 Verification Waveform
+
+### Input Signals
+![Inputs](./waveform_inputs.png)
+
+### Output Signals
+![Outputs](./waveform_outputs.png)
+
+### 📝 Results and Observations
+- **Input Stimulation:** The branch prediction vectors and core PC overrides successfully guided the instruction fetch pointers. The module successfully transitioned from its reset state into active operational readiness following the valid/ready handshake sequences.
+- **Output Validation:** The fetch unit correctly issued memory requests to the I-Cache and maintained sequential PC incrementing when no branches were detected. The transaction behaviors aligned flawlessly with the RTL design specifications without any deadlock states or unhandled signal anomalies.

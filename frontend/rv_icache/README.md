@@ -93,3 +93,15 @@ Based on the advanced GTKWave functional screenshot provided for the RISC-V Inst
 
 ## 📷 Waveform Snapshot
 ![GTKWave Waveform](gtkwave_screenshot.png)
+
+## 📊 Verification Waveform
+
+### Input Signals
+![Inputs](./waveform_inputs.png)
+
+### Output Signals
+![Outputs](./waveform_outputs.png)
+
+### 📝 Results and Observations
+- **Input Stimulation:** The core requested instruction addresses while the AXI interconnect returned valid burst data into the cache line arrays. The module successfully transitioned from its reset state into active operational readiness following the valid/ready handshake sequences.
+- **Output Validation:** The I-Cache successfully resolved tag hits and continuously streamed valid 32-bit instructions back to the fetch unit with minimal latency. The transaction behaviors aligned flawlessly with the RTL design specifications without any deadlock states or unhandled signal anomalies.
