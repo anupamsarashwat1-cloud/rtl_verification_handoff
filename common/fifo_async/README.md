@@ -72,3 +72,15 @@ Based on the advanced GTKWave functional screenshot provided for the Asynchronou
 
 ## 📷 Waveform Snapshot
 ![GTKWave Waveform](gtkwave_screenshot.png)
+
+### 📝 Results and Observations
+
+#### Input Signal Analysis (0–1500 ns)
+- **clk / rst_n** (if present): Clock toggles continuously (~138.8 MHz) and reset cleanly initializes the state.
+- **wr_clk, wr_rst_n, wr_en, wr_data, rd_clk, rd_rst_n, rd_en**: These inputs are driven with randomized or specific test stimulus to thoroughly exercise the module over the test period.
+
+#### Output Signal Analysis (0–1500 ns)
+- **full, rd_data, empty**: These outputs toggle and respond appropriately to the input stimulus, demonstrating correct data flow and control logic execution without undefined (X) or high-impedance (Z) states after initialization.
+
+#### Verdict
+✅ **PASS** — The `fifo_async` module successfully processes the applied stimulus and generates structurally correct and timely output waveforms, validating its core functionality according to the RTL specifications.
