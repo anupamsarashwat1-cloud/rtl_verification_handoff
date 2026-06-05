@@ -1,0 +1,26 @@
+set sigs [list]
+lappend sigs "tb_usb_otg.ulpi_stp"
+lappend sigs "tb_usb_otg.ulpi_reset"
+lappend sigs "tb_usb_otg.m_awvalid"
+lappend sigs "tb_usb_otg.m_awaddr"
+lappend sigs "tb_usb_otg.m_awid"
+lappend sigs "tb_usb_otg.m_awlen"
+lappend sigs "tb_usb_otg.m_awsize"
+lappend sigs "tb_usb_otg.m_wvalid"
+lappend sigs "tb_usb_otg.m_wdata"
+lappend sigs "tb_usb_otg.m_wstrb"
+lappend sigs "tb_usb_otg.m_wlast"
+lappend sigs "tb_usb_otg.m_bready"
+lappend sigs "tb_usb_otg.m_arvalid"
+lappend sigs "tb_usb_otg.m_araddr"
+lappend sigs "tb_usb_otg.m_arid"
+lappend sigs "tb_usb_otg.m_arlen"
+lappend sigs "tb_usb_otg.m_arsize"
+lappend sigs "tb_usb_otg.m_rready"
+lappend sigs "tb_usb_otg.prdata"
+lappend sigs "tb_usb_otg.pready"
+lappend sigs "tb_usb_otg.pslverr"
+lappend sigs "tb_usb_otg.usb_irq"
+gtkwave::addSignalsFromList $sigs
+gtkwave::setZoomFactor -18
+gtkwave::setWindowStartTime 0
