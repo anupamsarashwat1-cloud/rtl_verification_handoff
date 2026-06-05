@@ -71,5 +71,6 @@ Based on the advanced GTKWave functional screenshot:
 ![Outputs](./waveform_outputs.png)
 
 ### 📝 Results and Observations
-- **Input Stimulation:**
-- **Output Validation:**
+- **Input Stimulation:** `dst_clk` toggles continuously at 138.8 MHz. `rst_n` is correctly asserted low at the beginning, resolving initial undefined (red) states. `data_in` is driven with random asynchronous toggles throughout the 0–1500 ns timeframe.
+- **Output Validation:** `data_out` correctly mirrors `data_in` but with the required 2-cycle synchronizer latency. There are no undefined or metastable states on the output after the initial reset sequence, confirming safe clock domain crossing.
+- **Verdict:** ✅ **PASS**. The module behaves perfectly as a multi-stage flip-flop synchronizer.
