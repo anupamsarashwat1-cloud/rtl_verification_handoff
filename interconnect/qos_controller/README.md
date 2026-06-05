@@ -61,3 +61,6 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 - `m_arready`
 - `m_awvalid`
 - `m_awready`
+
+## 📊 Verification Waveform
+![Waveform](./waveform.png)

@@ -61,3 +61,6 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 - `paddr`
 - `pwdata`
 - `spi_miso`
+
+## 📊 Verification Waveform
+![Waveform](./waveform.png)

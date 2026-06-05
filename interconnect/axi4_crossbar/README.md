@@ -112,3 +112,6 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 - `s_rresp`
 - `s_rlast`
 - `s_rid`
+
+## 📊 Verification Waveform
+![Waveform](./waveform.png)

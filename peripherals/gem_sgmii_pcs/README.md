@@ -64,3 +64,6 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 - `gmii_tx_er`
 - `tbi_rx_data`
 - `signal_detect`
+
+## 📊 Verification Waveform
+![Waveform](./waveform.png)

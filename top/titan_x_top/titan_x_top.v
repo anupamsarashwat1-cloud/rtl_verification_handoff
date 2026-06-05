@@ -139,7 +139,7 @@ module titan_x_top (
     // Tie off unused slaves
     genvar s;
     generate
-        for (s = 2; s < 9; s = s + 1) begin : gen_unused_axis
+        for (s = 3; s < 9; s = s + 1) begin : gen_unused_axis
             assign axs_awready[s] = 1'b1;
             assign axs_wready[s] = 1'b1;
             assign axs_bvalid[s] = 1'b0;
@@ -153,6 +153,29 @@ module titan_x_top (
             assign axs_rid[s*4 +: 4] = 4'h0;
         end
     endgenerate
+
+    // Boot ROM on Slave 2
+    axi_rom #(
+        .HEX_FILE("/home/anupam-sarashwat/titan_x_firmware/firmware.hex")
+    ) u_boot_rom (
+        .clk(clk),
+        .rst_n(rst_n),
+        .s_arvalid(axs_arvalid[2]),
+        .s_arready(axs_arready[2]),
+        .s_araddr (axs_araddr[2*40 +: 40]),
+        .s_arid   (axs_arid[2*4 +: 4]),
+        .s_rvalid (axs_rvalid[2]),
+        .s_rready (axs_rready[2]),
+        .s_rdata  (axs_rdata[2*64 +: 64]),
+        .s_rresp  (axs_rresp[2*2 +: 2]),
+        .s_rlast  (axs_rlast[2]),
+        .s_rid    (axs_rid[2*4 +: 4])
+    );
+    assign axs_awready[2] = 1'b1;
+    assign axs_wready[2] = 1'b1;
+    assign axs_bvalid[2] = 1'b0;
+    assign axs_bresp[2*2 +: 2] = 2'b00;
+    assign axs_bid[2*4 +: 4] = 4'h0;
 
     // -------------------------------------------------------
     // Cores 0-3 (RV64GC)

@@ -46,7 +46,6 @@
 ../../common/fifo_async/fifo_async.v
 ../../common/reset_sync/reset_sync.v
 ../../common/BUFX4/buf_macros.v
-../../top/titan_x_top/titan_x_top.v
 ../../memory/l2_data_array/l2_data_array.v
 ../../memory/ddr_scheduler/ddr_scheduler.v
 ../../memory/l2_snoop_filter/l2_snoop_filter.v

@@ -61,3 +61,6 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 - `pwrite`
 - `pwdata`
 - `trng_ready`
+
+## 📊 Verification Waveform
+![Waveform](./waveform.png)

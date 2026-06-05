@@ -44,10 +44,9 @@ module tb_qos_controller();
         $dumpvars(0, tb_qos_controller);
 
         // 1. Initialize all data inputs
-        // Unpacked arrays cannot be assigned 0 directly without a loop
-        // cfg_base_qos = 0;
-        // cfg_boost_qos = 0;
-        // cfg_bw_limit = 0;
+        for(int i=0; i<15; i++) cfg_base_qos[i] = 0;
+        for(int i=0; i<15; i++) cfg_boost_qos[i] = 0;
+        for(int i=0; i<15; i++) cfg_bw_limit[i] = 0;
         cfg_time_win = 0;
         m_arvalid = 0;
         m_arready = 0;
@@ -66,10 +65,9 @@ module tb_qos_controller();
         // Generating aggressive random toggling to exercise internal logic
         repeat(500) begin
             #10;
-            // Unpacked arrays cannot be randomized directly without a loop
-            // cfg_base_qos = $random;
-            // cfg_boost_qos = $random;
-            // cfg_bw_limit = $random;
+            for(int i=0; i<15; i++) cfg_base_qos[i] = $random;
+            for(int i=0; i<15; i++) cfg_boost_qos[i] = $random;
+            for(int i=0; i<15; i++) cfg_bw_limit[i] = $random;
             cfg_time_win = $random;
             m_arvalid = $random;
             m_arready = $random;

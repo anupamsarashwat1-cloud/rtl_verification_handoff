@@ -81,3 +81,6 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 - `prdata`
 - `pready`
 - `pslverr`
+
+## 📊 Verification Waveform
+![Waveform](./waveform.png)

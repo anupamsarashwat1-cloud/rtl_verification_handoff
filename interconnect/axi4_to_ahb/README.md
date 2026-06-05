@@ -87,3 +87,6 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 - `hrdata`
 - `hready`
 - `hresp`
+
+## 📊 Verification Waveform
+![Waveform](./waveform.png)

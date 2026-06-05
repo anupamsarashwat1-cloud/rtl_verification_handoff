@@ -1,0 +1,20 @@
+set sigs [list]
+lappend sigs "tb_ahb_to_apb.uut.clk"
+lappend sigs "tb_ahb_to_apb.uut.rst_n"
+lappend sigs "tb_ahb_to_apb.uut.haddr"
+lappend sigs "tb_ahb_to_apb.uut.hwrite"
+lappend sigs "tb_ahb_to_apb.uut.htrans"
+lappend sigs "tb_ahb_to_apb.uut.hwdata"
+lappend sigs "tb_ahb_to_apb.uut.prdata"
+lappend sigs "tb_ahb_to_apb.uut.pready"
+lappend sigs "tb_ahb_to_apb.uut.pslverr"
+lappend sigs "tb_ahb_to_apb.uut.hrdata"
+lappend sigs "tb_ahb_to_apb.uut.hready_out"
+lappend sigs "tb_ahb_to_apb.uut.hresp"
+lappend sigs "tb_ahb_to_apb.uut.paddr"
+lappend sigs "tb_ahb_to_apb.uut.psel"
+lappend sigs "tb_ahb_to_apb.uut.penable"
+lappend sigs "tb_ahb_to_apb.uut.pwrite"
+lappend sigs "tb_ahb_to_apb.uut.pwdata"
+gtkwave::addSignalsFromList $sigs
+gtkwave::/Time/Zoom/Zoom_Full

@@ -112,3 +112,6 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 - `gmii_rx_er`
 - `gmii_crs`
 - `gmii_col`
+
+## 📊 Verification Waveform
+![Waveform](./waveform.png)

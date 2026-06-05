@@ -1,0 +1,20 @@
+set sigs [list]
+lappend sigs "tb_uart_16550.uut.clk"
+lappend sigs "tb_uart_16550.uut.rst_n"
+lappend sigs "tb_uart_16550.uut.paddr"
+lappend sigs "tb_uart_16550.uut.psel"
+lappend sigs "tb_uart_16550.uut.penable"
+lappend sigs "tb_uart_16550.uut.pwrite"
+lappend sigs "tb_uart_16550.uut.pwdata"
+lappend sigs "tb_uart_16550.uut.rxd"
+lappend sigs "tb_uart_16550.uut.irda_rx"
+lappend sigs "tb_uart_16550.uut.lin_rx"
+lappend sigs "tb_uart_16550.uut.prdata"
+lappend sigs "tb_uart_16550.uut.pready"
+lappend sigs "tb_uart_16550.uut.pslverr"
+lappend sigs "tb_uart_16550.uut.uart_irq"
+lappend sigs "tb_uart_16550.uut.txd"
+lappend sigs "tb_uart_16550.uut.irda_tx"
+lappend sigs "tb_uart_16550.uut.lin_tx"
+gtkwave::addSignalsFromList $sigs
+gtkwave::/Time/Zoom/Zoom_Full

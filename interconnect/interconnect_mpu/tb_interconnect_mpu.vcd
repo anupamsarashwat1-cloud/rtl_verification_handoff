@@ -1,0 +1,1149 @@
+$date
+	Fri Jun  5 11:20:55 2026
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1ps
+$end
+$scope module tb_interconnect_mpu $end
+$var wire 15 ! s_rvalid [14:0] $end
+$var wire 30 " s_rresp [29:0] $end
+$var wire 15 # s_rlast [14:0] $end
+$var wire 60 $ s_rid [59:0] $end
+$var wire 960 % s_rdata [959:0] $end
+$var wire 15 & s_bvalid [14:0] $end
+$var wire 30 ' s_bresp [29:0] $end
+$var wire 60 ( s_bid [59:0] $end
+$var wire 15 ) s_awready [14:0] $end
+$var wire 15 * s_arready [14:0] $end
+$var wire 15 + m_rready [14:0] $end
+$var wire 15 , m_bready [14:0] $end
+$var wire 15 - m_awvalid [14:0] $end
+$var wire 60 . m_awid [59:0] $end
+$var wire 600 / m_awaddr [599:0] $end
+$var wire 15 0 m_arvalid [14:0] $end
+$var wire 60 1 m_arid [59:0] $end
+$var wire 600 2 m_araddr [599:0] $end
+$var reg 1 3 clk $end
+$var reg 15 4 m_arready [14:0] $end
+$var reg 15 5 m_awready [14:0] $end
+$var reg 60 6 m_bid [59:0] $end
+$var reg 30 7 m_bresp [29:0] $end
+$var reg 15 8 m_bvalid [14:0] $end
+$var reg 960 9 m_rdata [959:0] $end
+$var reg 60 : m_rid [59:0] $end
+$var reg 15 ; m_rlast [14:0] $end
+$var reg 30 < m_rresp [29:0] $end
+$var reg 15 = m_rvalid [14:0] $end
+$var reg 1 > rst_n $end
+$var reg 600 ? s_araddr [599:0] $end
+$var reg 60 @ s_arid [59:0] $end
+$var reg 15 A s_arvalid [14:0] $end
+$var reg 600 B s_awaddr [599:0] $end
+$var reg 60 C s_awid [59:0] $end
+$var reg 15 D s_awvalid [14:0] $end
+$var reg 15 E s_bready [14:0] $end
+$var reg 15 F s_rready [14:0] $end
+$scope module uut $end
+$var wire 1 3 clk $end
+$var wire 15 G m_arready [14:0] $end
+$var wire 15 H m_awready [14:0] $end
+$var wire 60 I m_bid [59:0] $end
+$var wire 30 J m_bresp [29:0] $end
+$var wire 15 K m_bvalid [14:0] $end
+$var wire 960 L m_rdata [959:0] $end
+$var wire 60 M m_rid [59:0] $end
+$var wire 15 N m_rlast [14:0] $end
+$var wire 30 O m_rresp [29:0] $end
+$var wire 15 P m_rvalid [14:0] $end
+$var wire 1 > rst_n $end
+$var wire 600 Q s_araddr [599:0] $end
+$var wire 60 R s_arid [59:0] $end
+$var wire 15 S s_arvalid [14:0] $end
+$var wire 600 T s_awaddr [599:0] $end
+$var wire 60 U s_awid [59:0] $end
+$var wire 15 V s_awvalid [14:0] $end
+$var wire 15 W s_bready [14:0] $end
+$var wire 15 X s_rready [14:0] $end
+$var wire 15 Y s_rvalid [14:0] $end
+$var wire 30 Z s_rresp [29:0] $end
+$var wire 15 [ s_rlast [14:0] $end
+$var wire 60 \ s_rid [59:0] $end
+$var wire 960 ] s_rdata [959:0] $end
+$var wire 15 ^ s_bvalid [14:0] $end
+$var wire 30 _ s_bresp [29:0] $end
+$var wire 60 ` s_bid [59:0] $end
+$var wire 15 a s_awready [14:0] $end
+$var wire 15 b s_arready [14:0] $end
+$var wire 15 c m_rready [14:0] $end
+$var wire 15 d m_bready [14:0] $end
+$var wire 15 e m_awvalid [14:0] $end
+$var wire 60 f m_awid [59:0] $end
+$var wire 600 g m_awaddr [599:0] $end
+$var wire 15 h m_arvalid [14:0] $end
+$var wire 60 i m_arid [59:0] $end
+$var wire 600 j m_araddr [599:0] $end
+$var parameter 32 k AW $end
+$var parameter 32 l DW $end
+$var parameter 32 m IDW $end
+$var parameter 32 n NM $end
+$var parameter 32 o REGIONS $end
+$scope begin gen_mpu_check[0] $end
+$var wire 40 p ar_addr [39:0] $end
+$var wire 1 q ar_block $end
+$var wire 40 r aw_addr [39:0] $end
+$var wire 1 s aw_block $end
+$var parameter 2 t i $end
+$var reg 1 u ar_allowed $end
+$var reg 1 v aw_allowed $end
+$var reg 1 w pending_ar_decerr $end
+$var reg 1 x pending_aw_decerr $end
+$var integer 32 y r [31:0] $end
+$upscope $end
+$scope begin gen_mpu_check[1] $end
+$var wire 40 z ar_addr [39:0] $end
+$var wire 1 { ar_block $end
+$var wire 40 | aw_addr [39:0] $end
+$var wire 1 } aw_block $end
+$var parameter 2 ~ i $end
+$var reg 1 !" ar_allowed $end
+$var reg 1 "" aw_allowed $end
+$var reg 1 #" pending_ar_decerr $end
+$var reg 1 $" pending_aw_decerr $end
+$var integer 32 %" r [31:0] $end
+$upscope $end
+$scope begin gen_mpu_check[2] $end
+$var wire 40 &" ar_addr [39:0] $end
+$var wire 1 '" ar_block $end
+$var wire 40 (" aw_addr [39:0] $end
+$var wire 1 )" aw_block $end
+$var parameter 3 *" i $end
+$var reg 1 +" ar_allowed $end
+$var reg 1 ," aw_allowed $end
+$var reg 1 -" pending_ar_decerr $end
+$var reg 1 ." pending_aw_decerr $end
+$var integer 32 /" r [31:0] $end
+$upscope $end
+$scope begin gen_mpu_check[3] $end
+$var wire 40 0" ar_addr [39:0] $end
+$var wire 1 1" ar_block $end
+$var wire 40 2" aw_addr [39:0] $end
+$var wire 1 3" aw_block $end
+$var parameter 3 4" i $end
+$var reg 1 5" ar_allowed $end
+$var reg 1 6" aw_allowed $end
+$var reg 1 7" pending_ar_decerr $end
+$var reg 1 8" pending_aw_decerr $end
+$var integer 32 9" r [31:0] $end
+$upscope $end
+$scope begin gen_mpu_check[4] $end
+$var wire 40 :" ar_addr [39:0] $end
+$var wire 1 ;" ar_block $end
+$var wire 40 <" aw_addr [39:0] $end
+$var wire 1 =" aw_block $end
+$var parameter 4 >" i $end
+$var reg 1 ?" ar_allowed $end
+$var reg 1 @" aw_allowed $end
+$var reg 1 A" pending_ar_decerr $end
+$var reg 1 B" pending_aw_decerr $end
+$var integer 32 C" r [31:0] $end
+$upscope $end
+$scope begin gen_mpu_check[5] $end
+$var wire 40 D" ar_addr [39:0] $end
+$var wire 1 E" ar_block $end
+$var wire 40 F" aw_addr [39:0] $end
+$var wire 1 G" aw_block $end
+$var parameter 4 H" i $end
+$var reg 1 I" ar_allowed $end
+$var reg 1 J" aw_allowed $end
+$var reg 1 K" pending_ar_decerr $end
+$var reg 1 L" pending_aw_decerr $end
+$var integer 32 M" r [31:0] $end
+$upscope $end
+$scope begin gen_mpu_check[6] $end
+$var wire 40 N" ar_addr [39:0] $end
+$var wire 1 O" ar_block $end
+$var wire 40 P" aw_addr [39:0] $end
+$var wire 1 Q" aw_block $end
+$var parameter 4 R" i $end
+$var reg 1 S" ar_allowed $end
+$var reg 1 T" aw_allowed $end
+$var reg 1 U" pending_ar_decerr $end
+$var reg 1 V" pending_aw_decerr $end
+$var integer 32 W" r [31:0] $end
+$upscope $end
+$scope begin gen_mpu_check[7] $end
+$var wire 40 X" ar_addr [39:0] $end
+$var wire 1 Y" ar_block $end
+$var wire 40 Z" aw_addr [39:0] $end
+$var wire 1 [" aw_block $end
+$var parameter 4 \" i $end
+$var reg 1 ]" ar_allowed $end
+$var reg 1 ^" aw_allowed $end
+$var reg 1 _" pending_ar_decerr $end
+$var reg 1 `" pending_aw_decerr $end
+$var integer 32 a" r [31:0] $end
+$upscope $end
+$scope begin gen_mpu_check[8] $end
+$var wire 40 b" ar_addr [39:0] $end
+$var wire 1 c" ar_block $end
+$var wire 40 d" aw_addr [39:0] $end
+$var wire 1 e" aw_block $end
+$var parameter 5 f" i $end
+$var reg 1 g" ar_allowed $end
+$var reg 1 h" aw_allowed $end
+$var reg 1 i" pending_ar_decerr $end
+$var reg 1 j" pending_aw_decerr $end
+$var integer 32 k" r [31:0] $end
+$upscope $end
+$scope begin gen_mpu_check[9] $end
+$var wire 40 l" ar_addr [39:0] $end
+$var wire 1 m" ar_block $end
+$var wire 40 n" aw_addr [39:0] $end
+$var wire 1 o" aw_block $end
+$var parameter 5 p" i $end
+$var reg 1 q" ar_allowed $end
+$var reg 1 r" aw_allowed $end
+$var reg 1 s" pending_ar_decerr $end
+$var reg 1 t" pending_aw_decerr $end
+$var integer 32 u" r [31:0] $end
+$upscope $end
+$scope begin gen_mpu_check[10] $end
+$var wire 40 v" ar_addr [39:0] $end
+$var wire 1 w" ar_block $end
+$var wire 40 x" aw_addr [39:0] $end
+$var wire 1 y" aw_block $end
+$var parameter 5 z" i $end
+$var reg 1 {" ar_allowed $end
+$var reg 1 |" aw_allowed $end
+$var reg 1 }" pending_ar_decerr $end
+$var reg 1 ~" pending_aw_decerr $end
+$var integer 32 !# r [31:0] $end
+$upscope $end
+$scope begin gen_mpu_check[11] $end
+$var wire 40 "# ar_addr [39:0] $end
+$var wire 1 ## ar_block $end
+$var wire 40 $# aw_addr [39:0] $end
+$var wire 1 %# aw_block $end
+$var parameter 5 &# i $end
+$var reg 1 '# ar_allowed $end
+$var reg 1 (# aw_allowed $end
+$var reg 1 )# pending_ar_decerr $end
+$var reg 1 *# pending_aw_decerr $end
+$var integer 32 +# r [31:0] $end
+$upscope $end
+$scope begin gen_mpu_check[12] $end
+$var wire 40 ,# ar_addr [39:0] $end
+$var wire 1 -# ar_block $end
+$var wire 40 .# aw_addr [39:0] $end
+$var wire 1 /# aw_block $end
+$var parameter 5 0# i $end
+$var reg 1 1# ar_allowed $end
+$var reg 1 2# aw_allowed $end
+$var reg 1 3# pending_ar_decerr $end
+$var reg 1 4# pending_aw_decerr $end
+$var integer 32 5# r [31:0] $end
+$upscope $end
+$scope begin gen_mpu_check[13] $end
+$var wire 40 6# ar_addr [39:0] $end
+$var wire 1 7# ar_block $end
+$var wire 40 8# aw_addr [39:0] $end
+$var wire 1 9# aw_block $end
+$var parameter 5 :# i $end
+$var reg 1 ;# ar_allowed $end
+$var reg 1 <# aw_allowed $end
+$var reg 1 =# pending_ar_decerr $end
+$var reg 1 ># pending_aw_decerr $end
+$var integer 32 ?# r [31:0] $end
+$upscope $end
+$scope begin gen_mpu_check[14] $end
+$var wire 40 @# ar_addr [39:0] $end
+$var wire 1 A# ar_block $end
+$var wire 40 B# aw_addr [39:0] $end
+$var wire 1 C# aw_block $end
+$var parameter 5 D# i $end
+$var reg 1 E# ar_allowed $end
+$var reg 1 F# aw_allowed $end
+$var reg 1 G# pending_ar_decerr $end
+$var reg 1 H# pending_aw_decerr $end
+$var integer 32 I# r [31:0] $end
+$upscope $end
+$upscope $end
+$scope begin $ivl_for_loop0 $end
+$var integer 32 J# i [31:0] $end
+$upscope $end
+$scope begin $ivl_for_loop1 $end
+$var integer 32 K# i [31:0] $end
+$upscope $end
+$scope begin $ivl_for_loop2 $end
+$var integer 32 L# i [31:0] $end
+$upscope $end
+$scope begin $ivl_for_loop3 $end
+$var integer 32 M# i [31:0] $end
+$upscope $end
+$scope begin $ivl_for_loop4 $end
+$var integer 32 N# i [31:0] $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+$comment Show the parameter values. $end
+$dumpall
+b1110 D#
+b1101 :#
+b1100 0#
+b1011 &#
+b1010 z"
+b1001 p"
+b1000 f"
+b111 \"
+b110 R"
+b101 H"
+b100 >"
+b11 4"
+b10 *"
+b1 ~
+b0 t
+b10000 o
+b1111 n
+b100 m
+b1000000 l
+b101000 k
+$end
+#0
+$dumpvars
+b10000 N#
+b10000 M#
+b10000 L#
+b10000 K#
+b10000 J#
+b10000 I#
+0H#
+0G#
+1F#
+1E#
+0C#
+b0 B#
+0A#
+b0 @#
+b10000 ?#
+0>#
+0=#
+1<#
+1;#
+09#
+b0 8#
+07#
+b0 6#
+b10000 5#
+04#
+03#
+12#
+11#
+0/#
+b0 .#
+0-#
+b0 ,#
+b10000 +#
+0*#
+0)#
+1(#
+1'#
+0%#
+b0 $#
+0##
+b0 "#
+b10000 !#
+0~"
+0}"
+1|"
+1{"
+0y"
+b0 x"
+0w"
+b0 v"
+b10000 u"
+0t"
+0s"
+1r"
+1q"
+0o"
+b0 n"
+0m"
+b0 l"
+b10000 k"
+0j"
+0i"
+1h"
+1g"
+0e"
+b0 d"
+0c"
+b0 b"
+b10000 a"
+0`"
+0_"
+1^"
+1]"
+0["
+b0 Z"
+0Y"
+b0 X"
+b10000 W"
+0V"
+0U"
+1T"
+1S"
+0Q"
+b0 P"
+0O"
+b0 N"
+b10000 M"
+0L"
+0K"
+1J"
+1I"
+0G"
+b0 F"
+0E"
+b0 D"
+b10000 C"
+0B"
+0A"
+1@"
+1?"
+0="
+b0 <"
+0;"
+b0 :"
+b10000 9"
+08"
+07"
+16"
+15"
+03"
+b0 2"
+01"
+b0 0"
+b10000 /"
+0."
+0-"
+1,"
+1+"
+0)"
+b0 ("
+0'"
+b0 &"
+b10000 %"
+0$"
+0#"
+1""
+1!"
+0}
+b0 |
+0{
+b0 z
+b10000 y
+0x
+0w
+1v
+1u
+0s
+b0 r
+0q
+b0 p
+b0 j
+b0 i
+b0 h
+b0 g
+b0 f
+b0 e
+b0 d
+b0 c
+b0 b
+b0 a
+b0 `
+b0 _
+b0 ^
+b0 ]
+b0 \
+b0 [
+b0 Z
+b0 Y
+b0 X
+b0 W
+b0 V
+b0 U
+b0 T
+b0 S
+b0 R
+b0 Q
+b0 P
+b0 O
+b0 N
+b0 M
+b0 L
+b0 K
+b0 J
+b0 I
+b0 H
+b0 G
+b0 F
+b0 E
+b0 D
+b0 C
+b0 B
+b0 A
+b0 @
+b0 ?
+0>
+b0 =
+b0 <
+b0 ;
+b0 :
+b0 9
+b0 8
+b0 7
+b0 6
+b0 5
+b0 4
+03
+b0 2
+b0 1
+b0 0
+b0 /
+b0 .
+b0 -
+b0 ,
+b0 +
+b0 *
+b0 )
+b0 (
+b0 '
+b0 &
+b0 %
+b0 $
+b0 #
+b0 "
+b0 !
+$end
+#3600
+13
+#7200
+03
+#10000
+1>
+#10800
+13
+#14400
+03
+#18000
+13
+#21600
+03
+#25200
+13
+#28800
+03
+#32400
+13
+#36000
+03
+#39600
+13
+#43200
+03
+#46800
+13
+#50400
+03
+#54000
+13
+#57600
+03
+#61200
+13
+#64800
+03
+#68400
+13
+#72000
+03
+#75600
+13
+#79200
+03
+#82800
+13
+#86400
+03
+#90000
+13
+#93600
+03
+#97200
+13
+#100800
+03
+#104400
+13
+#108000
+03
+#111600
+13
+#115200
+03
+#118800
+13
+#122400
+03
+#126000
+13
+#129600
+03
+#133200
+13
+#136800
+03
+#140400
+13
+#144000
+03
+#147600
+13
+#151200
+03
+#154800
+13
+#158400
+03
+#162000
+13
+#165600
+03
+#169200
+13
+#172800
+03
+#176400
+13
+#180000
+03
+#183600
+13
+#187200
+03
+#190800
+13
+#194400
+03
+#198000
+13
+#201600
+03
+#205200
+13
+#208800
+03
+#212400
+13
+#216000
+03
+#219600
+13
+#223200
+03
+#226800
+13
+#230400
+03
+#234000
+13
+#237600
+03
+#241200
+13
+#244800
+03
+#248400
+13
+#252000
+03
+#255600
+13
+#259200
+03
+#262800
+13
+#266400
+03
+#270000
+13
+#273600
+03
+#277200
+13
+#280800
+03
+#284400
+13
+#288000
+03
+#291600
+13
+#295200
+03
+#298800
+13
+#302400
+03
+#306000
+13
+#309600
+03
+#313200
+13
+#316800
+03
+#320400
+13
+#324000
+03
+#327600
+13
+#331200
+03
+#334800
+13
+#338400
+03
+#342000
+13
+#345600
+03
+#349200
+13
+#352800
+03
+#356400
+13
+#360000
+03
+#363600
+13
+#367200
+03
+#370800
+13
+#374400
+03
+#378000
+13
+#381600
+03
+#385200
+13
+#388800
+03
+#392400
+13
+#396000
+03
+#399600
+13
+#403200
+03
+#406800
+13
+#410400
+03
+#414000
+13
+#417600
+03
+#421200
+13
+#424800
+03
+#428400
+13
+#432000
+03
+#435600
+13
+#439200
+03
+#442800
+13
+#446400
+03
+#450000
+13
+#453600
+03
+#457200
+13
+#460800
+03
+#464400
+13
+#468000
+03
+#471600
+13
+#475200
+03
+#478800
+13
+#482400
+03
+#486000
+13
+#489600
+03
+#493200
+13
+#496800
+03
+#500400
+13
+#504000
+03
+#507600
+13
+#511200
+03
+#514800
+13
+#518400
+03
+#522000
+13
+#525600
+03
+#529200
+13
+#532800
+03
+#536400
+13
+#540000
+03
+#543600
+13
+#547200
+03
+#550800
+13
+#554400
+03
+#558000
+13
+#561600
+03
+#565200
+13
+#568800
+03
+#572400
+13
+#576000
+03
+#579600
+13
+#583200
+03
+#586800
+13
+#590400
+03
+#594000
+13
+#597600
+03
+#601200
+13
+#604800
+03
+#608400
+13
+#612000
+03
+#615600
+13
+#619200
+03
+#622800
+13
+#626400
+03
+#630000
+13
+#633600
+03
+#637200
+13
+#640800
+03
+#644400
+13
+#648000
+03
+#651600
+13
+#655200
+03
+#658800
+13
+#662400
+03
+#666000
+13
+#669600
+03
+#673200
+13
+#676800
+03
+#680400
+13
+#684000
+03
+#687600
+13
+#691200
+03
+#694800
+13
+#698400
+03
+#702000
+13
+#705600
+03
+#709200
+13
+#712800
+03
+#716400
+13
+#720000
+03
+#723600
+13
+#727200
+03
+#730800
+13
+#734400
+03
+#738000
+13
+#741600
+03
+#745200
+13
+#748800
+03
+#752400
+13
+#756000
+03
+#759600
+13
+#763200
+03
+#766800
+13
+#770400
+03
+#774000
+13
+#777600
+03
+#781200
+13
+#784800
+03
+#788400
+13
+#792000
+03
+#795600
+13
+#799200
+03
+#802800
+13
+#806400
+03
+#810000
+13
+#813600
+03
+#817200
+13
+#820800
+03
+#824400
+13
+#828000
+03
+#831600
+13
+#835200
+03
+#838800
+13
+#842400
+03
+#846000
+13
+#849600
+03
+#853200
+13
+#856800
+03
+#860400
+13
+#864000
+03
+#867600
+13
+#871200
+03
+#874800
+13
+#878400
+03
+#882000
+13
+#885600
+03
+#889200
+13
+#892800
+03
+#896400
+13
+#900000
+03
+#903600
+13
+#907200
+03
+#910800
+13
+#914400
+03
+#918000
+13
+#921600
+03
+#925200
+13
+#928800
+03
+#932400
+13
+#936000
+03
+#939600
+13
+#943200
+03
+#946800
+13
+#950400
+03
+#954000
+13
+#957600
+03
+#961200
+13
+#964800
+03
+#968400
+13
+#972000
+03
+#975600
+13
+#979200
+03
+#982800
+13
+#986400
+03
+#990000
+13
+#993600
+03
+#997200
+13
+#1000800
+03
+#1004400
+13
+#1008000
+03
+#1011600
+13
+#1015200
+03
+#1018800
+13
+#1022400
+03
+#1026000
+13
+#1029600
+03
+#1033200
+13
+#1036800
+03
+#1040400
+13
+#1044000
+03
+#1047600
+13
+#1051200
+03
+#1054800
+13
+#1058400
+03
+#1062000
+13
+#1065600
+03
+#1069200
+13
+#1072800
+03
+#1076400
+13
+#1080000
+03
+#1083600
+13
+#1087200
+03
+#1090800
+13
+#1094400
+03
+#1098000
+13
+#1101600
+03
+#1105200
+13
+#1108800
+03
+#1110000

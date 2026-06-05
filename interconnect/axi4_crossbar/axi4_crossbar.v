@@ -82,15 +82,11 @@ module axi4_crossbar #(
     function [3:0] decode_slave;
         input [AW-1:0] addr;
         begin
-            if      (addr[39:28] == 12'h000) decode_slave = 4'd0;
-            else if (addr[39:31] == 9'h001)  decode_slave = 4'd1;
-            else if (addr[27:24] == 4'h1)    decode_slave = 4'd2;
-            else if (addr[27:24] == 4'h2)    decode_slave = 4'd3;
-            else if (addr[27:24] == 4'h3)    decode_slave = 4'd4;
-            else if (addr[27:24] == 4'h4)    decode_slave = 4'd5;
-            else if (addr[27:24] == 4'h5)    decode_slave = 4'd6;
-            else if (addr[27:24] == 4'h6)    decode_slave = 4'd7;
-            else                             decode_slave = 4'd8;
+            if      (addr[39:31] == 9'h001)  decode_slave = 4'd0; // DDR (0x8000_0000)
+            else if (addr[39:28] == 12'h004) decode_slave = 4'd1; // APB (0x4000_0000)
+            else if (addr[39:28] == 12'h001) decode_slave = 4'd2; // BootROM (0x1000_0000)
+            else if (addr[39:28] == 12'h000) decode_slave = 4'd3; // L2 Cache (0x0000_0000)
+            else                             decode_slave = 4'd8; // Unmapped
         end
     endfunction
 

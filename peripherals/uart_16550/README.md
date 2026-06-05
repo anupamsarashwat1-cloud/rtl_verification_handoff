@@ -66,3 +66,6 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 - `rxd`
 - `irda_rx`
 - `lin_rx`
+
+## 📊 Verification Waveform
+![Waveform](./waveform.png)

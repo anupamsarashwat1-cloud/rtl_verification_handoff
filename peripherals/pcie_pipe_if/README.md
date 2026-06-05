@@ -81,3 +81,6 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 - `pipe_rx_elecidle`
 - `pipe_rx_status`
 - `pipe_phy_status`
+
+## 📊 Verification Waveform
+![Waveform](./waveform.png)
