@@ -1,13 +1,16 @@
 set sigs [list]
-lappend sigs "tb_gpio_ctrl.uut.clk"
-lappend sigs "tb_gpio_ctrl.uut.rst_n"
-lappend sigs "tb_gpio_ctrl.uut.psel"
-lappend sigs "tb_gpio_ctrl.uut.penable"
-lappend sigs "tb_gpio_ctrl.uut.pwrite"
-lappend sigs "tb_gpio_ctrl.uut.paddr"
-lappend sigs "tb_gpio_ctrl.uut.pwdata"
-lappend sigs "tb_gpio_ctrl.uut.prdata"
-lappend sigs "tb_gpio_ctrl.uut.pready"
-lappend sigs "tb_gpio_ctrl.uut.irq"
+lappend sigs "tb_gpio_ctrl.prdata"
+lappend sigs "tb_gpio_ctrl.pready"
+lappend sigs "tb_gpio_ctrl.irq"
+lappend sigs "tb_gpio_ctrl.clk"
+lappend sigs "tb_gpio_ctrl.rst_n"
+lappend sigs "tb_gpio_ctrl.psel"
+lappend sigs "tb_gpio_ctrl.penable"
+lappend sigs "tb_gpio_ctrl.pwrite"
+lappend sigs "tb_gpio_ctrl.paddr"
+lappend sigs "tb_gpio_ctrl.pwdata"
 gtkwave::addSignalsFromList $sigs
 gtkwave::/Time/Zoom/Zoom_Full
+gtkwave::/Time/Zoom/Zoom_In
+gtkwave::/Time/Zoom/Zoom_In
+gtkwave::/Time/Zoom/Zoom_In

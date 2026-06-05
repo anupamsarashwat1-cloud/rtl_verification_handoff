@@ -1,14 +1,17 @@
 set sigs [list]
-lappend sigs "tb_clint.uut.clk"
-lappend sigs "tb_clint.uut.rst_n"
-lappend sigs "tb_clint.uut.psel"
-lappend sigs "tb_clint.uut.penable"
-lappend sigs "tb_clint.uut.pwrite"
-lappend sigs "tb_clint.uut.paddr"
-lappend sigs "tb_clint.uut.pwdata"
-lappend sigs "tb_clint.uut.prdata"
-lappend sigs "tb_clint.uut.pready"
-lappend sigs "tb_clint.uut.msip"
-lappend sigs "tb_clint.uut.mtip"
+lappend sigs "tb_clint.prdata"
+lappend sigs "tb_clint.pready"
+lappend sigs "tb_clint.msip"
+lappend sigs "tb_clint.mtip"
+lappend sigs "tb_clint.clk"
+lappend sigs "tb_clint.rst_n"
+lappend sigs "tb_clint.psel"
+lappend sigs "tb_clint.penable"
+lappend sigs "tb_clint.pwrite"
+lappend sigs "tb_clint.paddr"
+lappend sigs "tb_clint.pwdata"
 gtkwave::addSignalsFromList $sigs
 gtkwave::/Time/Zoom/Zoom_Full
+gtkwave::/Time/Zoom/Zoom_In
+gtkwave::/Time/Zoom/Zoom_In
+gtkwave::/Time/Zoom/Zoom_In

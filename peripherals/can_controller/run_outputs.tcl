@@ -1,16 +1,19 @@
 set sigs [list]
-lappend sigs "tb_can_controller.uut.clk"
-lappend sigs "tb_can_controller.uut.rst_n"
-lappend sigs "tb_can_controller.uut.paddr"
-lappend sigs "tb_can_controller.uut.psel"
-lappend sigs "tb_can_controller.uut.penable"
-lappend sigs "tb_can_controller.uut.pwrite"
-lappend sigs "tb_can_controller.uut.pwdata"
-lappend sigs "tb_can_controller.uut.can_rx"
-lappend sigs "tb_can_controller.uut.prdata"
-lappend sigs "tb_can_controller.uut.pready"
-lappend sigs "tb_can_controller.uut.pslverr"
-lappend sigs "tb_can_controller.uut.can_irq"
-lappend sigs "tb_can_controller.uut.can_tx"
+lappend sigs "tb_can_controller.prdata"
+lappend sigs "tb_can_controller.pready"
+lappend sigs "tb_can_controller.pslverr"
+lappend sigs "tb_can_controller.can_irq"
+lappend sigs "tb_can_controller.can_tx"
+lappend sigs "tb_can_controller.clk"
+lappend sigs "tb_can_controller.rst_n"
+lappend sigs "tb_can_controller.paddr"
+lappend sigs "tb_can_controller.psel"
+lappend sigs "tb_can_controller.penable"
+lappend sigs "tb_can_controller.pwrite"
+lappend sigs "tb_can_controller.pwdata"
+lappend sigs "tb_can_controller.can_rx"
 gtkwave::addSignalsFromList $sigs
 gtkwave::/Time/Zoom/Zoom_Full
+gtkwave::/Time/Zoom/Zoom_In
+gtkwave::/Time/Zoom/Zoom_In
+gtkwave::/Time/Zoom/Zoom_In

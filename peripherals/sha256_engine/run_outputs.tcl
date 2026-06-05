@@ -1,13 +1,16 @@
 set sigs [list]
-lappend sigs "tb_sha256_engine.uut.clk"
-lappend sigs "tb_sha256_engine.uut.rst_n"
-lappend sigs "tb_sha256_engine.uut.psel"
-lappend sigs "tb_sha256_engine.uut.penable"
-lappend sigs "tb_sha256_engine.uut.pwrite"
-lappend sigs "tb_sha256_engine.uut.paddr"
-lappend sigs "tb_sha256_engine.uut.pwdata"
-lappend sigs "tb_sha256_engine.uut.prdata"
-lappend sigs "tb_sha256_engine.uut.pready"
-lappend sigs "tb_sha256_engine.uut.irq"
+lappend sigs "tb_sha256_engine.prdata"
+lappend sigs "tb_sha256_engine.pready"
+lappend sigs "tb_sha256_engine.irq"
+lappend sigs "tb_sha256_engine.clk"
+lappend sigs "tb_sha256_engine.rst_n"
+lappend sigs "tb_sha256_engine.psel"
+lappend sigs "tb_sha256_engine.penable"
+lappend sigs "tb_sha256_engine.pwrite"
+lappend sigs "tb_sha256_engine.paddr"
+lappend sigs "tb_sha256_engine.pwdata"
 gtkwave::addSignalsFromList $sigs
 gtkwave::/Time/Zoom/Zoom_Full
+gtkwave::/Time/Zoom/Zoom_In
+gtkwave::/Time/Zoom/Zoom_In
+gtkwave::/Time/Zoom/Zoom_In

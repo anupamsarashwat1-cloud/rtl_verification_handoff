@@ -1,13 +1,16 @@
 set sigs [list]
-lappend sigs "tb_i2c_master.uut.clk"
-lappend sigs "tb_i2c_master.uut.rst_n"
-lappend sigs "tb_i2c_master.uut.psel"
-lappend sigs "tb_i2c_master.uut.penable"
-lappend sigs "tb_i2c_master.uut.pwrite"
-lappend sigs "tb_i2c_master.uut.paddr"
-lappend sigs "tb_i2c_master.uut.pwdata"
-lappend sigs "tb_i2c_master.uut.prdata"
-lappend sigs "tb_i2c_master.uut.pready"
-lappend sigs "tb_i2c_master.uut.irq"
+lappend sigs "tb_i2c_master.prdata"
+lappend sigs "tb_i2c_master.pready"
+lappend sigs "tb_i2c_master.irq"
+lappend sigs "tb_i2c_master.clk"
+lappend sigs "tb_i2c_master.rst_n"
+lappend sigs "tb_i2c_master.psel"
+lappend sigs "tb_i2c_master.penable"
+lappend sigs "tb_i2c_master.pwrite"
+lappend sigs "tb_i2c_master.paddr"
+lappend sigs "tb_i2c_master.pwdata"
 gtkwave::addSignalsFromList $sigs
 gtkwave::/Time/Zoom/Zoom_Full
+gtkwave::/Time/Zoom/Zoom_In
+gtkwave::/Time/Zoom/Zoom_In
+gtkwave::/Time/Zoom/Zoom_In

@@ -1,4 +1,33 @@
 set sigs [list]
-lappend sigs "tb_rv_dcache.uut.clk"
+lappend sigs "tb_rv_dcache.clk"
+lappend sigs "tb_rv_dcache.rst_n"
+lappend sigs "tb_rv_dcache.cpu_addr"
+lappend sigs "tb_rv_dcache.cpu_wdata"
+lappend sigs "tb_rv_dcache.cpu_wstrb"
+lappend sigs "tb_rv_dcache.cpu_req"
+lappend sigs "tb_rv_dcache.cpu_wr"
+lappend sigs "tb_rv_dcache.cpu_size"
+lappend sigs "tb_rv_dcache.is_lr"
+lappend sigs "tb_rv_dcache.is_sc"
+lappend sigs "tb_rv_dcache.lr_addr_in"
+lappend sigs "tb_rv_dcache.lr_valid_in"
+lappend sigs "tb_rv_dcache.flush_all"
+lappend sigs "tb_rv_dcache.flush_addr_en"
+lappend sigs "tb_rv_dcache.flush_addr"
+lappend sigs "tb_rv_dcache.m_arready"
+lappend sigs "tb_rv_dcache.m_rvalid"
+lappend sigs "tb_rv_dcache.m_rdata"
+lappend sigs "tb_rv_dcache.m_rlast"
+lappend sigs "tb_rv_dcache.m_rresp"
+lappend sigs "tb_rv_dcache.m_awready"
+lappend sigs "tb_rv_dcache.m_wready"
+lappend sigs "tb_rv_dcache.m_bvalid"
+lappend sigs "tb_rv_dcache.m_bresp"
+lappend sigs "tb_rv_dcache.snoop_valid"
+lappend sigs "tb_rv_dcache.snoop_addr"
+lappend sigs "tb_rv_dcache.snoop_type"
 gtkwave::addSignalsFromList $sigs
 gtkwave::/Time/Zoom/Zoom_Full
+gtkwave::/Time/Zoom/Zoom_In
+gtkwave::/Time/Zoom/Zoom_In
+gtkwave::/Time/Zoom/Zoom_In
