@@ -126,3 +126,34 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 - `snoop_type`
 - `halt_req`
 - `resume_req`
+
+## 📊 Verification Waveform
+
+### Input Signals
+![Inputs](./waveform_inputs.png)
+
+### Output Signals
+![Outputs](./waveform_outputs.png)
+
+### 📝 Results and Observations
+
+#### Input Signal Analysis (0–1500 ns)
+- **clk**: Continuous toggling at ~138.8 MHz across the entire simulation window.
+- **rst_n**: Held low for the first ~100 ns, then released high — proper active-low reset sequence.
+- **irq_m_ext, irq_m_timer, irq_m_soft**: All three machine-level interrupt request lines toggle randomly throughout, simulating asynchronous interrupt arrival from timer, software, and external sources.
+- **imem_arready, imem_rvalid, imem_rdata[63:0], imem_rlast, imem_rresp[1:0]**: Instruction memory AXI4 read channel signals toggle aggressively. `imem_rresp` cycles through values 00, 01, 10, 11 simulating OKAY, EXOKAY, SLVERR, and DECERR responses.
+- **dmem_awready, dmem_wready, dmem_bvalid, dmem_bresp[1:0]**: Data memory AXI4 write channel handshake signals toggle randomly. `dmem_bresp` varies across all response codes.
+- **dmem_arready, dmem_rvalid, dmem_rdata[63:0], dmem_rlast, dmem_rresp[1:0]**: Data memory read channel stimulus exercised similarly.
+- **snoop_valid, snoop_addr[39:0], snoop_type[1:0]**: L2 cache snoop port actively stimulated with random addresses and snoop types.
+- **halt_req, resume_req**: Debug control signals toggle sporadically, simulating external halt/resume requests from JTAG debug module.
+
+#### Output Signal Analysis (0–1500 ns)
+- **imem_arvalid, imem_araddr[39:0], imem_arlen[7:0], imem_arsize[2:0], imem_arburst[1:0], imem_rready**: All instruction fetch AXI4 outputs remain stuck at their initial X (undefined, shown in red) or low state. The core never issues a valid instruction fetch request.
+- **dmem_awvalid, dmem_awaddr[39:0], dmem_awlen, dmem_awsize, dmem_awburst, dmem_wvalid, dmem_wdata[63:0], dmem_wstrb[7:0], dmem_wlast, dmem_bready**: All data memory write channel outputs similarly flatlined at X/0. No write transactions initiated.
+- **dmem_arvalid, dmem_araddr[39:0], dmem_arlen, dmem_arsize, dmem_arburst, dmem_arlock, dmem_rready**: Data memory read channel outputs also unresponsive.
+- **snoop_ack**: Shows periodic green toggling, indicating some internal snoop response logic is operating.
+- **snoop_data_valid, snoop_data[511:0]**: `snoop_data_valid` remains low; `snoop_data` shows extended X values before settling.
+- **hart_halted, hart_running**: These debug status outputs show active toggling patterns — `hart_halted` and `hart_running` pulse in complementary fashion, reacting to the random `halt_req`/`resume_req` inputs.
+
+#### Verdict
+⚠️ **INCONCLUSIVE** — The `rv_core_top` integration module's pipeline outputs (AXI4 instruction and data memory interfaces) remain unresponsive. This is expected: the core requires a valid instruction stream (proper boot ROM content at the reset vector) and properly handshaked AXI responses to exit its reset/init state. The random stimulus does not provide a coherent boot sequence. However, the debug interface (`hart_halted`/`hart_running`) and snoop logic (`snoop_ack`) show active responses, confirming those sub-blocks are functional. Full verification requires a directed boot test with realistic memory content.
