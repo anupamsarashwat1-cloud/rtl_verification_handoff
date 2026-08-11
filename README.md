@@ -509,7 +509,11 @@ rtl_verification_handoff/
 
 ---
 
-## 📈 Results Till Now & The Way Forward
+*SMVDU TITAN-X SoC — Designed for SCL 180nm ASIC Tapeout*
+
+---
+
+## 📈 Results Till Now
 
 ### 🌐 The Big Picture
 
@@ -526,14 +530,15 @@ The problem is **not the RTL** — most of the RTL logic is structurally sound. 
 
 ---
 
-# TITAN-X SoC — Master Plan: From Broken to Perfect
+## 🚀 Way Forward — Master Plan: From Broken to Perfect
 
-## 🎯 Goal
+### 🎯 Goal
 Make **every single module** individually verified (PASS) and proven to work together as a complete SoC. This requires:
 1. Fixing RTL bugs found during verification
 2. Rewriting all weak/random testbenches into directed, protocol-correct testbenches
 3. Building behavioral models for external interfaces (DDR, ULPI, SGMII, GMII, MIPI)
 4. Integrating and boot-testing the full `titan_x_top`
+
 
 ---
 
