@@ -507,3 +507,358 @@ rtl_verification_handoff/
 
 *SMVDU TITAN-X SoC — Designed for SCL 180nm ASIC Tapeout*
 
+---
+
+## 📈 Results Till Now & The Way Forward
+
+### 🌐 The Big Picture
+
+The problem is **not the RTL** — most of the RTL logic is structurally sound. The failures come from 3 root causes:
+
+#### 🔴 Root Cause 1: Syntax-broken testbenches (3 modules)
+`gem_ethernet`, `ddr_ctrl_top`, `pcie_top` won't even compile — literal typos like `[7.0:0]` (decimal point in bit width).
+
+#### 🔴 Root Cause 2: Random stimulus can never reach the right state (9 modules)
+`rtc`, `trng`, `uart_16550`, `can_controller`, `i2c_master`, `drbg`, `ecdsa_engine`, `usb_otg`, `vdma` — all require a **specific command sequence** to operate (enable → configure → command → poll → verify). A random bit-blaster will never hit this by chance. **These need directed testbenches with APB task libraries.**
+
+#### 🔴 Root Cause 3: Missing external models (5 modules)
+`ddr_ctrl_top`, `usb_otg`, `gem_ethernet`, `pcie_top`, `mipi_csi2_rx` need a **counterpart chip to simulate against** (DDR4 SDRAM, USB PHY, Ethernet MAC layer, PCIe root port). Without these BFMs, the module just waits forever.
+
+---
+
+# TITAN-X SoC — Master Plan: From Broken to Perfect
+
+## 🎯 Goal
+Make **every single module** individually verified (PASS) and proven to work together as a complete SoC. This requires:
+1. Fixing RTL bugs found during verification
+2. Rewriting all weak/random testbenches into directed, protocol-correct testbenches
+3. Building behavioral models for external interfaces (DDR, ULPI, SGMII, GMII, MIPI)
+4. Integrating and boot-testing the full `titan_x_top`
+
+---
+
+## 📊 Current State (Baseline)
+
+| Category | PASS | PARTIAL | INCONCLUSIVE | FAIL |
+|----------|------|---------|--------------|------|
+| Backend (RISC-V) | 11 | 2 | 1 | 0 |
+| Frontend (RISC-V) | 4 | 0 | 0 | 0 |
+| Common Primitives | 3 | 0 | 2 | 0 |
+| Interconnect | 4 | 0 | 3 | 0 |
+| Memory Subsystem | 8 | 0 | 1 | 0 |
+| Peripherals | 3 | 2 | 2 | 3 |
+| Security IP | 1 | 2 | 0 | 2 |
+| Storage | 1 | 1 | 0 | 1 |
+| Video | 2 | 2 | 0 | 1 |
+| SoC Top | 0 | 1 | 0 | 0 |
+| **TOTAL** | **37** | **10** | **9** | **7** |
+
+### Root Cause Categories
+| Problem Type | Affected Modules |
+|---|---|
+| **Buggy testbench (wrong bit widths, syntax errors)** | `gem_ethernet`, `ddr_ctrl_top`, `pcie_top` |
+| **Random stimulus can't exercise state machine** | `rtc`, `trng`, `drbg`, `ecdsa_engine`, `usb_otg`, `vdma`, `can_controller`, `i2c_master`, `uart_16550` |
+| **Missing external behavioral model** | `ddr_ctrl_top`, `usb_otg`, `gem_ethernet`, `pcie_top`, `mipi_csi2_rx` |
+| **RTL behavioral mock too simple** | `trng`, `drbg` (ring oscillator mock) |
+| **Corrupted screenshot / No waveform** | `cdc_sync`, `BUFX4`, `qos_controller` |
+| **Needs multi-clock domain stimulus** | `rtc`, `usb_otg` |
+
+---
+
+## 🗺️ 5-Phase Master Plan
+
+---
+
+## PHASE 1 — Fix Testbench Syntax Bugs (Quick Wins)
+
+These modules fail to compile due to **syntax errors** in the testbench. Fix these first for immediate wins.
+
+### 1.1 `gem_ethernet` — `tb_gem_ethernet.v`
+**Bug**: `wire [7.0:0] m_wstrb;` — decimal point in bit width is a syntax error. Should be `[7:0]`.
+**Bug**: `logi` instead of `logic` on `gmii_rx_er`.
+**Fix**: Correct all signal declarations. Also fix `s_awready` being wired incorrectly.
+**Expected Result**: Compiles and shows AXI DMA activity when Ethernet frame arrives.
+
+### 1.2 `ddr_ctrl_top` — `tb_ddr_ctrl_top.v`
+**Bug**: All bus signals (`s_awaddr`, `s_awid`, etc.) declared as `logic` (1-bit) instead of proper widths. `s_awaddr` should be `[39:0]`, `s_awid` should be `[3:0]`, etc.
+**Fix**: Correct all bus widths to match the DUT port widths.
+
+### 1.3 `pcie_top` — `tb_pcie_top.v`
+**Bug**: Similar single-bit declarations for wide bus ports.
+**Fix**: Correct all PIPE interface signal widths.
+
+---
+
+## PHASE 2 — Directed Testbench Rewrites (Core Work)
+
+Replace all **random stimulus** testbenches with **protocol-correct directed tests**.
+
+### 2.1 Universal APB Task Library
+Add to every peripheral testbench:
+```verilog
+task apb_write(input [31:0] addr, input [31:0] data);
+    begin
+        paddr=addr; psel=1; penable=0; pwrite=1; pwdata=data;
+        @(posedge clk); #1;
+        penable=1;
+        @(posedge clk); while(!pready) @(posedge clk);
+        psel=0; penable=0; @(posedge clk);
+    end
+endtask
+
+task apb_read(input [31:0] addr, output [31:0] data);
+    begin
+        paddr=addr; psel=1; penable=0; pwrite=0;
+        @(posedge clk); #1;
+        penable=1;
+        @(posedge clk); while(!pready) @(posedge clk);
+        data=prdata; psel=0; penable=0; @(posedge clk);
+    end
+endtask
+```
+
+### 2.2 Peripheral-Specific Directed Tests
+
+#### `rtc` (FAIL → PASS)
+- Fix: `rtc_clk` must run at 32.768 kHz (`#15259` half-period, not 138.8 MHz)
+- Write `mtimecmp[0]` to small value (0x100)
+- Poll until `mtime` crosses threshold → assert `timer_irq[0]` fires
+
+#### `uart_16550` (INCONCLUSIVE → PASS)
+- APB write divisor latch for 115200 baud
+- APB write LCR for 8N1 format
+- APB write byte to THR → monitor `uart_tx` for correct framing
+- Drive matching bit sequence on `uart_rx` → poll RBR → verify data match
+
+#### `can_controller` (INCONCLUSIVE → PASS)
+- APB write baud rate prescaler
+- APB write TX ID, DLC, data
+- APB set TXREQ bit
+- Monitor `can_tx` for SOF→ID→RTR→DLC→Data→CRC→EOF sequence
+
+#### `i2c_master` (INCONCLUSIVE → PASS)
+- APB write prescaler for 100 kHz SCL
+- APB write slave address + write command
+- Monitor `scl` and `sda` for START→ADDRESS→ACK→DATA→STOP
+
+#### `trng` (FAIL → PASS) — Also needs RTL fix (see Phase 4)
+- APB write enable bit
+- Poll `trng_valid` within 256 cycles
+- Verify `trng_entropy` is non-zero and non-constant
+
+### 2.3 Security IP Directed Tests
+
+#### `drbg` (FAIL → PASS)
+- Feed known NIST SP800-90A CTR_DRBG test vector seed
+- APB write INSTANTIATE command → poll status
+- APB write GENERATE command → poll output_valid
+- APB read generated output → compare to expected values
+
+#### `ecdsa_engine` (PARTIAL → PASS)
+- APB write NIST P-256 known private key
+- APB write known message hash
+- APB write SIGN command → poll done flag
+- APB read signature (r, s) → compare to expected NIST test vectors
+
+#### `secure_boot` (PARTIAL → PASS)
+- Load known firmware image into envm_ctrl memory
+- Provide matching RSA/ECDSA signature
+- Pulse `boot_req` → verify `boot_done` asserts and `boot_fail` stays low
+
+### 2.4 Storage Protocol Tests
+
+#### `usb_otg` (FAIL → PASS) — Requires ULPI BFM (Phase 3)
+- BFM asserts `ulpi_dir=0` initially
+- OTG writes ULPI REGW command for PHY register 0x04
+- BFM acknowledges with NXT pulse
+- Verify `ulpi_stp` de-asserts after transfer
+
+#### `vdma` (FAIL → PASS) — Requires AXI memory model (Phase 3)
+- Pre-load AXI memory model with test frame (64×64 pixels)
+- APB configure VDMA: src_addr, width, height, stride
+- APB write START command
+- Count `m_axis_tvalid` pulses → must equal 64×64 = 4096
+
+### 2.5 Video Streaming Tests
+
+#### `hdmi_ctrl` (PARTIAL → PASS)
+- Drive `s_axis_tdata`/`s_axis_tvalid` with VGA timing test pattern
+- Verify `hdmi_tmds_data_p/n` toggles with encoded pixel data
+
+### 2.6 Interconnect Functional Tests
+
+#### `interconnect_mpu` (INCONCLUSIVE → PASS)
+- Write MPU region base/limit/permission registers via APB
+- Issue AXI read to allowed region → expect OKAY response
+- Issue AXI read to denied region → expect SLVERR + `fault_irq`
+
+#### `ahb_to_apb` (INCONCLUSIVE → PASS)
+- Use proper AHB BFM task (HTRANS=NONSEQ, HSIZE=WORD, HREADY=1)
+- Complete AHB→APB bridge transaction
+- Verify APB psel/penable sequence matches AHB command
+
+#### `qos_controller` (INCONCLUSIVE → PASS)
+- Issue multiple simultaneous AXI transactions with different QoS IDs
+- Verify higher-priority requests are scheduled first
+
+---
+
+## PHASE 3 — External Behavioral Models
+
+Build reusable BFMs for complex external interfaces.
+
+### 3.1 `ddr4_sdram_bfm.v`
+**Purpose**: Respond to DDR4 PHY training sequence.
+**Key behaviors**: MRS responses, DQS generation, data return on reads.
+**Used by**: `ddr_ctrl_top`, `ddr_phy_if`, `titan_x_top`
+
+### 3.2 `ulpi_phy_bfm.v`
+**Purpose**: Simulate USB PHY for `usb_otg` initialization.
+**Key behaviors**: Respond to ULPI register reads/writes, generate SOF packets.
+**Used by**: `usb_otg`
+
+### 3.3 `gmii_frame_gen.v`
+**Purpose**: Generate valid GMII Ethernet frames.
+**Key behaviors**: Preamble→SFD→DA→SA→EtherType→Payload→FCS at 125 MHz GMII timing.
+**Used by**: `gem_ethernet`
+
+### 3.4 `mipi_csi2_bfm.v`
+**Purpose**: Generate MIPI CSI-2 packet structure.
+**Key behaviors**: Short packets (Frame Start/End), Long packets (RAW10/RAW12 image data).
+**Used by**: `mipi_csi2_rx`
+
+### 3.5 `pcie_rootport_bfm.v`
+**Purpose**: Act as PCIe Root Port for LTSSM link training.
+**Key behaviors**: Drive PIPE RX data, complete Detect→Polling→Config→L0 state.
+**Used by**: `pcie_top`, `pcie_pipe_if`
+
+### 3.6 `axi_memory_model.v`
+**Purpose**: Simple AXI4 slave memory for DMA testing.
+**Used by**: `vdma`, `gem_ethernet`, `usb_otg`
+
+---
+
+## PHASE 4 — RTL Bug Fixes
+
+### 4.1 `trng` — Fix Deterministic Ring Oscillator
+The behavioral mock produces constant 0 entropy because all oscillators are tied to the same clock.
+```verilog
+// FIX: Use per-oscillator random seed
+always @(posedge clk or negedge rst_n) begin
+    if (!rst_n) ro_out <= 16'h0;
+    else ro_out <= $urandom; // Simulation entropy
+end
+```
+
+### 4.2 `drbg` — Verify Register Map
+Confirm register address offsets for INSTANTIATE/GENERATE/STATUS match the testbench writes. Common bug: byte vs. word addressing offset.
+
+### 4.3 `rtc` — Verify CDC Synchronizer
+`mtime` is clocked by `rtc_clk` but read via APB (`clk`). Verify CDC synchronizer is present, or add 2-FF synchronizer chain.
+
+### 4.4 `cdc_sync` — Regenerate Screenshot
+Re-run simulation and capture proper GTKWave waveform (existing screenshot is a login screen).
+
+---
+
+## PHASE 5 — Full SoC Integration Boot Test
+
+### 5.1 Create Minimal Boot ROM
+```
+# bootrom.hex — writes "TITAN-X BOOT OK" to UART
+# Compiled RV64I assembly, loaded at address 0x0000_0000
+```
+
+### 5.2 Integration Testbench `tb_titan_x_soc.v`
+Instantiates:
+- `titan_x_top` (DUT)
+- `ddr4_sdram_bfm` (DDR4 model)
+- `uart_monitor` (ASCII capture)
+- `gmii_frame_gen` (Ethernet frames)
+- `ulpi_phy_bfm` (USB PHY)
+
+### 5.3 Boot Test Sequence
+1. Release reset → DDR BFM completes training (~1µs simulation)
+2. RISC-V core fetches from boot ROM
+3. Core executes → writes to UART
+4. `uart_monitor` captures "TITAN-X BOOT OK" → PASS
+
+### 5.4 Integration Checklist
+```
+[ ] RISC-V Pipeline fetches from ICACHE
+[ ] ICACHE miss → L2 cache
+[ ] L2 cache miss → DDR via AXI crossbar
+[ ] UART TX: correct framing at configured baud
+[ ] CLINT timer interrupt fires at mtimecmp match
+[ ] PLIC routes IRQ to correct RISC-V hart
+[ ] GPIO: memory-mapped write changes output
+[ ] SPI/I2C/CAN: APB config → protocol activity
+[ ] QSPI: reads boot image from flash
+[ ] MMU: virtual→physical address translation
+[ ] PMP: memory protection violations flagged
+```
+
+---
+
+## 📋 Prioritized Work Order
+
+| Priority | Module(s) | Work | Effort | Outcome |
+|----------|-----------|------|--------|---------|
+| **P0** | gem_ethernet, ddr_ctrl_top, pcie_top | Fix TB syntax bugs | 1h | FAIL→compile+run |
+| **P1** | rtc, uart_16550, can_controller, i2c_master | Directed APB TBs | 3h | INCONCLUSIVE/FAIL→PASS |
+| **P2** | trng + RTL fix | Fix oscillator mock + directed TB | 2h | FAIL→PASS |
+| **P3** | drbg, ecdsa_engine, secure_boot | NIST test vector TBs | 4h | FAIL/PARTIAL→PASS |
+| **P4** | gem_ethernet + gmii_frame_gen BFM | Ethernet frame RX test | 3h | FAIL→PASS |
+| **P5** | ddr_ctrl_top + ddr4_sdram_bfm | DDR training completion | 5h | INCONCLUSIVE→PASS |
+| **P6** | usb_otg + ulpi_phy_bfm | ULPI init sequence | 3h | FAIL→PASS |
+| **P7** | vdma + axi_memory_model | Frame transfer test | 3h | FAIL→PASS |
+| **P8** | hdmi_ctrl + video_pattern_gen | TMDS data encoding | 2h | PARTIAL→PASS |
+| **P9** | interconnect_mpu, ahb_to_apb, qos_controller | Directed protocol tests | 3h | INCONCLUSIVE→PASS |
+| **P10** | cdc_sync | Re-run simulation + screenshot | 30min | INCONCLUSIVE→PASS |
+| **P11** | titan_x_top | Full SoC boot test | 6h | PARTIAL→PASS |
+
+**Total estimated effort: 8–10 focused work sessions**
+
+---
+
+## 🔧 Infrastructure Improvements
+
+### Automation: `run_all_sims.sh`
+One script to compile and simulate all modules, report PASS/FAIL counts.
+
+### Makefile per module
+Standard `make sim`, `make wave`, `make clean` targets.
+
+### Self-checking testbenches
+Replace visual waveform inspection with automatic assertion checking:
+```verilog
+integer error_count = 0;
+initial begin
+    // ... run test ...
+    if (timer_irq !== 5'b00001) begin
+        $display("FAIL: timer_irq expected=1 got=%b", timer_irq);
+        error_count++;
+    end
+    if (error_count == 0) $display("PASS: All checks passed");
+    else $display("FAIL: %0d errors detected", error_count);
+    $finish;
+end
+```
+
+---
+
+## ❓ Open Questions
+
+> [!IMPORTANT]
+> **Q1: RTL frozen or editable?** Can we fix RTL bugs (like the TRNG ring oscillator), or is RTL frozen and we can only fix testbenches?
+
+> [!IMPORTANT]
+> **Q2: Simulation tool?** Stay on Icarus Verilog, or move to Verilator (10× faster) or a commercial tool for SystemVerilog assertion support?
+
+> [!IMPORTANT]
+> **Q3: PASS definition?** Just no X-propagation? Or protocol-correct handshakes? Or full self-checking with NIST test vectors?
+
+> [!NOTE]
+> **Q4: Top-down or bottom-up?** Fix individual IPs first (Phases 1-4) then integrate (Phase 5), or start with boot test (Phase 5) to find integration issues early?
+
+
