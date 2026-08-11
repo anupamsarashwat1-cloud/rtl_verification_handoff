@@ -194,8 +194,10 @@ flowchart TD
     AHB2APB <==>|"APB3"| LS_PERIPH
 
     %% === Interrupts ===
-    PLIC -. "ext_irq[0–4]" .-> CPU_CLUSTER & MON_CORE
-    CLINT -. "timer_irq / sw_irq" .-> CPU_CLUSTER & MON_CORE
+    PLIC -. "ext_irq[0-4]" .-> CPU_CLUSTER
+    PLIC -. "ext_irq[0-4]" .-> MON_CORE
+    CLINT -. "timer_irq / sw_irq" .-> CPU_CLUSTER
+    CLINT -. "timer_irq / sw_irq" .-> MON_CORE
 
     %% === APB-Mapped Security ===
     AHB2APB -. "APB" .-> SEC_ENCLAVE
@@ -233,64 +235,64 @@ flowchart TD
     classDef cache fill:#fff0f5,stroke:#db7093,stroke-width:2px,color:#8b008b;
     classDef prot fill:#f5fffa,stroke:#3cb371,stroke-width:2px,color:#006400;
 
-    subgraph CORE ["`rv_core_top` — Module Boundary"]
+    subgraph CORE ["rv_core_top — Module Boundary"]
         direction TB
 
         subgraph SYS ["System"]
-            P_clk("⬇ clk"):::inp
-            P_rst("⬇ rst_n"):::inp
+            P_clk["IN: clk"]:::inp
+            P_rst["IN: rst_n"]:::inp
         end
 
         subgraph IRQ ["Interrupts"]
-            P_irq_ext("⬇ irq_m_ext"):::inp
-            P_irq_timer("⬇ irq_m_timer"):::inp
-            P_irq_soft("⬇ irq_m_soft"):::inp
+            P_irq_ext["IN: irq_m_ext"]:::inp
+            P_irq_timer["IN: irq_m_timer"]:::inp
+            P_irq_soft["IN: irq_m_soft"]:::inp
         end
 
-        subgraph DBG ["Debug (JTAG)"]
-            P_halt("⬇ halt_req"):::inp
-            P_resume("⬇ resume_req"):::inp
-            P_halted("⬆ hart_halted"):::outp
-            P_running("⬆ hart_running"):::outp
+        subgraph DBG ["Debug JTAG"]
+            P_halt["IN: halt_req"]:::inp
+            P_resume["IN: resume_req"]:::inp
+            P_halted["OUT: hart_halted"]:::outp
+            P_running["OUT: hart_running"]:::outp
         end
 
         subgraph SNOOP ["L2 Snoop Port"]
-            P_sv("⬇ snoop_valid"):::inp
-            P_sa("⬇ snoop_addr[39:0]"):::inp
-            P_st("⬇ snoop_type[1:0]"):::inp
-            P_sack("⬆ snoop_ack"):::outp
-            P_sdv("⬆ snoop_data_valid"):::outp
-            P_sd("⬆ snoop_data[511:0]"):::outp
+            P_sv["IN: snoop_valid"]:::inp
+            P_sa["IN: snoop_addr[39:0]"]:::inp
+            P_st["IN: snoop_type[1:0]"]:::inp
+            P_sack["OUT: snoop_ack"]:::outp
+            P_sdv["OUT: snoop_data_valid"]:::outp
+            P_sd["OUT: snoop_data[511:0]"]:::outp
         end
 
-        subgraph IAXI ["AXI4 Master — I-Cache (Read-Only)"]
+        subgraph IAXI ["AXI4 Master — I-Cache Read-Only"]
             direction LR
-            P_iar("⬆ imem_arvalid, araddr[39:0],\narlen[7:0], arsize[2:0], arburst[1:0]"):::outp
-            P_ird("⬇ imem_arready, rvalid,\nrdata[63:0], rlast, rresp[1:0]"):::inp
-            P_irr("⬆ imem_rready"):::outp
+            P_iar["OUT: imem_arvalid, araddr, arlen, arsize, arburst"]:::outp
+            P_ird["IN: imem_arready, rvalid, rdata, rlast, rresp"]:::inp
+            P_irr["OUT: imem_rready"]:::outp
         end
 
-        subgraph DAXI ["AXI4 Master — D-Cache (Full R/W)"]
+        subgraph DAXI ["AXI4 Master — D-Cache Full RW"]
             direction LR
-            P_daw("⬆ dmem_awvalid, awaddr[39:0],\nawlen[7:0], awsize[2:0], awburst[1:0]"):::outp
-            P_dw("⬆ dmem_wvalid, wdata[63:0],\nwstrb[7:0], wlast"):::outp
-            P_db("⬇ dmem_bvalid, bresp[1:0]\n⬆ dmem_bready"):::outp
-            P_dar("⬆ dmem_arvalid, araddr[39:0],\narlen[7:0], arsize[2:0], arburst[1:0], arlock"):::outp
-            P_dr("⬇ dmem_rvalid, rdata[63:0],\nrlast, rresp[1:0]\n⬆ dmem_rready"):::outp
+            P_daw["OUT: dmem_awvalid, awaddr, awlen, awsize, awburst"]:::outp
+            P_dw["OUT: dmem_wvalid, wdata, wstrb, wlast"]:::outp
+            P_db["IN: dmem_bvalid, bresp / OUT: dmem_bready"]:::outp
+            P_dar["OUT: dmem_arvalid, araddr, arlen, arsize, arburst, arlock"]:::outp
+            P_dr["IN: dmem_rvalid, rdata, rlast, rresp / OUT: dmem_rready"]:::outp
         end
 
         subgraph PIPE ["5-Stage Integer Pipeline"]
             direction TB
             u_fetch["rv_fetch"]:::mod
             u_decode["rv_decode"]:::mod
-            u_execute["rv_execute\n(ALU, Branch, CSR)"]:::mod
+            u_execute["rv_execute (ALU, Branch, CSR)"]:::mod
             u_mem["rv_mem"]:::mod
             u_wb["rv_writeback"]:::mod
         end
 
         subgraph ACC ["Accelerators"]
-            u_bpu["rv_bpu\n(BTB + BHT)"]:::mod
-            u_fpu["rv_fpu\n(IEEE-754)"]:::mod
+            u_bpu["rv_bpu (BTB + BHT)"]:::mod
+            u_fpu["rv_fpu (IEEE-754)"]:::mod
         end
 
         subgraph CACHES ["L1 Caches"]
@@ -310,46 +312,50 @@ flowchart TD
             u_monitor["rv_monitor_core"]:::mod
         end
 
-        %% === Pipeline Data Path ===
-        u_fetch ==>|"Inst[31:0]\nPC[63:0]"| u_decode
-        u_decode ==>|"RS1/RS2/RS3\nImmediate\nControl"| u_execute
-        u_execute ==>|"ALU Res[63:0]\nLS Addr[63:0]"| u_mem
-        u_mem ==>|"Load Data[63:0]\nRd Index[4:0]"| u_wb
-        u_execute <==>|"FP Operands\nFP Flags"| u_fpu
+        %% Pipeline Data Path
+        u_fetch ==>|"Inst[31:0] / PC[63:0]"| u_decode
+        u_decode ==>|"RS1/RS2/RS3 / Imm / Control"| u_execute
+        u_execute ==>|"ALU Res / LS Addr"| u_mem
+        u_mem ==>|"Load Data / Rd Index"| u_wb
+        u_execute <==>|"FP Operands / Flags"| u_fpu
 
-        %% === Pipeline Control ===
-        flush("flush_de_raw\n(BUFX4 buffered)"):::wire
-        u_execute -.->|"branch_taken\nexception"| flush
-        flush -.->|"flush"| u_fetch & u_decode
-        u_mem -.->|"stall_req\n(D$ miss)"| u_execute & u_decode & u_fetch
+        %% Pipeline Control
+        flush["flush_de_raw (BUFX4 buffered)"]:::wire
+        u_execute -.->|"branch_taken / exception"| flush
+        flush -.->|"flush"| u_fetch
+        flush -.->|"flush"| u_decode
+        u_mem -.->|"stall_req (D$ miss)"| u_execute
+        u_mem -.->|"stall_req (D$ miss)"| u_decode
+        u_mem -.->|"stall_req (D$ miss)"| u_fetch
 
-        %% === Branch Prediction ===
-        u_fetch <.->|"BTB/BHT\nR/W"| u_bpu
-        u_execute -.->|"Resolve\nMispredict"| u_bpu
-        u_execute -.->|"Target PC\nException PC"| u_fetch
+        %% Branch Prediction
+        u_fetch <.->|"BTB/BHT R/W"| u_bpu
+        u_execute -.->|"Resolve Mispredict"| u_bpu
+        u_execute -.->|"Target PC / Exception PC"| u_fetch
 
-        %% === Cache Access ===
+        %% Cache Access
         u_fetch <==>|"I-Fetch / Inst"| u_ic
         u_mem <==>|"L/S Req / Data"| u_dc
 
-        %% === Address Translation ===
-        priv("priv_mode[1:0]\nsatp[63:0]"):::wire
+        %% Address Translation
+        priv["priv_mode[1:0] / satp[63:0]"]:::wire
         u_execute -.->|"CSR Write"| priv
-        priv -.-> u_mmu & u_tlb
+        priv -.-> u_mmu
+        priv -.-> u_tlb
         u_ic -.->|"VA (I)"| u_tlb
         u_dc -.->|"VA (D)"| u_tlb
         u_tlb <==>|"TLB Miss"| u_mmu
         u_mmu <==>|"PTE Req"| u_ptw
         u_ptw <==>|"L1D Bypass"| u_dc
 
-        %% === PMP ===
-        pmpcfg("pmpcfg[63:0]\npmpaddr[0:7]"):::wire
+        %% PMP
+        pmpcfg["pmpcfg[63:0] / pmpaddr[0:7]"]:::wire
         u_execute -.->|"PMP CSR"| pmpcfg
         pmpcfg -.-> u_pmp
         u_mmu -.->|"PA Check"| u_pmp
         u_pmp -.->|"Fault"| u_mmu
 
-        %% === External I/O Mapping ===
+        %% External I/O Mapping
         u_ic ==>|"AR / R"| IAXI
         u_dc ==>|"AW / W / B / AR / R"| DAXI
         SNOOP ==> u_dc
