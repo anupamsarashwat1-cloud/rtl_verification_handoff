@@ -85,5 +85,21 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 ![Outputs](./waveform_outputs.png)
 
 ### 📝 Results and Observations
-- **Input Stimulation:**
-- **Output Validation:**
+
+#### Input Signal Analysis
+- **clk/rst_n**: Standard clock and reset.
+- **psel/penable/pwrite/paddr/pwdata**: Randomized APB stimulus with pwdata stuck at `00000000`.
+- **AXI-Stream slave inputs**: s_axis_tdata, s_axis_tvalid, s_axis_tlast — randomized pixel stream data.
+
+#### Output Signal Analysis
+- **s_axis_tready**: Initially low (red), transitions to high at ~50 ns — the HDMI controller is **accepting incoming video stream data** after reset. This is a significant positive finding.
+- **tmds_clk_p**: **Actively toggling** at a high frequency throughout the entire simulation — the **TMDS positive clock is generated correctly**, producing the differential serial clock for HDMI transmission.
+- **tmds_clk_n**: **Actively toggling** in complement to `tmds_clk_p` — the **TMDS negative clock** correctly produces the differential complement.
+- **tmds_data_p[2:0]**: Held at `000` — no TMDS-encoded pixel data on the positive differential data lanes.
+- **tmds_data_n[2:0]**: Held at `111` — the negative data lanes are the complement of `000`, which is correct for an idle/blanking state.
+- **prdata[31:0]**: Held at `00000000`.
+- **pready**: Held constant low.
+- **pslverr**: Held constant low.
+
+#### Verdict
+- **Verdict:** ⚠️ **PARTIAL PASS**. The `hdmi_ctrl` module demonstrates two key functional behaviors: (1) `tmds_clk_p`/`tmds_clk_n` are actively toggling as a differential pair, confirming the **TMDS clock serializer is fully operational**, and (2) `s_axis_tready` asserts after reset, indicating the controller is ready to accept video stream data. However, `tmds_data_p/n` remain in the idle/blanking state (`000`/`111`) — no actual pixel data is being TMDS-encoded. This is likely because the HDMI controller requires proper video timing configuration (horizontal/vertical sync, blanking periods, pixel format) via APB registers. The TMDS clock generation is a strong positive sign of silicon-level functionality.

@@ -122,5 +122,38 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 ![Outputs](./waveform_outputs.png)
 
 ### 📝 Results and Observations
-- **Input Stimulation:**
-- **Output Validation:**
+
+#### Input Signal Analysis
+- **clk**: Clean periodic toggling at ~138.8 MHz.
+- **rst_n**: Proper reset sequence (low to high at ~50 ns).
+- **psel/penable/pwrite/paddr/pwdata**: Standard randomized APB stimulus with pwdata stuck at `00000000`.
+- **gmii_rxd[7:0]**: Randomized receive data — simulating incoming Ethernet frames.
+- **gmii_rx_dv/gmii_rx_er**: Randomized — receive data valid and error signals exercised.
+
+#### Output Signal Analysis
+- **m_awvalid**: Held constant low — no AXI write transactions initiated (no DMA writes to memory).
+- **m_awaddr[39:0]**: Held at `0000000000` — no write address ever generated.
+- **m_awid[3:0]**: Held at `0`.
+- **m_awlen[7:0]**: Held at `00`.
+- **m_awsize[2:0]**: Held at `011` (8-byte transfers) — default reset value.
+- **m_wvalid**: Held constant low — no write data phase.
+- **m_wdata[63:0]**: Held at `0000000000000000` — no data written.
+- **m_wstrb[7:0]**: Held at `00`.
+- **m_wlast**: Held constant low.
+- **m_bready**: Held constant low — not ready for write responses.
+- **m_arvalid**: Held constant low — no AXI read transactions initiated (no DMA reads from memory).
+- **m_araddr[39:0]**: Held at `0000000000`.
+- **m_arid[3:0]**: Held at `0`.
+- **m_arlen[7:0]**: Held at `00`.
+- **m_arsize[2:0]**: Held at `011` — default reset value.
+- **m_rready**: Held constant low.
+- **prdata[31:0]**: Held at `00000000` — no APB read-back data.
+- **pready**: Held constant low — APB transactions not completing.
+- **pslverr**: Held constant low.
+- **mac_irq**: Brief red pulse at time 0, then held low — no MAC interrupt events.
+- **gmii_txd[7:0]**: Held at `00` — no Ethernet frame data transmitted.
+- **gmii_tx_en**: Held constant low — transmit enable never asserted.
+- **gmii_tx_er**: Held constant low — no transmit errors.
+
+#### Verdict
+- **Verdict:** ❌ **FAIL**. The `gem_ethernet` (Gigabit Ethernet MAC) module is completely non-functional. Every output signal — AXI master (DMA), APB, and GMII TX — remains at its reset/zero value. The MAC was never configured with: (1) DMA buffer descriptor ring base addresses, (2) MAC address filter, (3) network configuration (speed, duplex), or (4) TX/RX enable bits. The random GMII RX data doesn't conform to valid Ethernet framing (preamble + SFD + CRC), so no valid receive events occur. A comprehensive directed testbench is required.

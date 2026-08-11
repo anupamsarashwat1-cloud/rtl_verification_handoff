@@ -66,5 +66,20 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 ![Outputs](./waveform_outputs.png)
 
 ### 📝 Results and Observations
-- **Input Stimulation:**
-- **Output Validation:**
+
+#### Input Signal Analysis
+- **clk**: Clean periodic toggling at ~138.8 MHz across the 0–1900 ns window.
+- **rst_n**: Asserted low at time 0, released high at ~50 ns — proper reset initialization.
+- **psel**: Randomized toggling — APB select assertions with irregular timing.
+- **penable**: Follows psel with expected APB 2-phase handshake behavior.
+- **pwrite**: Mixed read/write transactions — both directions exercised.
+- **paddr[3:0]**: Cycles through values (0, A, D, 3, F, 9, D, 8, 0, 9, 8, A, etc.) — same address pattern as other APB peripherals, randomly accessing prescaler, control, data, status, and command registers.
+- **pwdata[31:0]**: Stays at `00000000` throughout — all write data is zero, so the I2C prescaler, control register, and transmit data register are never properly configured.
+
+#### Output Signal Analysis
+- **prdata[31:0]**: Shows active non-zero read-back values (00000000, 00000063, 0+, 00000B00, 0000+, 0000000X, 000+, 00+, 0000+, 8008565F, 00000000, 0000080X, 800629E3, 0000+, 80008059, 000000X, 0000+, 0000000X, 00000000). The data varies significantly with non-zero values — this indicates the module's internal registers contain meaningful state that is being read back correctly.
+- **pready**: Held constant low — APB transactions are **not being acknowledged**. The I2C module requires proper prescaler and control register configuration before it will respond to register accesses.
+- **irq**: Single pulse around ~700 ns then stays low for the remainder. The I2C module generates one interrupt event (possibly an arbitration-lost or transfer-complete condition triggered by initial conditions) but no sustained interrupt activity follows.
+
+#### Verdict
+- **Verdict:** ⚠️ **INCONCLUSIVE**. The `i2c_master` module compiles and simulates, and `prdata` shows varying read-back values proving the register file is functional. However, `pready` never asserts (APB transactions don't complete), and no I2C bus activity (SCL/SDA toggling) is visible because the prescaler and control registers were never configured (pwdata stuck at zero). A directed testbench is required to: (1) program the prescaler for a valid SCL frequency, (2) enable the I2C core, (3) write a slave address + R/W bit, and (4) issue START/WRITE/STOP commands to verify bus-level transactions.

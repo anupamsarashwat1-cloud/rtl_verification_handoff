@@ -67,5 +67,16 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 ![Outputs](./waveform_outputs.png)
 
 ### 📝 Results and Observations
-- **Input Stimulation:**
-- **Output Validation:**
+
+#### Input Signal Analysis
+- **clk/rst_n**: Standard clock and reset.
+- **psel/penable/pwrite/paddr/pwdata**: Randomized APB stimulus with pwdata stuck at `00000000`.
+
+#### Output Signal Analysis
+- **prdata[31:0]**: Shows **highly active** data with frequent transitions: `00000000`, `+`, `+`, `0+`, `00000000`, `x+`, `00+`, `00+`, `+`, `000+`, `0+`, `0000+`, `x+`, `00+`, `0+`, `+`, `00+`, `x+`, `+`, `008+`, `+`, `00+`, `008+`, `0+`, `+`, `00000+`, `00+`, `0+`, `+`, `000+`, `00+`, `+`, `00000000+`, `000+`, `00000000`. The data varies rapidly between zero and small non-zero values, with occasional `x` (undefined) bits. This indicates the ECDSA module's internal register file is returning computational state — likely partial results from the elliptic curve arithmetic pipeline.
+- **pready**: Held constant low — APB transactions not formally completing.
+- **pslverr**: Held constant low.
+- **ecdsa_irq**: Held constant low (red) — no ECDSA operation-complete interrupt. No signature generation or verification was completed because the module was never loaded with a private key, message hash, or curve parameters.
+
+#### Verdict
+- **Verdict:** ⚠️ **PARTIAL PASS**. The `ecdsa_engine` register file is actively returning data via `prdata`, with frequent non-zero values indicating the internal arithmetic state is readable. However, no complete ECDSA operation (sign/verify) was performed since the module was never configured with curve parameters (P-256/P-384), private key, or message hash via the APB interface. A directed testbench with NIST ECDSA known-answer test vectors is essential for full functional verification.

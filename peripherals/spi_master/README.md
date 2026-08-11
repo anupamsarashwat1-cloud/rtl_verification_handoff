@@ -71,5 +71,24 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 ![Outputs](./waveform_outputs.png)
 
 ### 📝 Results and Observations
-- **Input Stimulation:**
-- **Output Validation:**
+
+#### Input Signal Analysis
+- **clk**: Clean periodic toggling at ~138.8 MHz across the full 0–1900 ns window.
+- **rst_n**: Asserted low at time 0, released high at ~50 ns — proper reset.
+- **psel**: Randomized toggling — APB select assertions throughout simulation.
+- **penable**: Follows psel with appropriate APB phase timing.
+- **pwrite**: Mixed read/write — both types of transactions.
+- **paddr[3:0]**: Cycles through values (0, 8, B, 0, 9, 9, 0, 4, B, 2, B, A, etc.) — randomized register addresses covering SPI control, data, status, and chip-select registers.
+- **pwdata[31:0]**: Stays at `00000000` throughout — all writes carry zero data.
+- **spi_miso**: Randomized toggling — simulating a slave device sending data back.
+
+#### Output Signal Analysis
+- **prdata[31:0]**: Shows sporadic read-back values (00000000, then 0000+, 00+, 0000+, 0000+, 000000xx, 00000000, 0000+, 000+, 000000xx, 00000000, 0000A66A, 000000xx, 00000000, etc.). Mostly near-zero values with occasional non-zero data indicating some internal register state is being read back.
+- **pready**: Held constant low — **APB transactions never complete**. The SPI master module is not acknowledging register accesses, indicating it requires specific initialization before responding.
+- **spi_clk**: Brief burst of activity between ~300–600 ns (a single clock train), then remains flat low for the rest of the simulation. This suggests the random stimulus accidentally configured a single SPI transfer early in simulation, but subsequent random writes disrupted the configuration.
+- **spi_mosi**: Held constant low (red/low) — no meaningful data transmitted on the MOSI line.
+- **spi_csn[3:0]**: Transitions from `F` (all chip selects deasserted/high) to `0` (all chip selects asserted/low) at ~730 ns, then stays at `0`. This is an invalid SPI configuration — all four chip selects simultaneously active.
+- **irq**: Asserted low at start, brief pulse, then remains low — no sustained interrupt activity.
+
+#### Verdict
+- **Verdict:** ⚠️ **PARTIAL PASS**. The `spi_master` module responds to stimulus — the SPI clock briefly toggles (proving the clock divider works) and chip-select outputs change state. However, `pready` never asserts (APB interface not properly completing transactions), `spi_mosi` shows no data, and `spi_csn` enters an invalid all-asserted state. The all-zero `pwdata` prevents proper configuration of baud rate, frame size, and CPOL/CPHA. A directed testbench is needed to program the SPI control registers and execute a complete SPI transfer cycle.

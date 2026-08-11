@@ -155,5 +155,19 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 ![Outputs](./waveform_outputs.png)
 
 ### 📝 Results and Observations
-- **Input Stimulation:**
-- **Output Validation:**
+
+#### Input Signal Analysis
+- **clk**: Clean periodic toggling at ~138.8 MHz.
+- **rst_n**: Proper reset sequence.
+- **Standard APB + AXI slave stimulus**: Randomized with pwdata stuck at `00000000`.
+- **PIPE RX inputs**: pipe_rx_data, pipe_rx_valid, pipe_rx_status — randomized.
+
+#### Output Signal Analysis
+- **AXI Master Write Channel**: `m_awvalid`, `m_wvalid`, `m_wlast` all held low. `m_awaddr[39:0]` at `0000000000`, `m_wdata[63:0]` at zero, `m_wstrb[7:0]` at `00`. No DMA write transactions initiated.
+- **AXI Master Read Channel**: `m_arvalid` held low. `m_araddr[39:0]` at zero. No DMA read transactions.
+- **AXI Master Misc**: `m_awsize[2:0]` and `m_arsize[2:0]` both at `011` (8-byte default). `m_bready`, `m_rready` held low.
+- **AXI Slave Outputs**: `s_awready`, `s_wready`, `s_bvalid`, `s_arready`, `s_rvalid` all held low. `s_rdata[63:0]` at zero, `s_bresp`/`s_rresp` at `00`, `s_rlast` low. The slave interface is **not accepting any transactions**.
+- **PIPE TX Outputs**: `pipe_tx_data[63:0]` at `0000000000000000`, `pipe_tx_datak[7:0]` at `00` — no PIPE data transmitted. `pipe_tx_rate[1:0]` at `01` — defaulting to Gen1 (2.5 GT/s). `pipe_tx_elecidle[3:0]` at `0`, `pipe_tx_compliance[3:0]` at `0`, `pipe_rx_polarity[3:0]` at `0`, `pipe_power_down[7:0]` at `00`.
+
+#### Verdict
+- **Verdict:** ❌ **FAIL**. The `pcie_top` module is entirely unresponsive. All AXI master, AXI slave, and PIPE TX outputs remain at reset values. The PCIe controller requires extensive initialization: (1) LTSSM configuration for link training, (2) BAR register setup, (3) capability structure programming, (4) interrupt configuration. The randomized testbench provides none of this. The `pipe_tx_rate` defaulting to `01` (Gen1) confirms the reset value is correct but no link training occurs. A comprehensive directed testbench with a PCIe root complex model is essential.

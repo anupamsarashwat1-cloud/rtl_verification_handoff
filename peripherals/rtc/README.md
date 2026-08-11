@@ -69,5 +69,22 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 ![Outputs](./waveform_outputs.png)
 
 ### 📝 Results and Observations
-- **Input Stimulation:**
-- **Output Validation:**
+
+#### Input Signal Analysis
+- **clk**: Clean periodic toggling at ~138.8 MHz across the 0–1900 ns window.
+- **rtc_clk**: Secondary slower clock toggling — the dedicated RTC oscillator input is actively driven.
+- **rst_n**: Asserted low at time 0, released high at ~50 ns — proper reset.
+- **paddr[31:0]**: Remains at `00000000` throughout — only register offset 0 is ever addressed, missing the alarm, prescaler, and control registers.
+- **psel**: Randomized toggling — APB select assertions with irregular timing.
+- **penable**: Follows psel with expected APB phase behavior.
+- **pwrite**: Mixed read/write — toggling throughout.
+- **pwdata[31:0]**: Stays at `00000000` throughout — no configuration data written.
+
+#### Output Signal Analysis
+- **prdata[31:0]**: Held at `00000000` for the entire simulation — the RTC module returns all zeros on every read. This confirms the timer counter and alarm registers are never initialized, and the module is not counting.
+- **pready**: Held constant low — APB transactions are **not completing**. The RTC module is not acknowledging any register accesses.
+- **pslverr**: Held constant low — no slave errors.
+- **timer_irq[4:0]**: Held at `00` throughout — no timer interrupts generated. The 5-bit interrupt vector remains at zero, confirming no alarm match, overflow, or periodic timer events occurred.
+
+#### Verdict
+- **Verdict:** ❌ **FAIL**. The `rtc` module is completely unresponsive under the current testbench. `pready` never asserts (no APB transactions complete), `prdata` is stuck at zero (no register read-back), and `timer_irq` never fires. Despite having both `clk` and `rtc_clk` actively driven, the RTC counter produces no observable output. The root cause is likely that the module requires explicit enable/prescaler configuration via APB writes before the counter starts, but `pwdata` is stuck at zero and `paddr` never addresses the control register. A directed testbench is required to properly initialize the RTC.

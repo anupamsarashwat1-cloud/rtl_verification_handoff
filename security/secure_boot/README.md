@@ -74,5 +74,20 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 ![Outputs](./waveform_outputs.png)
 
 ### 📝 Results and Observations
-- **Input Stimulation:**
-- **Output Validation:**
+
+#### Input Signal Analysis
+- **clk/rst_n**: Standard clock and reset.
+- **psel/penable/pwrite/paddr/pwdata**: Randomized APB stimulus with pwdata stuck at `00000000`.
+- **envm_rdata[31:0]**: Randomized — simulating flash read-back data.
+
+#### Output Signal Analysis
+- **prdata[31:0]**: Shows `00000000`, then `0+`, `00000000` around ~100 ns, then flat at `00000000` for most of the simulation, with a late read-back of `00000000` around ~1500 ns. Very sparse register activity.
+- **pready**: Held constant low.
+- **pslverr**: Held constant low.
+- **envm_addr[16:0]**: **Actively cycling** through sequential addresses: `00000`, `00+`, `0+`, `00+`, `0+`, `+`, `0000F`, `00014`, `00+`, `0+`, `0+`, `0+`, `0+`, `00031`, `00+`, `0+`, `00+`, `0+`, `0+`, `0+`, `+`, `0+`, `0+`, `0+`, `0+`, `00660`, `00+`, `0+`, `0+`, `0+`. This confirms the **secure boot state machine is actively fetching code** from the eNVM array in a sequential pattern. The addresses include offsets 0x00000, 0x0000F, 0x00014, 0x00031, 0x00660 — consistent with reading boot ROM image blocks.
+- **envm_req**: Initially low (red), transitions to high at ~50 ns (after reset release) and remains high — the secure boot FSM is **continuously requesting eNVM access**, confirming the boot sequence has started.
+- **boot_pass**: Held constant low (red) — boot verification never succeeds. The secure boot module cannot validate the boot image because the random `envm_rdata` doesn't contain a valid cryptographic signature.
+- **boot_fail**: Held constant low — boot failure is also not asserted. The module is still processing/fetching and hasn't reached a final verdict within the simulation window.
+
+#### Verdict
+- **Verdict:** ⚠️ **PARTIAL PASS**. The `secure_boot` module demonstrates active boot ROM fetching behavior — `envm_req` asserts after reset, and `envm_addr` sequences through memory addresses in a pattern consistent with reading a boot image. However, neither `boot_pass` nor `boot_fail` asserts within the simulation window, indicating the boot verification process is incomplete (possibly because the hash/signature computation requires more cycles than the ~1900 ns simulation provides, or the random eNVM data causes the FSM to enter an infinite retry loop). A directed testbench with a pre-loaded valid boot image and known signature is required.

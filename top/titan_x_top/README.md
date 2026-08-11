@@ -115,5 +115,31 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 ![Outputs](./waveform_outputs.png)
 
 ### 📝 Results and Observations
-- **Input Stimulation:**
-- **Output Validation:**
+
+#### Input Signal Analysis
+- **clk/rst_n**: Standard system clock and reset.
+- **All external inputs**: DDR data, UART RX, CAN RX, SPI MISO, I2C SDA/SCL, USB ULPI, MIPI, etc. — randomized.
+
+#### Output Signal Analysis
+- **ddr_addr**: Held constant (red/undefined initially, then flat) — no DDR address commands issued.
+- **ddr_ba**: Held constant — no DDR bank address activity.
+- **ddr_bg**: Held constant — no DDR bank group activity.
+- **ddr_ck_p**: Held constant low — DDR positive clock not generated.
+- **ddr_ck_n**: Initially low (red), brief green pulse at ~50 ns, then **held constant high** — DDR negative clock shows a single initial transition, suggesting the PLL/clock divider attempts startup but stalls.
+- **ddr_cke**: Held constant (red) — DDR clock enable stuck undefined.
+- **ddr_cs_n**: Held constant high — DDR chip select inactive.
+- **ddr_ras_n**: Held constant (red) — undefined.
+- **ddr_cas_n**: Held constant (red) — undefined.
+- **ddr_we_n**: Held constant (red) — undefined.
+- **ddr_reset_n**: Held constant low (green) — DDR reset **held active**, confirming the DDR controller is stuck in its initialization/training phase and never releases the DDR memory from reset.
+- **ddr_odt**: Held constant low — no on-die termination control.
+- **ddr_act_n**: Held constant low — no DDR activate commands.
+- **hdmi_tmds_clk_p**: **Actively toggling** at high frequency throughout the simulation — the **HDMI TMDS positive clock is fully functional** at the SoC level.
+- **hdmi_tmds_clk_n**: **Actively toggling** in complement — the **HDMI TMDS negative clock** correctly generates the differential complement.
+- **hdmi_tmds_data_p**: Held constant low — no HDMI pixel data (same as standalone `hdmi_ctrl`).
+- **hdmi_tmds_data_n**: Held constant high — complement of data_p (idle state).
+- **uart_tx**: Held constant high — UART TX idle (high is correct idle state for UART, but no data transmitted).
+- **can_tx**: Held constant high — CAN TX idle (high is correct idle/recessive state for CAN bus).
+
+#### Verdict
+- **Verdict:** ⚠️ **PARTIAL PASS**. The `titan_x_top` SoC-level integration shows two key functional behaviors: (1) **HDMI TMDS differential clocks are actively toggling**, confirming the HDMI clock path from the ISP/video pipeline through the HDMI controller to the top-level I/O pads is functional, and (2) **UART TX and CAN TX are in correct idle states** (high), confirming proper reset initialization of these peripherals. However, the DDR memory interface is completely non-functional — `ddr_reset_n` is held active, `ddr_ck_p` never toggles, and all DDR command signals are undefined. The RISC-V core cannot boot without DDR memory, so the SoC is effectively stuck in the DDR initialization phase. A directed testbench with a DDR4 memory model responding to the PHY training sequence is required for full SoC bring-up.

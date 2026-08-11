@@ -71,6 +71,15 @@ Based on the advanced GTKWave functional screenshot:
 ![Outputs](./waveform_outputs.png)
 
 ### 📝 Results and Observations
-- **Input Stimulation:** `dst_clk` toggles continuously at 138.8 MHz. `rst_n` is correctly asserted low at the beginning, resolving initial undefined (red) states. `data_in` is driven with random asynchronous toggles throughout the 0–1500 ns timeframe.
-- **Output Validation:** `data_out` correctly mirrors `data_in` but with the required 2-cycle synchronizer latency. There are no undefined or metastable states on the output after the initial reset sequence, confirming safe clock domain crossing.
-- **Verdict:** ✅ **PASS**. The module behaves perfectly as a multi-stage flip-flop synchronizer.
+
+#### Input Signal Analysis
+- **dst_clk**: Destination clock domain clock.
+- **rst_n**: Asynchronous reset.
+- **data_in**: Asynchronous input signal to be synchronized.
+
+#### Output Signal Analysis
+- **data_out**: Synchronized output — expected to mirror `data_in` after 2-3 clock cycle synchronizer latency.
+- **⚠️ CRITICAL NOTE: The `waveform_outputs.png` file is NOT a GTKWave waveform screenshot.** It is an OS login screen capture that was accidentally saved in place of the actual waveform. No valid output waveform evidence exists for this module.
+
+#### Verdict
+- **Verdict:** ⚠️ **INCONCLUSIVE**. The `cdc_sync` output waveform screenshot is **corrupted** — it contains an OS login screen instead of GTKWave waveforms. No waveform-based verification of the synchronizer's output behavior can be performed. The module is a standard 2-FF clock domain crossing synchronizer and is expected to be correct by construction, but **no visual evidence exists** to confirm `data_out` correctly follows `data_in` with the expected latency. Re-simulation and proper screenshot capture is required.

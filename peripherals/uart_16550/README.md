@@ -76,5 +76,27 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 ![Outputs](./waveform_outputs.png)
 
 ### 📝 Results and Observations
-- **Input Stimulation:**
-- **Output Validation:**
+
+#### Input Signal Analysis
+- **clk**: Clean periodic toggling at ~138.8 MHz across the full 0–1900 ns window.
+- **rst_n**: Asserted low at time 0, released high at ~50 ns — correct reset sequence.
+- **paddr[31:0]**: Remains at `00000000` throughout — the testbench is only addressing register offset 0 (likely the THR/RBR register), missing the configuration registers (LCR, IER, FCR, etc.).
+- **psel**: Active toggling — random APB select assertions throughout simulation.
+- **penable**: Toggles with appropriate spacing after psel — APB protocol phase sequencing.
+- **pwrite**: Mix of high and low — both read and write transactions attempted.
+- **pwdata[31:0]**: Stays at `00000000` throughout — only zeros written to registers, so the UART divisor latch, line control, and FIFO control are never configured.
+- **rxd**: Randomized toggling — simulating noisy serial receive data.
+- **irda_rx**: Randomized toggling — infrared receive input exercised.
+- **lin_rx**: Randomized toggling — LIN bus receive input exercised.
+
+#### Output Signal Analysis
+- **prdata[31:0]**: Shows sparse read-back values (0000000xx, 00+, 00000000, 00000+, 00000000, etc.). Most values are near-zero, confirming the UART status registers return default/reset state since the module was never configured.
+- **pready**: Held constant low — **this is significant**. The APB ready signal never asserts, meaning the UART module is **not completing any APB transactions**. This likely indicates the UART requires proper initialization (divisor latch configuration) before it will respond to register accesses.
+- **pslverr**: Held constant low — no APB slave errors reported.
+- **uart_irq**: Held constant low (flat green line) — no interrupts generated because no interrupt sources were enabled.
+- **txd**: Held constant high (flat green line) — UART transmit line idle. No transmission ever initiated because the module was never configured with baud rate or line parameters.
+- **irda_tx**: Held constant high — infrared transmit idle.
+- **lin_tx**: Held constant high — LIN bus transmit idle.
+
+#### Verdict
+- **Verdict:** ⚠️ **INCONCLUSIVE**. The `uart_16550` module compiles and simulates, but the randomized testbench completely fails to exercise any real UART functionality. The `paddr` is stuck at offset 0 and `pwdata` is all-zeros, so the divisor latch, line control, FIFO control, and interrupt enable registers are never programmed. As a result, `pready` never asserts (transactions never complete), `txd` stays idle, and no interrupts fire. **A directed testbench is required** that programs the divisor latch for a baud rate, configures LCR for 8N1 framing, enables FIFOs via FCR, and then writes data to THR to verify actual serial transmission.

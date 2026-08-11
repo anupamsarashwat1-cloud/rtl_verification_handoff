@@ -114,5 +114,26 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 ![Outputs](./waveform_outputs.png)
 
 ### 📝 Results and Observations
-- **Input Stimulation:**
-- **Output Validation:**
+
+#### Input Signal Analysis
+- **clk/rst_n**: Standard clock and reset.
+- **psel/penable/pwrite/paddr/pwdata**: Randomized APB stimulus with pwdata stuck at `00000000`.
+- **AXI-Stream slave inputs**: s_axis_s2mm_tdata, s_axis_s2mm_tvalid — randomized video stream data.
+
+#### Output Signal Analysis
+- **s_axis_s2mm_tready**: Held constant low — the VDMA is **not accepting** incoming video stream data.
+- **m_axis_mm2s_tdata[31:0]**: Held at `00000000` — no video data output on the memory-to-stream channel.
+- **m_axis_mm2s_tvalid**: Held constant low — no valid video stream data produced.
+- **m_axis_mm2s_tuser**: Held constant low — no start-of-frame marker.
+- **m_axis_mm2s_tlast**: Held constant low — no end-of-line marker.
+- **AXI Master Write Channel**: `m_axi_awvalid`, `m_axi_wvalid`, `m_axi_wlast` all held low. All address/data at zero. No DMA write transactions (no S2MM path active).
+- **AXI Master Read Channel**: `m_axi_arvalid` held low. All at zero. No DMA read transactions (no MM2S path active).
+- **m_axi_awsize[2:0]/m_axi_arsize[2:0]**: Both at `011` (8-byte default).
+- **m_axi_bready/m_axi_rready**: Held low.
+- **prdata[31:0]**: Held at `00000000`.
+- **pready**: Held constant low.
+- **pslverr**: Held constant low.
+- **vdma_irq**: Held constant low — no VDMA interrupt events.
+
+#### Verdict
+- **Verdict:** ❌ **FAIL**. The `vdma` (Video DMA) module is completely non-functional. Every output — AXI-Stream MM2S, AXI master, and APB — remains at its reset value. The VDMA requires extensive configuration: (1) framebuffer base address programming, (2) horizontal/vertical size registers, (3) stride/frame delay settings, (4) channel enable bits for S2MM and MM2S paths. None of this is accomplished with randomized APB stimulus. A directed testbench with video frame data and proper DMA descriptor configuration is required.

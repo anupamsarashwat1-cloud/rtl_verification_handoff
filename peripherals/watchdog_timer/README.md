@@ -67,5 +67,21 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 ![Outputs](./waveform_outputs.png)
 
 ### 📝 Results and Observations
-- **Input Stimulation:**
-- **Output Validation:**
+
+#### Input Signal Analysis
+- **clk**: Clean periodic toggling at ~138.8 MHz across the 0–1900 ns window.
+- **rst_n**: Asserted low at time 0, released high at ~50 ns — proper reset.
+- **psel**: Randomized toggling — APB select assertions with irregular timing.
+- **penable**: Follows psel with expected APB phase behavior.
+- **pwrite**: Mixed read/write transactions throughout.
+- **paddr[3:0]**: Cycles through values (0, A, D, 3, F, 9, D, 8, 0, 9, 8, A, etc.) — randomized register addresses covering control, timeout value, and status registers.
+- **pwdata[31:0]**: Stays at `00000000` — no configuration data written.
+
+#### Output Signal Analysis
+- **prdata[31:0]**: Shows a distinctive alternating pattern: starts with `xxxxxxxx` (undefined before first valid read), then cycles between `00000000`, `FF+`, `00000000`, `0000+`, `FFFFFFFF`, `00+`, `FFFFF+`, `00000000`, `FFFFFFFF`, `00000000`, `FFFFFFFF`, `00000000`, `00000000`, `FFFFFFFF`. The `FFFFFFFF` values likely represent the watchdog counter's default/maximum timeout value or the counter current value being read back. This is a **strong positive indicator** — the register file is actively returning meaningful data.
+- **pready**: Held constant low — APB transactions technically not acknowledged, but the prdata bus is still being driven with varying values.
+- **wdt_reset_n**: Held constant low (red) — the watchdog system reset output is permanently asserted low. This is concerning as it means the watchdog is **holding the system in reset state**. This could be the default power-on behavior before the watchdog is properly configured and serviced.
+- **irq**: Held constant low — no watchdog timeout interrupt generated.
+
+#### Verdict
+- **Verdict:** ⚠️ **PARTIAL PASS**. The `watchdog_timer` register file is functionally active — `prdata` returns meaningful alternating `FFFFFFFF`/`00000000` values indicating the counter/timeout registers are readable. However, `wdt_reset_n` is stuck low (permanently asserting system reset), which suggests the watchdog defaults to an armed state and the testbench never properly services (kicks) the watchdog. The `pready` not asserting is a concern. A directed testbench is needed to: (1) configure the timeout value, (2) enable the watchdog, (3) periodically write to the kick register, and (4) verify `wdt_reset_n` goes high when serviced and triggers when not serviced.

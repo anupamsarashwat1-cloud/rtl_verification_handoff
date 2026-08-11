@@ -107,5 +107,23 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 ![Outputs](./waveform_outputs.png)
 
 ### 📝 Results and Observations
-- **Input Stimulation:**
-- **Output Validation:**
+
+#### Input Signal Analysis
+- **clk/rst_n**: Standard clock and reset.
+- **psel/penable/pwrite/paddr/pwdata**: Randomized APB stimulus with pwdata stuck at `00000000`.
+- **SD card inputs**: sd_cmd_in, sd_dat_in — randomized.
+
+#### Output Signal Analysis
+- **AXI Master Write Channel**: `m_awvalid`, `m_wvalid`, `m_wlast` all held low. All address, data, and strobe signals at zero. No DMA write transactions.
+- **AXI Master Read Channel**: `m_arvalid` held low. All at zero. No DMA read transactions.
+- **m_awsize[2:0]/m_arsize[2:0]**: Both at `011` (8-byte default).
+- **m_bready/m_rready**: Held low.
+- **prdata[31:0]**: Initially shows a brief red (undefined) pulse at time 0, then held at `00000000` throughout.
+- **pready**: Held constant low.
+- **pslverr**: Held constant low.
+- **mmc_irq**: Held constant low — no MMC interrupt events.
+- **sd_clk**: **Actively toggling** at a divided frequency throughout the entire simulation — the **SD/MMC clock divider is functional** and generating the card clock. This is a significant positive finding.
+- **sd_reset_n**: Initially low (red), deasserts high at ~50 ns — **correct SD card reset sequence** observed.
+
+#### Verdict
+- **Verdict:** ⚠️ **PARTIAL PASS**. The `mmc_controller` shows two key functional behaviors: (1) `sd_clk` is actively toggling, confirming the clock divider logic works, and (2) `sd_reset_n` correctly deasserts after system reset. However, no SD/MMC card commands are issued, no DMA transfers occur, and no APB read-back data is generated because the controller was never configured with: command type, block length, DMA buffer addresses, or card detect status. A directed testbench with SD card command protocol (CMD0, CMD8, ACMD41, CMD2/3/7) is needed.

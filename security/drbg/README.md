@@ -72,5 +72,18 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 ![Outputs](./waveform_outputs.png)
 
 ### 📝 Results and Observations
-- **Input Stimulation:**
-- **Output Validation:**
+
+#### Input Signal Analysis
+- **clk/rst_n**: Standard clock and reset.
+- **psel/penable/pwrite/paddr/pwdata**: Randomized APB stimulus with pwdata stuck at `00000000`.
+- **trng_entropy[255:0]**: Randomized entropy input — simulating TRNG seed data.
+
+#### Output Signal Analysis
+- **prdata[31:0]**: Shows sparse data: starts with `00000000`, then `00000000` at ~100 ns, long gap, `00000000` at ~590 ns, `00+` at ~740 ns, `00000000` at ~770 ns, then `00000000` at ~1200 ns. All values are zero — the DRBG never generates random output data readable through the register interface.
+- **pready**: Held constant low — APB transactions not completing.
+- **pslverr**: Held constant low.
+- **trng_ready**: Held constant low (red) — the DRBG never signals that it's ready to accept TRNG entropy. This means the seed-loading path is not activated.
+- **drbg_irq**: Held constant low — no interrupt generated (no random data available event).
+
+#### Verdict
+- **Verdict:** ❌ **FAIL**. The `drbg` (Deterministic Random Bit Generator) module is completely non-functional. Despite having `trng_entropy[255:0]` driven with random data, the DRBG never asserts `trng_ready` (refusing to accept the seed), never produces random output via `prdata`, and never generates an interrupt. The module requires: (1) proper instantiation command via APB to initiate seeding, (2) DRBG algorithm selection (CTR_DRBG/Hash_DRBG), (3) seed request/acknowledgment handshake, and (4) generate command to produce random bytes. None of this is accomplished with randomized APB stimulus.

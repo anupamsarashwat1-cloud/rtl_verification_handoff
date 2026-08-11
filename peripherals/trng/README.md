@@ -71,5 +71,23 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 ![Outputs](./waveform_outputs.png)
 
 ### 📝 Results and Observations
-- **Input Stimulation:**
-- **Output Validation:**
+
+#### Input Signal Analysis
+- **clk**: Clean periodic toggling at ~138.8 MHz across the 0–1800 ns window.
+- **rst_n**: Asserted low at time 0, released high at ~50 ns — proper reset.
+- **psel**: Randomized toggling — APB select assertions.
+- **penable**: APB phase timing follows psel.
+- **pwrite**: Mixed read/write transactions.
+- **paddr[3:0]**: Randomized register addresses.
+- **pwdata[31:0]**: Stuck at `00000000` — no configuration data written.
+
+#### Output Signal Analysis
+- **prdata[31:0]**: Held at `00000000` for the entire simulation — no register data returned.
+- **pready**: Held constant low — APB transactions not completing.
+- **pslverr**: Held constant low — no errors.
+- **trng_entropy[255:0]**: Held at all zeros (`000000...000000`) throughout the entire simulation — **no random entropy bits generated**. The 256-bit entropy output never changes from its reset value.
+- **trng_valid**: Held constant low (red) — the TRNG never asserts that valid random data is available.
+- **trng_irq**: Held constant low — no interrupt to signal entropy availability.
+
+#### Verdict
+- **Verdict:** ❌ **FAIL**. The `trng` (True Random Number Generator) module is completely non-functional under the current testbench. Every output signal remains at its reset value: `prdata` is zero, `trng_entropy[255:0]` is zero, `trng_valid` never asserts, and `trng_irq` never fires. The module likely requires: (1) APB-based enable/configuration via control registers (which are never written since pwdata is zero), and (2) potentially an external noise source input that the testbench doesn't provide. A directed testbench must configure the TRNG enable bit, seed source selection, and verify entropy output with NIST SP 800-90B statistical tests.

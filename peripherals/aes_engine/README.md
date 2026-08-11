@@ -79,5 +79,29 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 ![Outputs](./waveform_outputs.png)
 
 ### 📝 Results and Observations
-- **Input Stimulation:**
-- **Output Validation:**
+
+#### Input Signal Analysis
+- **clk**: Clean periodic toggling at ~138.8 MHz across the 0–1800 ns window.
+- **rst_n**: Asserted low at time 0, released high at ~50 ns. An additional reset glitch is visible around ~100 ns — the testbench may be applying a double reset.
+- **paddr[31:0]**: Randomized — cycles through `00000000` and various addresses throughout simulation.
+- **psel**: Randomized toggling — APB slave select with irregular timing.
+- **penable**: Follows psel with APB 2-phase handshake pattern.
+- **pwrite**: Mixed read/write — both transaction types exercised.
+- **pwdata[31:0]**: Stays at `00000000` — all writes carry zero data, so AES key registers, plaintext data registers, and control registers are never properly programmed.
+- **s_axis_tdata[31:0]**: Randomized 32-bit values — AXI-Stream input data actively driven with varying patterns throughout simulation, providing data to the AES encryption engine.
+- **s_axis_tvalid**: Randomized toggling — streaming data valid signal exercised.
+- **s_axis_tlast**: Randomized toggling — end-of-frame markers randomly asserted.
+- **m_axis_tready**: Randomized toggling — downstream ready signal exercised with back-pressure scenarios.
+
+#### Output Signal Analysis
+- **prdata[31:0]**: Shows sparse read-back activity — mostly `00000000` with brief non-zero values around ~750 ns (`000+`, `00000000`), then at ~920 ns (`00000000`). The APB register file returns mostly default/zero values since the AES configuration was never programmed.
+- **pready**: Held constant low — APB transactions are not completing.
+- **pslverr**: Held constant low — no slave errors.
+- **s_axis_tready**: Initially low (red), then toggles with active backpressure patterns — the AES engine is controlling input data flow, accepting data in bursts.
+- **m_axis_tdata[31:0]**: Starts at `00000000`, transitions to `xxxxxxxx` (undefined) after first reset release, then continues. The 'x' values indicate the AES output is in an undefined computation state — expected when no valid key/mode is programmed.
+- **m_axis_tvalid**: Active toggling — the AES engine is asserting valid output data periodically, indicating the processing pipeline is active.
+- **m_axis_tlast**: Periodic pulses — end-of-frame markers on the output stream, confirming the framing logic works.
+- **aes_irq**: Brief pulse at ~50 ns (during reset release), then remains low — interrupt generation triggered by initial conditions but no sustained activity.
+
+#### Verdict
+- **Verdict:** ⚠️ **PARTIAL PASS**. The `aes_engine` demonstrates active AXI-Stream processing — `m_axis_tvalid` and `m_axis_tlast` toggle correctly, and `s_axis_tready` shows proper flow control. However, `m_axis_tdata` contains undefined (`xxxxxxxx`) values because no encryption key or mode was configured via the APB interface (pwdata stuck at zero). The `pready` never asserts, meaning APB register access is not completing. **A directed testbench is required** to program the AES key, select encryption/decryption mode, and provide known-answer test (KAT) vectors to verify cryptographic correctness.

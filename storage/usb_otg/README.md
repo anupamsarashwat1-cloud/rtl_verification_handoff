@@ -113,5 +113,23 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 ![Outputs](./waveform_outputs.png)
 
 ### 📝 Results and Observations
-- **Input Stimulation:**
-- **Output Validation:**
+
+#### Input Signal Analysis
+- **clk/rst_n**: Standard clock and reset.
+- **psel/penable/pwrite/paddr/pwdata**: Randomized APB stimulus with pwdata stuck at `00000000`.
+- **ULPI inputs**: ulpi_data_in, ulpi_dir, ulpi_nxt — randomized.
+
+#### Output Signal Analysis
+- **ulpi_stp**: Held constant low — no ULPI stop signal generated.
+- **ulpi_reset**: Initially low (red), deasserts high at ~50 ns — **correct ULPI PHY reset sequence** observed. This is the only meaningful output behavior.
+- **AXI Master Write Channel**: `m_awvalid`, `m_wvalid`, `m_wlast` all held low. All write address, data, and strobe signals at zero. No USB DMA write transactions.
+- **AXI Master Read Channel**: `m_arvalid` held low. All read address signals at zero. No USB DMA read transactions.
+- **m_awsize[2:0]`/`m_arsize[2:0]**: Both at `011` (8-byte default).
+- **m_bready/m_rready**: Held low.
+- **prdata[31:0]**: Held at `00000000`.
+- **pready**: Held constant low.
+- **pslverr**: Held constant low.
+- **usb_irq**: Brief red pulse at time 0, then held low — no USB interrupt events.
+
+#### Verdict
+- **Verdict:** ❌ **FAIL**. The `usb_otg` module is completely non-functional. All AXI master, APB, and ULPI outputs remain at reset values. The only correct behavior is the `ulpi_reset` deassertion after system reset. The USB OTG controller requires extensive software initialization: (1) ULPI PHY register configuration, (2) USB controller mode selection (host/device/OTG), (3) endpoint configuration, (4) DMA buffer descriptor setup. None of this is accomplished with randomized APB stimulus. A directed testbench with USB device/host model is essential.

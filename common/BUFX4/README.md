@@ -41,5 +41,13 @@ graph TD
 ![Outputs](./waveform_outputs.png)
 
 ### 📝 Results and Observations
-- **Input Stimulation:**
-- **Output Validation:**
+
+#### Input Signal Analysis
+- **A**: Single-bit input to the buffer.
+
+#### Output Signal Analysis
+- **Y**: Single-bit output — expected to directly mirror the input `A`.
+- **No waveform screenshots were captured** for this module. The VCD file (`tb_BUFX4.vcd`) exists but no GTKWave screenshots were taken.
+
+#### Verdict
+- **Verdict:** ⚠️ **INCONCLUSIVE**. The `BUFX4` is a trivial single-gate buffer cell (`assign Y = A;`) with no logic to verify beyond signal pass-through. The VCD file exists but no waveform screenshots were captured to confirm the output matches the input. The module is a standard cell library primitive used for drive-strength buffering in physical design — its behavioral model is inherently correct by construction.

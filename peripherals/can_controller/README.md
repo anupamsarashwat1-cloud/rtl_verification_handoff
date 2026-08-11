@@ -70,5 +70,23 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 ![Outputs](./waveform_outputs.png)
 
 ### 📝 Results and Observations
-- **Input Stimulation:**
-- **Output Validation:**
+
+#### Input Signal Analysis
+- **clk**: Clean periodic toggling at ~138.8 MHz across the 0–1900 ns window.
+- **rst_n**: Asserted low at time 0, released high at ~50 ns — proper reset.
+- **paddr[31:0]**: Remains at `00000000` — only offset 0 addressed, missing bit timing, acceptance filter, and TX buffer registers.
+- **psel**: Randomized toggling — APB select assertions throughout.
+- **penable**: Follows psel with appropriate APB phase timing.
+- **pwrite**: Mixed read/write transactions.
+- **pwdata[31:0]**: Stuck at `00000000` — no configuration data written to bit timing, mode, or TX buffer registers.
+- **can_rx**: Randomized toggling — simulating noisy CAN bus receive data.
+
+#### Output Signal Analysis
+- **prdata[31:0]**: Initial value `00000001` (possibly a status register indicating the module is in reset/initialization mode), transitions to `00000000`, then shows sparse read-back values (00+, 00000000, 00+, FFFFF+, 00000000, etc.) at various points. The initial non-zero read confirms the register file is accessible.
+- **pready**: Held constant low — APB transactions are not completing.
+- **pslverr**: Held constant low — no slave errors.
+- **can_irq**: Brief low pulse at time 0, then remains low — no CAN interrupt events generated (no TX complete, RX complete, error, or bus-off events).
+- **can_tx**: Held constant high (green line) — CAN transmit line idle (recessive state). No CAN frame transmission occurs because the module was never configured with bit timing parameters or loaded with a TX message.
+
+#### Verdict
+- **Verdict:** ⚠️ **INCONCLUSIVE**. The `can_controller` module's register file partially responds (prdata shows initial `00000001` status), but the APB interface never completes transactions (`pready` stays low). The CAN bus output (`can_tx`) remains idle because no bit timing, acceptance filter, or TX message buffer was configured. The random `can_rx` toggling doesn't conform to CAN protocol framing, so no valid receive events occur. A directed testbench is required to configure bit timing registers, load a TX message, and trigger transmission.

@@ -71,5 +71,13 @@ Based on the advanced GTKWave functional screenshot provided for the Reset Synch
 ![Outputs](./waveform_outputs.png)
 
 ### 📝 Results and Observations
-- **Input Stimulation:**
-- **Output Validation:**
+
+#### Input Signal Analysis
+- **clk**: Standard system clock toggling continuously.
+- **rst_n**: Asynchronous reset input — held low initially, then released high.
+
+#### Output Signal Analysis
+- **sync_rst_n**: Initially low (red/undefined) during the asynchronous reset phase, then **cleanly transitions to stable high (green) at ~50 ns** and remains high for the entire remaining simulation duration (6130 ns). This is the **exact expected behavior** of a 2-stage synchronous reset deassertion circuit: the async reset assertion is immediate (sync_rst_n goes low when rst_n goes low), and the deassertion is synchronized to the clock edge through two flip-flop stages, producing a clean, glitch-free release.
+
+#### Verdict
+- **Verdict:** ✅ **PASS**. The `reset_sync` module demonstrates textbook synchronous reset behavior. The output `sync_rst_n` correctly: (1) asserts low immediately when the asynchronous `rst_n` goes low, (2) deasserts high synchronously after two clock edges when `rst_n` is released, and (3) remains stable high for the entire simulation. This confirms the 2-FF synchronizer chain is functional and glitch-free.
