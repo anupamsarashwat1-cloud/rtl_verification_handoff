@@ -32,16 +32,26 @@ module trng (
     // In physical design, this would be a hard macro of odd-stage inverters 
     // manually placed and routed to avoid logic optimization.
     
-    wire [15:0] ro_out;
-    genvar i;
-    generate
-        for (i = 0; i < 16; i = i + 1) begin : gen_ro
-            // Mock: Just feed clk or random toggle
-            assign ro_out[i] = (i % 2 == 0) ? clk : ~clk;
+    // -------------------------------------------------------
+    // Ring Oscillator Fix: Use independent per-oscillator random bits
+    // so XOR produces real entropy transitions for the Von Neumann extractor.
+    // In physical silicon each RO runs at a slightly different frequency
+    // due to process variation; here we model that with $urandom seeded regs.
+    // -------------------------------------------------------
+    // Use a single always block for the whole oscillator array (Verilog-2001 compatible)
+    reg [15:0] ro_out;
+    integer ro_idx;
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            ro_out <= 16'h5A3C; // Non-zero initial seed
+        end else begin
+            // Each "oscillator" independently randomizes each cycle
+            for (ro_idx = 0; ro_idx < 16; ro_idx = ro_idx + 1)
+                ro_out[ro_idx] <= $urandom_range(0, 1);
         end
-    endgenerate
-    
-    wire raw_bit = ^ro_out; // XOR tree collapse
+    end
+
+    wire raw_bit = ^ro_out; // XOR of 16 independent bits → random stream
 
     // -------------------------------------------------------
     // Von Neumann Extractor
