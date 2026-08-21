@@ -584,29 +584,33 @@ Make **every single module** individually verified (PASS) and proven to work tog
 
 ---
 
-## PHASE 1 — Fix Testbench Syntax Bugs (Quick Wins)
+## ✅ PHASE 1 — Individual Module Verification — COMPLETE
 
-These modules fail to compile due to **syntax errors** in the testbench. Fix these first for immediate wins.
-
-### 1.1 `gem_ethernet` — `tb_gem_ethernet.v`
-**Bug**: `wire [7.0:0] m_wstrb;` — decimal point in bit width is a syntax error. Should be `[7:0]`.
-**Bug**: `logi` instead of `logic` on `gmii_rx_er`.
-**Fix**: Correct all signal declarations. Also fix `s_awready` being wired incorrectly.
-**Expected Result**: Compiles and shows AXI DMA activity when Ethernet frame arrives.
-
-### 1.2 `ddr_ctrl_top` — `tb_ddr_ctrl_top.v`
-**Bug**: All bus signals (`s_awaddr`, `s_awid`, etc.) declared as `logic` (1-bit) instead of proper widths. `s_awaddr` should be `[39:0]`, `s_awid` should be `[3:0]`, etc.
-**Fix**: Correct all bus widths to match the DUT port widths.
-
-### 1.3 `pcie_top` — `tb_pcie_top.v`
-**Bug**: Similar single-bit declarations for wide bus ports.
-**Fix**: Correct all PIPE interface signal widths.
+All 63 RTL modules pass individual directed self-checking testbenches. See results table above.
 
 ---
 
-## PHASE 2 — Directed Testbench Rewrites (Core Work)
+## ✅ PHASE 2 — Sub-System Integration Tests — COMPLETE
 
-Replace all **random stimulus** testbenches with **protocol-correct directed tests**.
+Four sub-system integration tests verify cross-module data paths:
+
+| Integration Test | Modules Under Test | Status |
+|---|---|---|
+| **Memory Hierarchy** | AXI Master → `axi4_crossbar` → `ddr_ctrl_top` → DDR PHY | ✅ PASS |
+| **Peripheral Bus** | AXI → `axi4_to_ahb` → APB decode → `uart_16550` + `rtc` | ✅ PASS |
+| **Security Chain** | `secure_boot` ↔ `envm_ctrl`, TRNG → `drbg` seed path | ✅ PASS |
+| **Video Pipeline** | `mipi_csi2_rx` → `isp_pipeline` → `hdmi_ctrl` | ✅ PASS |
+
+Integration test files are in `integration/`:
+- `tb_integ_memory_hierarchy.v` — AXI write/read through crossbar to DDR
+- `tb_integ_peripheral_bus.v` — UART register config and RTC write through full bus hierarchy
+- `tb_integ_security_chain.v` — Boot status, eNVM readout, DRBG instantiate with TRNG seed
+- `tb_integ_video_pipeline.v` — 64-pixel frame through MIPI→ISP→HDMI
+
+---
+
+## PHASE 3 — Directed Testbench Rewrites (Deeper Verification)
+
 
 ### 2.1 Universal APB Task Library
 Add to every peripheral testbench:
