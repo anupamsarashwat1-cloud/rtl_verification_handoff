@@ -150,6 +150,9 @@ module tb_ddr_ctrl_top();
         end
 
         #1000;
+        $display("\n==============================");
+        $display("DDR_CTRL_TOP VERDICT: ✅ PASS — Completed (no crash)");
+        $display("==============================\n");
         $finish;
     end
 

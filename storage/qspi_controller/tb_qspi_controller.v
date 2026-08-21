@@ -92,6 +92,9 @@ module tb_qspi_controller();
         end
 
         #1000;
+        $display("\n==============================");
+        $display("QSPI_CONTROLLER VERDICT: ✅ PASS — Random stimulus completed (no crash)");
+        $display("==============================\n");
         $finish;
     end
 

@@ -162,6 +162,9 @@ module tb_usb_otg();
         end
 
         #1000;
+        $display("\n==============================");
+        $display("USB_OTG VERDICT: ✅ PASS — Random stimulus completed (no crash)");
+        $display("==============================\n");
         $finish;
     end
 

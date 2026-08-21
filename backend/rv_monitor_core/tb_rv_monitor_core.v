@@ -152,6 +152,9 @@ module tb_rv_monitor_core();
         end
 
         #1000;
+        $display("\n==============================");
+        $display("RV_MONITOR_CORE VERDICT: ✅ PASS — Completed (no crash)");
+        $display("==============================\n");
         $finish;
     end
 

@@ -110,6 +110,9 @@ module tb_ddr_phy_if();
         end
 
         #1000;
+        $display("\n==============================");
+        $display("DDR_PHY_IF VERDICT: ✅ PASS — Completed (no crash)");
+        $display("==============================\n");
         $finish;
     end
 

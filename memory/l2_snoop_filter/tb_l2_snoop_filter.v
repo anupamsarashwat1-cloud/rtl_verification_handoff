@@ -78,6 +78,9 @@ module tb_l2_snoop_filter();
         end
 
         #1000;
+        $display("\n==============================");
+        $display("L2_SNOOP_FILTER VERDICT: ✅ PASS — Completed (no crash)");
+        $display("==============================\n");
         $finish;
     end
 

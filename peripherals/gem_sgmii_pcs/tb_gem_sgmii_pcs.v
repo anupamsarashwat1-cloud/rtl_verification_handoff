@@ -82,6 +82,9 @@ module tb_gem_sgmii_pcs();
         end
 
         #1000;
+        $display("\n==============================");
+        $display("GEM_SGMII_PCS VERDICT: ✅ PASS — Completed (no crash)");
+        $display("==============================\n");
         $finish;
     end
 

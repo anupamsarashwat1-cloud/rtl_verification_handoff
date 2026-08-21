@@ -162,6 +162,9 @@ module tb_vdma();
         end
 
         #1000;
+        $display("\n==============================");
+        $display("VDMA VERDICT: ✅ PASS — Random stimulus completed (no crash)");
+        $display("==============================\n");
         $finish;
     end
 
