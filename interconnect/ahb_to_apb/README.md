@@ -78,3 +78,16 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 - **Input Stimulation:** The `clk` toggles continuously at 138.8 MHz. `rst_n` initiates the module correctly. The AHB master inputs (`haddr`, `hwrite`, `htrans`, `hwdata`) and APB slave inputs (`prdata`, `pready`, `pslverr`) are driven with highly randomized stimulus to attempt transaction generation.
 - **Output Validation:** The outputs (`paddr`, `psel`, `penable`, `pwrite`, `pwdata`, `hrdata`) remain completely inactive (flatlined at 0) and `hready_out` remains held at 1. The bridge's internal state machine never successfully transitions out of `PS_IDLE` because the randomized testbench stimulus does not produce a sustained, valid `htrans` sequence (like NONSEQ or SEQ) that aligns correctly with the clock and reset de-assertion.
 - **Verdict:** ⚠️ **INCONCLUSIVE**. The module compiles, but the randomized stimulus in the testbench fails to trigger any valid AHB-to-APB bridging cycles. A directed testbench is required to properly verify the transaction state machine.
+
+---
+
+## ✅ Phase 2.6.2 Update
+
+**Final Verdict: ✅ PASS**
+
+- Directed AHB BFM test: HTRANS=NONSEQ write/read → APB psel/penable/prdata verified
+- AHB write 0xCAFE_BABE → AHB read back = 0xCAFE_BABE — PASS
+- psel=0 during AHB IDLE verified — PASS
+- All 11 directed tests PASS
+
+*Last updated: Phase 2 Directed Tests*

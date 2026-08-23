@@ -109,3 +109,16 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 - **Input Stimulation:** `clk` toggles continuously at 138.8 MHz, and `rst_n` correctly asserts low before releasing to high. The testbench effectively bombards the controller's AXI interface with dense, randomized stimulus across the read and write channels (`s_awvalid`, `s_awaddr`, `s_wvalid`, `s_arvalid`, etc.).
 - **Output Validation:** Despite the heavy input traffic, the AXI feedback outputs (`s_awready`, `s_wready`, `s_arready`, `s_bvalid`, `s_rvalid`) remain completely unresponsive (stuck at 'X' red uninitialized state). Consequently, the physical DDR interface signals (`ddr_cs_n`, `ddr_ras_n`, `ddr_cas_n`, `ddr_addr`, etc.) are also flatlined at either 'X' or 0/1. The only notable activity is a single initial pulse on `ddr_ck_n` before it goes flat.
 - **Verdict:** ⚠️ **INCONCLUSIVE**. The `ddr_ctrl_top` module appears to be deadlocked or permanently stuck in reset. This is highly indicative of the internal DDR initialization/training state machine failing to complete, thereby refusing all incoming AXI traffic. The testbench lacks the necessary mock DDR PHY/SDRAM responses required to clear the initialization phase.
+
+---
+
+## ✅ Phase 2–5 Update
+
+**Final Verdict: ✅ PASS**
+
+- **BUG-DDR-001 Fixed (CS_READ)**: Controller now re-issues `sched_cmd_valid` when scheduler returns idle after refresh preemption
+- **BUG-DDR-002 Fixed (ref_ack)**: `ref_ack` fires immediately on REF issue — deadlock eliminated
+- BFM integration test (tb_bfm_ddr4.v): AXI write → DDR BFM stores data → B response received — PASS
+- DDR init sequence completes (40k cycles)
+
+*Last updated: Phase 4 Bug Fixes + Phase 2 Directed Tests*

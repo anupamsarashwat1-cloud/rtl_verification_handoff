@@ -74,3 +74,19 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 - **Input Stimulation:** `clk` toggles continuously at 138.8 MHz, and `rst_n` drops to 0 before rising at 100ns. However, the AXI valid/ready monitoring arrays (`m_arvalid`, `m_arready`, `m_awvalid`, `m_awready`) and configuration input (`cfg_time_win`) remain completely flatline at 0. Furthermore, critical QoS threshold configurations (`cfg_base_qos`, `cfg_boost_qos`, `cfg_bw_limit`) are missing entirely from the VCD trace.
 - **Output Validation:** The output signals (`m_arqos`, `m_awqos`) are completely absent from the simulation VCD file. The testbench fails to observe or capture these outputs, making it impossible to validate the QoS logic or bandwidth throttling behavior.
 - **Verdict:** ⚠️ **INCONCLUSIVE**. The testbench is structurally flawed. It fails to inject the randomized configuration/AXI signals into the module and completely omits capturing the calculated QoS outputs. A testbench redesign is required to properly stimulate and observe the QoS state machine.
+
+---
+
+## ✅ Phase 2.6.3 Update
+
+**Final Verdict: ✅ PASS**
+
+- 7-test directed suite verified QoS boost/throttle/recover behavior
+- Under limit (5 < 10 transactions): boost_qos=0xF — PASS
+- Over limit (12 > 10): base_qos=1 throttle — PASS
+- Idle master: boost_qos=0xF — PASS
+- Recovery after throttle — PASS
+- Boundary: exactly at limit (10 ≮ 10) = boost — PASS
+- One over (11 > 10) = throttle — PASS
+
+*Last updated: Phase 2 Directed Tests*

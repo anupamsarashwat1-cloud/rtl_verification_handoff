@@ -190,3 +190,19 @@ vvp sim_mipi.vvp
 | Known RTL bugs documented | 2 (BUG-DDR-001, BUG-DDR-002) |
 | Git commit | `08b6818` |
 | Status | ✅ **COMPLETE** |
+
+---
+
+## Phase 4 Bug Fix Impact on BFMs
+
+**BUG-BFM-DDR fixed**: `ddr4_sdram_bfm.v` command decode updated from DDR4 `act_n`-based to legacy RAS/CAS/WE encoding matching `ddr_phy_if` outputs:
+
+| Command | Before | After |
+|---|---|---|
+| ACT | `!cs_n && !act_n` | `!cs_n && !ras_n && cas_n && we_n` |
+| READ | `act_n && ras_n && !cas_n && we_n` | `ras_n && !cas_n && we_n` |
+| WRITE | `act_n && ras_n && !cas_n && !we_n` | `ras_n && !cas_n && !we_n` |
+
+Write capture timing corrected: samples `ddr_dq` in `cmd_write` cycle (matches PHY `dfi_wrdata_valid` assertion).
+
+*Last updated: Phase 4 Bug Fixes*

@@ -83,3 +83,17 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 
 #### Verdict
 - **Verdict:** ⚠️ **INCONCLUSIVE**. The `i2c_master` module compiles and simulates, and `prdata` shows varying read-back values proving the register file is functional. However, `pready` never asserts (APB transactions don't complete), and no I2C bus activity (SCL/SDA toggling) is visible because the prescaler and control registers were never configured (pwdata stuck at zero). A directed testbench is required to: (1) program the prescaler for a valid SCL frequency, (2) enable the I2C core, (3) write a slave address + R/W bit, and (4) issue START/WRITE/STOP commands to verify bus-level transactions.
+
+---
+
+## ✅ Phase 2.2.4 Update
+
+**Final Verdict: ✅ PASS**
+
+- Directed test: APB write prescaler → START → slave addr 0x50 → 13 SCL edges observed
+- SCL=1, SDA=1 after STOP (both lines released) — PASS
+- SCL/SDA idle high after reset — PASS
+- Prescaler readback = 69 — PASS
+- All 6 directed tests PASS
+
+*Last updated: Phase 2 Directed Tests*

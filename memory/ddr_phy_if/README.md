@@ -88,3 +88,15 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 - **Input Stimulation:** `clk` toggles continuously at 138.8 MHz, and `rst_n` initiates the module correctly. The testbench effectively bombards the DFI command interface (`dfi_ck_en`, `dfi_cs_n`, `dfi_ras_n`, `dfi_cas_n`, `dfi_we_n`, etc.) with dense, randomized stimulus to simulate back-to-back memory commands.
 - **Output Validation:** The physical PHY pins mirror the internal DFI commands beautifully. We observe dense toggling on all DDR command and address pins (`ddr_cs_n`, `ddr_ras_n`, `ddr_cas_n`, `ddr_we_n`, `ddr_ba`, `ddr_addr`). Crucially, the differential clocks (`ddr_ck_p` and `ddr_ck_n`) toggle perfectly out-of-phase as expected for DDR signaling. The `dfi_rddata_valid` signal correctly pulses, confirming that the PHY is successfully capturing data on the modeled read operations.
 - **Verdict:** ✅ **PASS**. The `ddr_phy_if` successfully bridges DFI 4.0 standard commands to physical DDR4 signaling, including proper differential clock generation and read data capturing.
+
+---
+
+## ✅ Phase 2–5 Update
+
+**Final Verdict: ✅ PASS**
+
+- **BUG-DDR-001 Fixed (PHY pipeline)**: Replaced 2-stage `dfi_rddata_valid_d` with 3-stage `rd_valid_pipe[2:0]`
+- Stage 0: CAS-RD command detected; Stage 1: BFM loads pipeline; Stage 2: ddr_dq driven by BFM → PHY samples `dfi_rddata`; Stage 3: `dfi_rddata_valid` asserted
+- Aligns with BFM CL=2 timing
+
+*Last updated: Phase 4 Bug Fixes + Phase 2 Directed Tests*

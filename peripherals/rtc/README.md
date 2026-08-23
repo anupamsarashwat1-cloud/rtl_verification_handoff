@@ -88,3 +88,17 @@ Over 500 consecutive cycles, the following inputs receive constrained `$random` 
 
 #### Verdict
 - **Verdict:** ❌ **FAIL**. The `rtc` module is completely unresponsive under the current testbench. `pready` never asserts (no APB transactions complete), `prdata` is stuck at zero (no register read-back), and `timer_irq` never fires. Despite having both `clk` and `rtc_clk` actively driven, the RTC counter produces no observable output. The root cause is likely that the module requires explicit enable/prescaler configuration via APB writes before the counter starts, but `pwdata` is stuck at zero and `paddr` never addresses the control register. A directed testbench is required to properly initialize the RTC.
+
+---
+
+## ✅ Phase 2–5 Update
+
+**Final Verdict: ✅ PASS**
+
+- **BUG-RTC-001 Fixed**: Added 2-FF CDC synchronizer (mtime_meta/mtime_sync) for rtc_clk→clk crossing
+- Directed test verified: `timer_irq[0]` fires when `mtime >= mtimecmp[0]` (Test 4 PASS)
+- IRQ cleared by writing mtimecmp=0xFFFF...FFFF (Test 5 PASS)
+- mtimecmp read-back verified (Test 6 PASS)
+- All 6 tests PASS
+
+*Last updated: Phase 4 Bug Fixes + Phase 2 Directed Tests*
