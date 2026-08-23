@@ -122,14 +122,13 @@ module ddr4_sdram_bfm #(
                     mem_array[bank][active_row[bank]][ddr_addr[5:0]]);
             end
 
-            // WRITE — data driven by PHY on ddr_dq same cycle as CAS-WR
+            // WRITE — PHY drives ddr_dq on same cycle as CAS-WR (dfi_wrdata_valid=1)
             if (cmd_write) begin
                 if (!row_open[bank]) begin
-                    // Auto-open row for writes (simulation convenience)
                     active_row[bank] <= ddr_addr[15:0];
                     row_open[bank]   <= 1'b1;
                 end
-                @(posedge ddr_ck_p); // WL=1
+                // Sample DQ now — PHY drives it this cycle via dfi_wrdata_valid
                 if (ddr_dq !== 64'hzzzz_zzzz_zzzz_zzzz)
                     mem_array[bank][active_row[bank]][ddr_addr[5:0]] <= ddr_dq;
                 $display("[DDR4_BFM] WRITE bank=%0d col=%0d data=0x%016h",

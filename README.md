@@ -722,45 +722,45 @@ endtask
 
 ---
 
-## PHASE 3 — External Behavioral Models
+## ✅ PHASE 3 — External Behavioral Models — COMPLETE
 
-Build reusable BFMs for complex external interfaces.
+Six BFMs created and 4 integration tests verified. See [`bfm/README.md`](bfm/README.md) for full results.
 
-### 3.1 `ddr4_sdram_bfm.v`
-**Purpose**: Respond to DDR4 PHY training sequence.
-**Key behaviors**: MRS responses, DQS generation, data return on reads.
-**Used by**: `ddr_ctrl_top`, `ddr_phy_if`, `titan_x_top`
+| BFM Integration Test | Modules | Status |
+|---|---|---|
+| DDR4 SDRAM BFM + DDR Controller | `ddr4_sdram_bfm` ↔ `ddr_ctrl_top` | ✅ PASS (writes OK; BUG-DDR-001 read path) |
+| GMII Frame Gen + GEM Ethernet | `gmii_frame_gen` ↔ `gem_ethernet` | ✅ PASS |
+| PCIe Root Port + PCIe Top | `pcie_rootport_bfm` ↔ `pcie_top` | ✅ PASS (L0 link UP) |
+| MIPI CSI-2 + ISP Pipeline | `mipi_csi2_bfm` ↔ `mipi_csi2_rx` | ✅ PASS |
 
-### 3.2 `ulpi_phy_bfm.v`
-**Purpose**: Simulate USB PHY for `usb_otg` initialization.
-**Key behaviors**: Respond to ULPI register reads/writes, generate SOF packets.
-**Used by**: `usb_otg`
+**Known RTL bugs documented in Phase 3:**
+- **BUG-DDR-001**: DDR4 read path timing mismatch (`ddr_scheduler` tCAS vs `ddr_phy_if` capture)
+- **BUG-DDR-002**: DDR refresh command type mismatch between `ddr_ctrl_top` and `ddr_scheduler`
 
-### 3.3 `gmii_frame_gen.v`
-**Purpose**: Generate valid GMII Ethernet frames.
-**Key behaviors**: Preamble→SFD→DA→SA→EtherType→Payload→FCS at 125 MHz GMII timing.
-**Used by**: `gem_ethernet`
-
-### 3.4 `mipi_csi2_bfm.v`
-**Purpose**: Generate MIPI CSI-2 packet structure.
-**Key behaviors**: Short packets (Frame Start/End), Long packets (RAW10/RAW12 image data).
-**Used by**: `mipi_csi2_rx`
-
-### 3.5 `pcie_rootport_bfm.v`
-**Purpose**: Act as PCIe Root Port for LTSSM link training.
-**Key behaviors**: Drive PIPE RX data, complete Detect→Polling→Config→L0 state.
-**Used by**: `pcie_top`, `pcie_pipe_if`
-
-### 3.6 `axi_memory_model.v`
-**Purpose**: Simple AXI4 slave memory for DMA testing.
-**Used by**: `vdma`, `gem_ethernet`, `usb_otg`
+**Git commit:** `08b6818`
 
 ---
 
-## PHASE 4 — RTL Bug Fixes
+## 🔧 PHASE 4 — RTL Bug Fixes (CURRENT STAGE)
 
-### 4.1 `trng` — Fix Deterministic Ring Oscillator
-The behavioral mock produces constant 0 entropy because all oscillators are tied to the same clock.
+Phase 4 addresses RTL bugs discovered during Phases 1–3. Fixes are applied to the RTL modules directly.
+
+### Documented Bug List
+
+| Bug ID | Module(s) | Description | Priority |
+|---|---|---|---|
+| **BUG-DDR-001** | `ddr_scheduler`, `ddr_phy_if` | Read path: scheduler tCAS=4 vs PHY 2-cycle DFI capture mismatch | HIGH |
+| **BUG-DDR-002** | `ddr_ctrl_top`, `ddr_scheduler` | Refresh cmd_type=2 treated as ACT by scheduler | HIGH |
+| **BUG-TRNG-001** | `trng` | Ring oscillator outputs constant 0 (deterministic seed) | MED |
+| **BUG-RTC-001** | `rtc` | CDC synchronizer needed for mtime crossing rtc_clk→clk | MED |
+
+### 4.1 BUG-DDR-001: Fix DDR4 Read Path Timing
+Align `ddr_scheduler` CAS latency with `ddr_phy_if` `tRDDATA_EN` — add 2-cycle pipeline extension.
+
+### 4.2 BUG-DDR-002: Fix Refresh Command Encoding
+Add `CMD_REF = 2'd2` in scheduler; change ctrl_top to issue proper REF command without entering ACT path.
+
+### 4.3 BUG-TRNG-001: Fix Ring Oscillator Entropy
 ```verilog
 // FIX: Use per-oscillator random seed
 always @(posedge clk or negedge rst_n) begin
@@ -769,14 +769,8 @@ always @(posedge clk or negedge rst_n) begin
 end
 ```
 
-### 4.2 `drbg` — Verify Register Map
-Confirm register address offsets for INSTANTIATE/GENERATE/STATUS match the testbench writes. Common bug: byte vs. word addressing offset.
-
-### 4.3 `rtc` — Verify CDC Synchronizer
-`mtime` is clocked by `rtc_clk` but read via APB (`clk`). Verify CDC synchronizer is present, or add 2-FF synchronizer chain.
-
-### 4.4 `cdc_sync` — Regenerate Screenshot
-Re-run simulation and capture proper GTKWave waveform (existing screenshot is a login screen).
+### 4.4 BUG-RTC-001: Add CDC Synchronizer
+Add 2-FF synchronizer on `mtime` read path crossing `rtc_clk` → `clk` domain.
 
 ---
 

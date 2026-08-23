@@ -111,7 +111,7 @@ module ddr_ctrl_top (
     reg [9:0]   sched_col;
     reg [63:0]  sched_wrdata;
 
-    assign ref_ack = (sched_cmd_valid && sched_cmd_type == 2'd2 && sched_ready);
+    assign ref_ack = (sched_cmd_valid && sched_cmd_type == 2'd2); // BUG-DDR-002: ack immediately on refresh issue
 
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
@@ -167,6 +167,10 @@ module ddr_ctrl_top (
                             s_rlast_r  <= 1'b1;
                             s_rid_r    <= cmd_id;
                             if (s_rready) ctrl_state <= CS_IDLE;
+                        end else if (sched_ready && !sched_cmd_valid) begin
+                            // Re-issue read if scheduler returned to idle (e.g. after refresh)
+                            sched_cmd_type  <= 2'd0; // READ
+                            sched_cmd_valid <= 1'b1;
                         end
                     end
 

@@ -67,19 +67,27 @@ module ddr_phy_if (
     assign ddr_dqs_p = dqs_drive ? {8{ddr_ck_p}} : 8'bz;
     assign ddr_dqs_n = dqs_drive ? {8{ddr_ck_n}} : 8'bz;
 
-    // Read capture: sample DQ on rising edge of DQS (modelled as posedge clk)
-    reg dfi_rddata_valid_d;
+    // Read capture: BFM drives ddr_dq at CL=2 (2 cycles after CAS command)
+    // PHY needs to capture DQ at that time. Use 3-stage pipeline: cas→1→2(DQ valid)→valid
+    // Stage 0: CAS command seen
+    // Stage 1: BFM pipeline[0] loaded
+    // Stage 2: BFM pipeline[1] → ddr_dq driven
+    // Stage 3: dfi_rddata_valid asserted with captured data
+    reg [2:0] rd_valid_pipe;
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             dfi_rddata       <= 64'h0;
             dfi_rddata_valid <= 1'b0;
-            dfi_rddata_valid_d <= 1'b0;
+            rd_valid_pipe    <= 3'h0;
         end else begin
-            // Capture DQ when not in write mode
-            dfi_rddata_valid_d <= !dfi_wrdata_valid && !dfi_cs_n && !dfi_cas_n;
-            dfi_rddata_valid   <= dfi_rddata_valid_d;
-            if (!dfi_wrdata_valid)
-                dfi_rddata <= ddr_dq;  // Capture tri-state driven value from DRAM
+            // Shift: detect CAS-RD command
+            rd_valid_pipe[0] <= !dfi_wrdata_valid && !dfi_cs_n && !dfi_cas_n;
+            rd_valid_pipe[1] <= rd_valid_pipe[0];
+            rd_valid_pipe[2] <= rd_valid_pipe[1];
+            // Assert valid and capture data at stage 3 (when BFM drives DQ)
+            dfi_rddata_valid <= rd_valid_pipe[2];
+            if (rd_valid_pipe[1])  // sample DQ one cycle before asserting valid
+                dfi_rddata <= (ddr_dq === 64'hzzzz_zzzz_zzzz_zzzz) ? 64'h0 : ddr_dq;
         end
     end
 endmodule

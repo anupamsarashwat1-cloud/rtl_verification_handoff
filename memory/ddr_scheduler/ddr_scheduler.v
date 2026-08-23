@@ -37,7 +37,7 @@ module ddr_scheduler #(
 );
     localparam CMD_RD  = 2'd0;
     localparam CMD_WR  = 2'd1;
-    localparam CMD_ACT = 2'd2;
+    localparam CMD_REF = 2'd2;  // BUG-DDR-002 fix: was CMD_ACT, now properly CMD_REF
     localparam CMD_PRE = 2'd3;
 
     // Open-row tracking
@@ -55,7 +55,7 @@ module ddr_scheduler #(
     localparam SC_TRCDW = 3'd4;
     localparam SC_CAS   = 3'd5;
     localparam SC_CASW  = 3'd6;
-    localparam SC_DONE  = 3'd7;
+    localparam SC_RDWT  = 3'd7;  // BUG-DDR-001 fix: wait for dfi_rddata_valid
 
     reg [2:0]  sched_state;
     reg [1:0]  saved_cmd_type;
@@ -102,7 +102,11 @@ module ddr_scheduler #(
                         saved_bank     <= cmd_bank;
                         saved_row      <= cmd_row;
                         saved_col      <= cmd_col;
-                        if (row_open[cmd_bank] && open_row[cmd_bank] == cmd_row) begin
+                        if (cmd_type == CMD_REF) begin
+                            // BUG-DDR-002 fix: refresh = NOP pulse, no bank state change
+                            tRP_cnt     <= tRP[3:0];
+                            sched_state <= SC_TRPW;  // reuse tRP wait as tRFC mini-delay
+                        end else if (row_open[cmd_bank] && open_row[cmd_bank] == cmd_row) begin
                             // Row already open: go direct to CAS
                             sched_state <= SC_CAS;
                         end else if (row_open[cmd_bank]) begin
@@ -161,12 +165,22 @@ module ddr_scheduler #(
                 SC_CASW: begin
                     if (tCAS_cnt == 4'h0) begin
                         if (saved_cmd_type == CMD_RD) begin
-                            rd_data  <= dfi_rddata;
-                            rd_valid <= dfi_rddata_valid;
+                            // BUG-DDR-001 fix: wait for dfi_rddata_valid instead of sampling blindly
+                            sched_state <= SC_RDWT;
+                        end else begin
+                            sched_state <= SC_IDLE;
                         end
-                        sched_state <= SC_IDLE;
                     end else begin
                         tCAS_cnt <= tCAS_cnt - 4'h1;
+                    end
+                end
+
+                SC_RDWT: begin
+                    // Wait for PHY to assert dfi_rddata_valid (2 cycles after CAS)
+                    if (dfi_rddata_valid) begin
+                        rd_data  <= dfi_rddata;
+                        rd_valid <= 1'b1;
+                        sched_state <= SC_IDLE;
                     end
                 end
 
