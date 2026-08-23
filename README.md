@@ -741,7 +741,21 @@ Six BFMs created and 4 integration tests verified. See [`bfm/README.md`](bfm/REA
 
 ---
 
-## 🔧 PHASE 4 — RTL Bug Fixes (CURRENT STAGE)
+## ✅ PHASE 4 — RTL Bug Fixes — COMPLETE
+
+All 4 documented bugs fixed. See [`docs/phase4_bug_fixes.md`](docs/phase4_bug_fixes.md).
+
+| Bug ID | Fix | Status |
+|---|---|---|
+| **BUG-DDR-001** | CS_READ re-issues cmd; PHY 3-stage rd_valid_pipe | ✅ Fixed |
+| **BUG-DDR-002** | CMD_REF handler in scheduler; ref_ack deadlock removed | ✅ Fixed |
+| **BUG-RTC-001** | 2-FF CDC synchronizer on mtime→clk crossing | ✅ Fixed |
+| **BUG-BFM-DDR** | BFM command decode: RAS/CAS/WE (not act_n) | ✅ Fixed |
+
+**Git commit:** `2b5b56a`
+
+---
+
 
 Phase 4 addresses RTL bugs discovered during Phases 1–3. Fixes are applied to the RTL modules directly.
 
